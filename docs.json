@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Hivenet Docs",
   "colors": {
-    "primary": "#d46e35",
-    "light": "#d46e35",
-    "dark": "#d46e35"
+    "primary": "#D46E35",
+    "light": "#D46E35",
+    "dark": "#D46E35"
   },
   "favicon": "/hivenet_favicon.png",
   "navigation": {
@@ -58,18 +58,18 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "anchor": "Help Center",
+          "href": "https://help.hivenet.com/en/",
           "icon": "book-open-cover"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "href": "https://discord.com/invite/p2CwYSKsQU",
+          "icon": "discord"
         },
         {
           "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "href": "https://compute.hivenet.com/computes-blog",
           "icon": "newspaper"
         }
       ]
