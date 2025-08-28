@@ -53,14 +53,16 @@
             ]
           }
         ]
-      }
+      },
       {
         "tab": "Changelog",
         "groups": [
-          {"group": "Changelog",
-            "pages": ["Product updates"
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog"
             ]
-        }
+          }
         ]
       }
     ],
