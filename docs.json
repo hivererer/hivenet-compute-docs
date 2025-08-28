@@ -7,7 +7,7 @@
     "light": "#D46E35",
     "dark": "#D46E35"
   },
-  "favicon": "/hivenet_favicon.png",
+  "favicon": "logo/hivenet_favicon.png",
   "navigation": {
     "tabs": [
       {
@@ -38,13 +38,13 @@
         "tab": "Tutorials",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Guides",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "More guides",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
