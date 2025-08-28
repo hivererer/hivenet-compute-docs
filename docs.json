@@ -13,11 +13,6 @@
       {
         "tab": "Documentation",
         "groups": [
-                    {
-            "group": "Changelog",
-            "pages": ["changelog"
-            ]
-          },
           {
             "group": "Get Started",
             "pages": [
@@ -55,6 +50,17 @@
               "api-reference/endpoint/create",
               "api-reference/endpoint/delete",
               "api-reference/endpoint/webhook"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog"
             ]
           }
         ]
