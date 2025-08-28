@@ -11,8 +11,13 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
+                    {
+            "group": "Changelog",
+            "pages": ["changelog"
+            ]
+          },
           {
             "group": "Get Started",
             "pages": [
@@ -35,7 +40,7 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Tutorials",
         "groups": [
           {
             "group": "API Documentation",
