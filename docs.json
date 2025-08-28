@@ -87,20 +87,20 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/logo-black.svg",
+    "dark": "/logo/logo-light.svg"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:support@hivenet.com"
+        "href": "https://www.hivenet.com/support"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://https://console.hivecompute.ai/"
     }
   },
   "footer": {
