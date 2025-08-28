@@ -40,16 +40,13 @@
           {
             "group": "Guides",
             "pages": [
-              "api-reference/introduction"
+              "guides/guide-1"
             ]
           },
           {
             "group": "More guides",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "guides/guide-2",
             ]
           }
         ]
