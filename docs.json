@@ -13,17 +13,17 @@
       {
         "tab": "Documentation",
         "groups": [
+                    {
+            "group": "Changelog",
+            "pages": ["changelog"
+            ]
+          },
           {
             "group": "Get Started",
             "pages": [
               "index",
               "quickstart",
               "development"
-            ]
-          },
-          {
-            "group": "Changelog",
-            "pages": ["changelog"
             ]
           },
           {
