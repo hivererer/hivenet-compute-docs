@@ -22,6 +22,11 @@
             ]
           },
           {
+            "group": "Changelog",
+            "pages": ["changelog"
+            ]
+          },
+          {
             "group": "Essentials",
             "pages": [
               "essentials/markdown",
