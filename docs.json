@@ -65,6 +65,11 @@
     ],
     "global": {
       "anchors": [
+           {
+          "anchor": "Console",
+          "href": "https://console.hivecompute.ai/",
+          "icon": "computer"
+        },
         {
           "anchor": "Help Center",
           "href": "https://help.hivenet.com/en/",
