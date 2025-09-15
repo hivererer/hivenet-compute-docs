@@ -31,6 +31,25 @@
               "essentials/vllms",
               "essentials/settings"
             ]
+          },
+            {
+            "group": "Troubleshooting",
+            "pages": [
+              "articles/troubleshooting/invalid-SSH-key"
+            ]
+          },
+          {
+            "group": "Billing",
+            "pages": [
+              "articles/account-billing/billing-info"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "articles/reference/faq",
+              "articles/reference/glossary"
+            ]
           }
         ]
       },
