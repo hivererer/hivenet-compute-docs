@@ -39,9 +39,11 @@
             ]
           },
           {
-            "group": "Billing",
+            "group": "Account and Billing",
             "pages": [
-              "articles/account-billing/billing-info"
+              "articles/account-billing/billing-info",
+              "articles/account-billing/track-costs-real-time",
+              "articles/account-billing/delete-account"
             ]
           },
           {

@@ -1,4 +1,70 @@
 ---
-title: "Troubleshoot "invalid SSH key" upload errors"
+sidebarTitle: "Invalid SSH key"
+title: "Troubleshoot 'invalid SSH key' upload errors"
 description: "Fix common mistakes when adding your public key to Compute"
 ---
+
+## What causes this error?
+
+When you paste an SSH key into the Compute dashboard and see “Invalid SSH key,” it usually means:
+
+- You pasted the **private** key instead of the public key
+- You copied only part of the public key or included extra spaces/line breaks
+- Your key type isn’t recognized (e.g., an unsupported format)
+
+<Steps>
+  <Step title="Verify you’re using the public key">
+    1. Open your `.ssh` folder
+    2. Find the file ending in `.pub` (for example, `id_ed25519.pub` or `id_rsa.pub`).
+    3. Right‑click the `.pub` file → **Open with** → Notepad.
+    4. **Select and copy** the entire single line, starting with `ssh-ed25519` or `ssh-rsa` and ending with your email or comment.
+
+    <Warning>
+      Don’t open or copy the file without `.pub`. That’s your private key\!
+    </Warning>
+  </Step>
+  <Step title="Regenerate your key if needed" stepNumber={2} titleSize="p">
+    If you can’t find a `.pub` file or suspect it’s corrupted, create a fresh pair:
+
+    ```
+    ssh-keygen -t ed25519 -C "your_email@example.com"
+    ```
+
+    - Accept the default file location or give it a custom name (e.g., `id_hivenet`).
+    - When prompted, set a passphrase (optional but adds security).
+
+    Then repeat Step 1 with the new `.pub` file.
+  </Step>
+  <Step title="Paste carefully into the dashboard">
+    1. In the Compute dashboard, go to **Add SSH key**.
+    2. **Click inside** the SSH key field—avoid pasting into any other box.
+    3. **Paste** your copied public key in one go (Ctrl\+V).
+    4. Click **Save** or **Add key**.
+
+    <Tip>
+      If you see line breaks or extra spaces, click inside the field and use backspace or delete.
+    </Tip>
+  </Step>
+</Steps>
+
+## Common pitfalls
+
+**Hidden newline characters:** Some editors add a newline at the end. Make sure the pasted text ends with your key comment, not an empty line.
+
+\*\*Wrong key type: \*\*Compute supports `ssh-ed25519` and `ssh-rsa`. ECDSA keys may not work.
+
+\*\*Mixing up accounts: \*\*If you have multiple keys, verify you copied the one linked to the current Compute account.
+
+## Test your key locally (optional)
+
+You can test that your key is valid by connecting to a known host (like GitHub):
+
+```
+ssh -T git@github.com
+```
+
+If GitHub accepts the key, it’s formatted correctly.
+
+---
+
+Still seeing errors? Use the chat widget on our site or join us on [Discord](https://discord.gg/cTmPDPrMG2) for live help\!
