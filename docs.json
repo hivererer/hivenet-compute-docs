@@ -24,11 +24,33 @@
             "group": "Essentials",
             "pages": [
               "articles/essentials/create-instance",
+              "articles/essentials/understand-choose-instance",
               "articles/essentials/custom-templates",
               "articles/essentials/start-stop",
               "articles/essentials/how-to-vcpu",
               "articles/essentials/how-to-vllm",
-              "articles/essentials/general-settings"
+              "articles/essentials/general-settings",
+              "articles/essentials/stop-terminate-instance"
+            ]
+          },
+            {
+            "group": "Troubleshooting",
+            "pages": [
+              "articles/troubleshooting/invalid-SSH-key"
+            ]
+          },
+          {
+            "group": "Connectivity",
+            "pages": [
+              "articles/connectivity/connect-instance-macos",
+              "articles/connectivity/connect-instance-windows",
+              "articles/connectivity/firewall-basics",
+              "articles/connectivity/forwards-ports",
+              "articles/connectivity/https-site-ssh-port-forwarding",
+              "articles/connectivity/ssh-key-linux",
+              "articles/connectivity/ssh-key-macos",
+              "articles/connectivity/ssh-key-windows",
+              "articles/connectivity/ssh-puttygen-openssh",
             ]
           },
             {
@@ -61,15 +83,17 @@
         "tab": "Tutorials",
         "groups": [
           {
-            "group": "Guides",
+            "group": "How to",
             "pages": [
-              "guides/guide-1"
+              "articles/guides/configuration-image-generation",
+              "articles/guides/open-jupyter-notebook"
             ]
           },
           {
             "group": "More guides",
             "pages": [
-              "guides/guide-2"
+              "articles/guides/sftp-not-ftps",
+              "articles/guides/SSH-config-file-explained"
             ]
           }
         ]
