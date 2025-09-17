@@ -1,4 +1,102 @@
 ---
-title: "Quickstart"
-description: "Start creating instances in under 5 minutes"
+title: "Compute quickstart"
+description: "Launch your first GPU or CPU instance—or a vLLM inference server—in minutes with Compute by Hivenet."
+sidebar_position: "1"
 ---
+
+Get from zero to a running environment fast. This guide covers account setup, creating an instance, connecting over SSH, and launching a vLLM inference server.
+
+> **You’ll need**
+>
+> - A **Compute** account (separate from a general Hivenet account)
+> - Prepaid **credits** in your balance
+> - An SSH client (macOS/Linux terminal or Windows Terminal)
+
+<Steps>
+  <Step title="Sign in to Compute">
+    1. Go to **compute.hivenet.com** and select **Sign in**.
+    2. Use Google, Apple, GitHub, or email/password.
+
+    After sign-in you’ll land on the **Console**.
+
+    <Tip>
+      Add credits first to avoid interruptions. You can enable **auto top-up** later in Billing.
+    </Tip>
+  </Step>
+  <Step title="Create a GPU or CPU instance">
+    1. From the left sidebar, select **Create new instance** (or **Create instance** from the Console card).
+    2. **Choose a location.** Pick what’s closest to your users or data.
+    3. **Choose your setup.** Select **GPU** or **vCPU only**.
+    4. **Pick a template.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates come pre-installed so you can start faster.
+    5. **Connectivity.**
+       - **SSH:** Paste your **public key**.
+         - Need one?
+
+           ```bash
+           ssh-keygen -t ed25519 -C "you@example.com"
+           ```
+
+           Then paste the contents of `~/.ssh/id_ed25519.pub`.
+       - **HTTPS / TCP / UDP:** Keep defaults unless your app needs open ports.
+    6. Review the summary and select **Create instance**.
+    7. Wait for **Status: Running** on the **Instances** page.
+  </Step>
+  <Step title="Connect over SSH">
+    From **Instances**, copy the SSH command shown for your instance, then connect:
+
+    ```bash
+    ssh -i /path/to/private_key username@INSTANCE_IP
+    ```
+
+    <Note>
+      \_username \_depends on the template. For Ubuntu images it’s usually `ubuntu`.
+    </Note>
+  </Step>
+  <Step title="Launch a vLLM inference server (optional)">
+    If you want a ready inference endpoint:
+
+    1. In the sidebar, select **Launch inference**.
+    2. **Choose a model** to run (pre-trained options are listed in the UI).
+    3. (Optional) **vLLM configuration.** Leave defaults for your first run. You can tune things later (e.g., context length, concurrency, sampling parameters).
+    4. **Choose a location** and **setup** (GPU).
+    5. Confirm **Connectivity** (SSH is required; HTTPS is available by default for the endpoint when applicable).
+    6. Select \*\*Run inference \*\*and wait for **Running**.
+  </Step>
+  <Step title="Manage and clean up">
+    - **Stop/Start:** You can stop and later start an instance from **Instances**.
+    - **Terminate:** When you’re done, terminate the instance to stop billing.
+    - **Billing:** Track spend and balance in **Billing**.
+
+    <Warning>
+      Billing is **per second while an instance is running**.
+
+      **Data on the instance is deleted after termination.** Back up anything important before you terminate.
+    </Warning>
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+- **“Permission denied (publickey)”** when SSHing\
+  Ensure you added the **public key** during creation and you’re using the matching **private key** with correct file permissions (`chmod 600`).
+- **Can’t reach the service**\
+  Check that the required **port** is enabled under **Connectivity** and any firewall rules are correct.
+- **Instance won’t start or pauses**\
+  Verify you have **enough credits**. Top up in **Billing**.
+
+## Next steps
+
+Now that you’ve launched your first instance, you’re ready to explore more:
+
+- Learn how to [use templates](/articles/essentials/custom-templates) to speed up setup with preinstalled environments.
+- Create [custom templates](/articles/essentials/custom-templates) tailored to your own workflows.
+- Dive into [vLLM configuration](/articles/essentials/how-to-vllm) to adjust context length, concurrency, and other parameters.
+- Check [benchmark results](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100) for RTX 4090 and RTX 5090 GPUs.
+- Review [billing and credits](/articles/account-billing/billing-info) to understand how per-second pricing works.
+- Explore our [security overview](/articles/reference/faq) for details on encryption and data handling.
+
+## Need help?
+
+- Join the Hivenet Compute community on [Discord](https://discord.com/cTmPDPrMG2).
+- Submit a request through our [Help Center](help.hivenet.com).
+- Contact us anytime at [support@hivenet.com](mailto:support@hivenet.com).

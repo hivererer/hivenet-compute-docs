@@ -17,19 +17,18 @@
             "group": "Get Started",
             "pages": [
               "index",
-              "get-started/quickstart",
-              "get-started/development"
+              "get-started/quickstart"
             ]
           },
           {
             "group": "Essentials",
             "pages": [
-              "essentials/create-instance",
-              "essentials/custom-templates",
-              "essentials/start-stop",
-              "essentials/how-to-vcpu",
-              "essentials/how-to-vllm",
-              "essentials/general-settings"
+              "articles/essentials/create-instance",
+              "articles/essentials/custom-templates",
+              "articles/essentials/start-stop",
+              "articles/essentials/how-to-vcpu",
+              "articles/essentials/how-to-vllm",
+              "articles/essentials/general-settings"
             ]
           },
             {
