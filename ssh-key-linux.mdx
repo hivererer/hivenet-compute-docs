@@ -1,0 +1,75 @@
+---
+title: "How to generate and add an SSH key on Linux"
+description: "A quick start for first-time Compute with Hivenet users on Linux"
+sidebarTitle: "Add SSH key on Linux"
+---
+
+## What you’ll need
+
+- A Hivenet account with Compute credits ready
+- A Debian-, Ubuntu-, Fedora-, or Arch-based distro (others work too)
+- **OpenSSH client** (`ssh`) installed
+- A terminal emulator
+
+##  Step 1 – Create your SSH key pair
+
+```
+bashCopyEditssh-keygen -t ed25519
+```
+
+- Accept the default path (`/home/<you>/.ssh/id_ed25519`).
+- Add a passphrase for extra security.
+
+<Tip>
+  Password managers such as 1Password, Bitwarden, and KeePassXC can generate and store SSH keys automatically. If you already rely on one, it’s an easy alternative to the `ssh-keygen` command.
+</Tip>
+
+## Step 2 – Find your key files
+
+Open the folder in your file manager:
+
+```
+bashCopyEditxdg-open ~/.ssh
+```
+
+—or browse there manually (`Home → .ssh`). You should see:
+
+- `id_ed25519` (private)
+- `id_ed25519.pub` (public)
+
+##  Step 3 – Add your public key to Hivenet
+
+1. Copy the public key to your clipboard:
+
+   ```
+   bashCopyEditcat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+   ```
+
+   _(If _`xclip`_isn’t installed, just open the file in a text editor and copy.)_ 
+2. In **Compute with Hivenet**, paste the key into **SSH key** when you spin up an instance.
+
+<Warning>
+  Share only the `.pub` key. Keep the private key private.
+</Warning>
+
+##  Step 4 – (Optional) add a quick SSH config
+
+Create or edit **~/.ssh/config**:
+
+```
+perlCopyEditHost hivenet HostName <your-instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 # Remove this line if no bastion host is listed ProxyCommand ssh bastion@ssh.hivecompute.ai %h
+```
+
+Connect with:
+
+```
+bashCopyEditssh hivenet
+```
+
+##  Troubleshooting
+
+| Message                           | Likely cause & fix                                                                                       |
+| :-------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| **Permission denied (publickey)** | Wrong key or the public key isn’t on the instance. Re-check the key path or re-add the key.              |
+| **Connection timed out**          | Network issue or incorrect `ProxyCommand`. Try `ssh -v hivenet` for details.                             |
+| **ssh: command not found**        | Install the OpenSSH client package (`install openssh-client`, `sudo dnf install openssh-clients`, etc.). |

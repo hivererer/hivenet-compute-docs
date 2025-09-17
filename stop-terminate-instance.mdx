@@ -1,0 +1,66 @@
+---
+title: "How to stop or terminate a Compute instance on Hivenet"
+description: "Understand the difference between “Stop” and “Terminate,” and choose the safest action for your workload."
+sidebarTitle: "Stop/terminate an instance"
+---
+
+On your **Instances** page, the three-dot menu (`⋮`) next to each instance offers two choices: **Stop** or **Terminate**. Seeing them side-by-side can be confusing—especially when one of those buttons can wipe an instance for good.  
+
+They might seem similar, but the results couldn’t be more different. One pauses your instance and keeps it around. The other deletes it entirely—no undo.
+
+This short guide breaks down what each option does, when to use it, and how to run the action step-by-step.
+
+## Where to find these actions
+
+1. Go to **Compute → Instances**
+2. Find the instance you want to manage
+3. Click the **three-dot menu** (`⋮`) on the right
+4. Choose **Stop** or **Terminate**
+5. Confirm your choice in the pop-up dialog
+
+You’ll need to tick some boxes before confirming Terminate—just to be sure you know what you're doing.
+
+## Stop vs. Terminate
+
+| Action        | What it does                     | Can you restart it later? | Keeps config? | Charges stop?                              | Auto-expires?         |
+| :------------ | :------------------------------- | :------------------------ | :------------ | :----------------------------------------- | :-------------------- |
+| **Stop**      | Pauses the instance              | Yes, within 5 days        | Yes           | Yes                                        | Yes, after **5 days** |
+| **Terminate** | Deletes the instance permanently | No                        | No            | Yes (all charges stop if you delete disks) | Yes, immediately      |
+
+## ⚠️ Stopped instances are not forever
+
+Stopping an instance pauses it, but only temporarily. If you don’t restart it within **5 days**, it will be **automatically terminated**—and that means:
+
+- The instance is deleted
+- All data is lost
+- There’s no recovery option
+
+This includes anything stored on the system disk. If it’s stopped and you forget about it, it will be gone.
+
+## When to use **Stop**
+
+Use Stop when you:
+
+- Need to temporarily pause an instance
+- Want to save on Compute charges for a bit
+- Plan to restart it soon
+
+Once stopped, the instance will show as **Stopped** in your list. To avoid losing it, just make sure you start it again within 5 days.
+
+## When to use **Terminate**
+
+Terminate is for when you're done with the instance—no return. Choose it when:
+
+- You’ve completed a job and want to clean up
+- You no longer need the instance or its data
+- You want to completely stop all charges
+
+Before the instance is deleted, you’ll be asked to confirm that:
+
+- All tasks will stop
+- All data will be wiped
+- This cannot be undone
+
+Once terminated, the instance disappears from your dashboard and cannot be recovered.
+
+ 

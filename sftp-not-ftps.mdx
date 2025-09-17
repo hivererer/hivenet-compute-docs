@@ -1,0 +1,52 @@
+---
+title: "Why Compute supports SFTP—not FTPS"
+description: "Key differences and how to adjust your workflow"
+sidebarTitle: "Why we support SFT"
+---
+
+## FTPS vs. SFTP at a glance
+
+| Feature              | SFTP                  | FTPS                               |
+| :------------------- | :-------------------- | :--------------------------------- |
+| Default port         | 22                    | 21 (control) / 990 (implicit)      |
+| Encryption layer     | Built‑in (SSH)        | TLS/SSL on top of FTP              |
+| Authentication       | SSH keys or passwords | X.509 certs or passwords           |
+| Firewall friendly    | ✅ Single port         | 🚧 Multiple ports (control + data) |
+| Supported on Compute | **Yes**               | **No**                             |
+
+## Why we chose SFTP
+
+1. **Same key, same port** – Your SSH key doubles for file transfers; no extra credentials.
+2. **No additional firewall rules** – Everything slips through port 22, even behind strict networks.
+3. **End‑to‑end encryption** – Data and commands are encrypted by default.
+
+<Info>
+  **Good to know: **FTPS requires opening a range of data ports, which conflicts with Compute’s default security posture.
+</Info>
+
+## Need an HTTPS upload instead?
+
+Spin up a quick web server on port 8888 inside your instance:
+
+```
+python3 -m http.server 8888 --bind 0.0.0.0
+```
+
+Then open your instance URL:
+
+```
+https://<instance-id>-8888.tenants.hivecompute.ai
+```
+
+##  Migrating scripts from FTPS to SFTP
+
+| Old FTPS command                              | SFTP replacement                              |
+| :-------------------------------------------- | :-------------------------------------------- |
+| `curl --ftp-ssl -T file.zip ftp://user@host/` | `sftp user@host:~/upload <<< $'put file.zip'` |
+| `lftp -u user,pass ftps://host`               | `sftp user@host` then `put/get`               |
+
+For automated workflows, tools like `rsync` or `scp` provide shell‑friendly, encrypted transfers.
+
+---
+
+Still unsure? Drop into [Discord](https://discord.gg/cTmPDPrMG2) or open the chat widget—our team’s happy to help you switch over.

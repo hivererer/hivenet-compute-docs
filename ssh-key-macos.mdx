@@ -1,0 +1,78 @@
+---
+title: "How to generate and add an SSH key on macOS"
+description: "A quick start for first-time Compute with Hivenet users on macOS"
+sidebarTitle: "Add SSH key on macOS"
+---
+
+## What you’ll need
+
+- A Hivenet account with Compute credits ready
+- macOS 11 (Big Sur) or newer
+- **Terminal** (built in)
+- **OpenSSH** (installed by default)
+
+## Step 1 – Create your SSH key pair
+
+1. Open **Terminal**.
+2. Run:
+
+   ```
+   bashCopyEditssh-keygen -t ed25519
+   ```
+3. Press **Enter** to accept the default location (`/Users/<you>/.ssh/id_ed25519`).
+4. When prompted, enter a passphrase (optional but recommended).
+
+<Tip>
+  Already use a password manager? Many, including 1Password and Bitwarden, can create and store SSH keys in one click. If that’s your jam, generate the key there and copy the public part straight from the manager.
+</Tip>
+
+The command (or your manager) creates two files:
+
+| File             | What it is                                      |
+| :--------------- | :---------------------------------------------- |
+| `id_ed25519`     | Your private key — keep it secret               |
+| `id_ed25519.pub` | Your public key — you’ll upload this to Hivenet |
+
+## Step 2 – Find your key files
+
+Open the `.ssh` folder in Finder:
+
+```
+bashCopyEditopen ~/.ssh
+```
+
+You’ll see the two files listed above.
+
+## Step 3 – Add your public key to Hivenet
+
+1. Double-click **id_ed25519.pub** to open it in TextEdit.
+2. Copy the entire line (it starts with `ssh-ed25519`).
+3. In **Compute with Hivenet**, paste that line into the **SSH key** field when you create an instance.
+
+<Warning>
+  Paste only the `.pub` file contents. Never share the private key.
+</Warning>
+
+## Step 4 – (Optional) add a quick SSH config
+
+In **~/.ssh**, create or edit a file named **config** (no extension) and paste:
+
+```
+perlCopyEditHost hivenet HostName <your-instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 # Remove the next line if your instance shows no bastion host ProxyCommand ssh bastion@ssh.hivecompute.ai %h
+```
+
+Now you can connect with:
+
+```
+bashCopyEditssh hivenet
+```
+
+—much quicker than pasting the full string each time.
+
+## Troubleshooting
+
+| Message                           | Likely cause & fix                                                                                                          |
+| :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| **Permission denied (publickey)** | The public key isn’t on the instance, or you’re using the wrong private key. Re-add the key or point SSH at the right file. |
+| **Host key verification failed**  | You re-created the VM and the host key changed. Remove the old entry from `~/.ssh/known_hosts` and try again.               |
+| **ssh: command not found**        | OpenSSH is missing (rare on macOS). Install **Xcode Command Line Tools** with `xcode-select --install`.                     |

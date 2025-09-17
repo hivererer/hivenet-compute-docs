@@ -1,5 +1,72 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Billing information"
+description: "How credits, charges, and payments work for Compute with Hivenet."
+sidebarTitle: "Billing information"
 ---
 
+Compute with Hivenet uses prepaid credits. You add funds first, then we deduct usage in real time while your instances run. You can see your **balance** and your **current spend rate (EUR/h)** at any time in**Billing** .
+
+<Note>
+  Charges apply only while an instance is running. Stopping or terminating an instance stops compute charges.
+</Note>
+
+## Find billing in the app
+
+From the left sidebar, select **Billing**. You’ll see:
+
+- **Balance** (EUR)
+- **Current spend rate** (EUR/h)
+- **Add funds** cards
+- **Auto top-up** controls
+- **Billing details** _(opens Stripe — coming soon in-app)_
+- **Transaction history** _(coming soon)_
+
+## Add funds
+
+1. Go to **Billing → Add funds**.
+2. Choose an amount (e.g., **€20**, **€50**, **€100**, **€500**).
+   - You’ll see the current first-purchase bonus (for example, “Get +€10/€40/€125/€250 for free”). This is applied **once per account** and may vary by offer.
+3. Click **Complete payment** and finish checkout in Stripe.
+4. Your **Balance** updates as soon as the payment clears.
+
+<Tip>
+  If a prepaid card fails repeatedly, try a single larger top-up rather than several small ones.
+</Tip>
+
+## Turn on auto top-up
+
+Auto top-up helps you avoid interruptions.
+
+1. After your first successful top-up, go to **Billing → Auto top-up**.
+2. Toggle **Enable auto top-up**.
+3. Set a **balance threshold** and a **reload amount**. We’ll add credits automatically when your balance drops below the threshold.
+
+<Note>
+  Auto top-up appears only after you’ve added credits at least once.
+</Note>
+
+## How charging works
+
+- **Granularity:** per-second billing; no hourly minimums.
+- **Start/stop:** charging starts when an instance is **Running** and stops when it’s **Stopped** or **Terminated**.
+- **Low/zero balance:** instances won’t start without enough credit. If your balance runs out, running workloads stop to prevent negative charges. Add credits and start again.
+
+<Info>
+  **Example**\
+  If an instance runs for 12 minutes 20 seconds, you’re billed for **740 seconds** at that GPU’s active price.
+</Info>
+
+## Payment methods, receipts, and taxes
+
+- **Payment methods:** Major credit/debit cards via Stripe (availability varies by country).
+- **Receipts:** Stripe emails a receipt for every successful top-up.
+- **Taxes/VAT:** Applied where required based on your billing details in Stripe.
+- **Currency:** Balances and prices are shown in **EUR**.
+
+> **Heads-up:** **Billing details** and **Transaction history** are labeled _Coming soon_ in the Billing page. Until then, use Stripe receipts for your records. If you need a consolidated statement, contact Support.
+
+## Troubleshooting payments
+
+- **Card declined:** Check funds, complete any 3-D Secure prompt, or try another card.
+- **Prepaid cards blocked:** Your bank may block online/international payments by default. A single larger top-up often works better.
+- **Charged but not credited:** Refresh the page after a minute. If it’s still missing, contact Support with the date, amount, and the last four digits of your card.

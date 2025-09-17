@@ -1,0 +1,80 @@
+---
+title: "SSH into your Compute instance on Windows (PuTTYgen & OpenSSH)"
+description: "Description of your new file."
+sidebarTitle: "Connect using OpenSSH"
+---
+
+## What you’ll need
+
+- A Compute instance with your SSH public key uploaded
+- **Windows 10 or later**
+- Windows Terminal / PowerShell (OpenSSH)
+
+## OpenSSH via Windows Terminal
+
+###  Step 1 – Check OpenSSH is installed
+
+Open PowerShell and run:
+
+```
+ssh -V
+```
+
+You should see an OpenSSH version. If not, enable it:
+
+1. Settings → Apps → Optional features
+2. Add a feature → OpenSSH Client
+
+###  Step 2 – Create or convert your key
+
+1. **If you _don’t_ have a key yet**
+   - Open **PuTTYgen** and click **Generate**.
+   - Move your mouse until the progress bar fills.
+   - Make sure you do the key **Conversions** to**OpenSSH key ** 
+   - Import or load the new key converted.
+   - Click **Save public key** (keeps the `.pub` extension).
+   - Click **Save private key** (you’ll get a `.ppk` file).
+   - Upload the **public key** in the Compute dashboard.
+2. **If you already have an OpenSSH key**
+   - In **PuTTYgen** click **Load**, pick your existing _id_ed25519_ (or _id_rsa_).
+   - Click **Save private key** to export it as `.ppk`.
+
+<Info>
+  PuTTYgen can also create a fresh key pair if you don’t have one yet.
+</Info>
+
+### Step 3 – Create a config entry (optional)
+
+In `C:\Users\<you>\.ssh\config`, add:
+
+```
+Host hivenet HostName <instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 ProxyCommand ssh bastion@ssh.hivecompute.ai %h
+```
+
+Save, then simply:
+
+```
+ssh hivenet
+```
+
+###  Step 4 – Connect manually
+
+Without a config file, run:
+
+```
+ssh -i ~/.ssh/id_ed25519 ubuntu@<instance-id>.ssh.hivecompute.ai
+```
+
+Replace `<instance-id>` with your actual ID.
+
+##  Troubleshooting OpenSSH
+
+- **Permission denied** → Wrong key or not uploaded
+- **Connection timed out** → Check internet/firewall
+- **Unknown host** → Typo in instance ID
+
+## Common PuTTY pitfalls
+
+- **Server unexpectedly closed connection** → Wrong port or host name
+- **No supported authentication methods available** → Wrong key format
+- **Support modern encryption and OpenSSH compatible formats**

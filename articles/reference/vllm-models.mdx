@@ -1,5 +1,31 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "vLLM model catalog"
+description: "Models available in the vLLM inference template, with sizes and what’s coming next."
+sidebarTitle: "vLLM models"
 ---
 
+The vLLM template lets you spin up an inference server in minutes. Pick a model from the catalog or provide your own weights.
+
+### Available models
+
+- **Falcon3 3B**
+- **Falcon3 Mamba-7B**
+- **Falcon3 7B**
+- **Falcon3 10B**
+
+> These ship as ready-to-run choices in the vLLM template. You can also mount your own models from storage or pull from public registries.
+
+### Coming soon
+
+- **Llama** family [confirm versions]
+- **Mistral** family [confirm versions]
+- **Qwen** family [confirm versions]
+- **GPT-OSS** [confirm details]
+
+### How to deploy (quick)
+
+1. Create instance → choose **vLLM inference** template.
+2. Select a **model** and size (GPU or CPU as needed).
+3. Launch. The server exposes an HTTP endpoint by default; add ports/SSH if required.
+
+> Host hardware: AMD EPYC 7713; GPU sizes listed in [**GPU types and sizes**.](/articles/reference/gpu-types)

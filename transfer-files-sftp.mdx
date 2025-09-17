@@ -1,0 +1,126 @@
+---
+title: "Transfer files to and from your Compute instance with SFTP"
+description: "Use CLI, WinSCP, or FileZilla to move data quickly and securely."
+sidebarTitle: "Transfer files with SFTP"
+---
+
+## Pick your tool
+
+| Method                                  | Use it when               | Watch for                                                       |
+| :-------------------------------------- | :------------------------ | :-------------------------------------------------------------- |
+| **CLI (sftp / scp)**                    | You just want it to work. | If `ssh` works, the CLI works—no extra setup.                   |
+| **WinSCP (Windows)**                    | You need drag-and-drop.   | Must use a **.ppk** key _and_ a ProxyCommand.                   |
+| **FileZilla (Windows / macOS / Linux)** | Same, but cross-platform. | Same hurdles as WinSCP; can freeze after a few failed attempts. |
+
+<Tip>
+  _All methods use the same SSH key you already uploaded for Compute._
+</Tip>
+
+<Note>
+  **Shortcut:** Stuck in a GUI loop? Drop back to the CLI. It’s faster than hunting for a hidden checkbox.
+</Note>
+
+## Command‑line quick‑start
+
+1. Open Windows Terminal or your preferred shell.
+2. Run:
+
+   ```
+   sftp -i ~/.ssh/id_ed25519 \
+        -o "ProxyCommand=ssh bastion@ssh.hivecompute.ai %h" \
+        ubuntu@<instance-id>.ssh.hivecompute.ai
+   ```
+3. At the `sftp>` prompt:
+
+| Command            | What it does                                                        | Example (Windows)              | Example (macOS/Linux) |
+| :----------------- | :------------------------------------------------------------------ | :----------------------------- | :-------------------- |
+| `put bigfile.zip`  | Upload a file                                                       | ―                              | ―                     |
+| `get results.csv`  | Download a file                                                     | ―                              | ―                     |
+| `lcd <local-path>` | **Change _local_ working folder**Use quotes if the path has spaces. | `lcd "C:\Users\You\Downloads"` | `lcd ~/Downloads`     |
+| `lpwd`             | Show current local folder                                           | ―                              | ―                     |
+| `ls` / `pwd`       | List / show path on the instance                                    | ―                              | ―                     |
+| `exit`             | Quit                                                                | ―                              | ―                     |
+
+<Tip>
+  If `lcd` fails, check that the path exists and is spelled exactly—Windows paths need either double backslashes (`C:\\path\\to\\dir`) or quotes around spaces.
+</Tip>
+
+## WinSCP walkthrough (Windows)
+
+1. **Download & install** WinSCP.
+2. Click **New Site** → **SFTP**.
+3. In **Host name** enter `<instance-id>.ssh.hivecompute.ai`.
+4. **Port:** 22 • **User name:** `ubuntu`.
+5. Click **Advanced** → **Tunnel** → enable **ProxyCommand** and paste:
+
+   ```
+   ssh bastion@ssh.hivecompute.ai %h
+   ```
+6. Back in the main window, click **Authentication** → browse to your `.ppk` (or convert with PuTTYgen).
+7. **Save** the session → **Login**.
+
+Drag‑and‑drop files between panels as usual.
+
+### **WinSCP not connecting?**
+
+- **Permission denied** → Convert your key to **.ppk** with PuTTYgen and point WinSCP to it.
+- **Connection closed** → Double-check the ProxyCommand line: `ssh bastion@ssh.hivecompute.ai %h`.
+- Still no luck? Open **Session → Log Window** and search for “proxy command rejected.”
+
+## FileZilla setup (cross‑platform)
+
+1. Install FileZilla.
+2. File → Site Manager → **New Site**.
+3. Protocol **SFTP – SSH File Transfer Protocol**.
+4. **Host:** `<instance-id>.ssh.hivecompute.ai` • **Port:** 22.
+5. **Logon type:** Key file → point to your private key (ED25519/RSA). Convert to `.ppk` if prompted.
+6. Advanced → **Generic Proxy** → Command:
+
+   ```
+   ssh bastion@ssh.hivecompute.ai %h
+   ```
+7. Connect → accept the host fingerprint.
+
+### **FileZilla stalls or won’t connect?**
+
+- Ensure “Key file” is a **.ppk** (or run `Pageant` on Windows).
+- Confirm the Proxy command is **exactly** `ssh bastion@ssh.hivecompute.ai %h`.
+- After several failures FileZilla can lock up—quit and relaunch before retrying.
+
+ FileZilla setup (cross‑platform)
+
+1. Install FileZilla.
+2. File → Site Manager → **New Site**.
+3. Protocol **SFTP – SSH File Transfer Protocol**.
+4. **Host:** `<instance-id>.ssh.hivecompute.ai` • **Port:** 22.
+5. **Logon type:** Key file → point to your private key (ED25519/RSA). Convert to `.ppk` if prompted.
+6. Advanced → **Generic Proxy** → Command:
+
+   ```
+   ssh bastion@ssh.hivecompute.ai %h
+   ```
+7. Connect → accept the host fingerprint.
+
+### **FileZilla stalls or won’t connect?**
+
+- Ensure “Key file” is a **.ppk** (or run `Pageant` on Windows).
+- Confirm the Proxy command is **exactly** `ssh bastion@ssh.hivecompute.ai %h`.
+- After several failures FileZilla can lock up—quit and relaunch before retrying.
+
+## Large datasets? Use `rsync`
+
+```
+rsync -avz -e "ssh -i ~/.ssh/id_ed25519 \      -o ProxyCommand='ssh bastion@ssh.hivecompute.ai %h'" \      ./localfolder/ \      ubuntu@<instance-id>.ssh.hivecompute.ai:/data
+```
+
+`rsync` resumes partial transfers—great for multi‑GB files.
+
+## Common errors & fixes
+
+- `Permission denied` → wrong key or key not added to Compute.
+- `Connection closed` → missing ProxyCommand/bastion hop.
+- **GUI can’t find key file** → convert OpenSSH key to `.ppk` with PuTTYgen
+
+---
+
+Still stuck? Ping us via the chat widget or join [Discord](https://discord.gg/cTmPDPrMG2).

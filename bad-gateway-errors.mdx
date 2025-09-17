@@ -1,0 +1,66 @@
+---
+title: "Compute instance URLs and Bad Gateway errors"
+description: "What causes them and how to fix them fast"
+sidebarTitle: "Bad gateway errors"
+---
+
+## What these URLs are
+
+When you create a Compute instance, Hivenet generates a temporary web URL:
+
+```
+https://<instance-id>-8888.tenants.hivecompute.ai
+```
+
+These are public links to help you access web interfaces like:
+
+- Jupyter notebooks
+- Fooocus
+- Stable Diffusion UIs
+- Dashboards running on port 8888
+
+##  Why you might see "Bad Gateway"
+
+Seeing a Bad Gateway error usually means one of these:
+
+- **Your app isn’t running yet**
+- **The app is listening only on \*\*\*\***`localhost`, not on `0.0.0.0`
+- **The app is running on the wrong port** (e.g. 7865 instead of 8888)
+- **HTTPS rate limit issues** (rare, but happens with repeated rapid reloads)
+
+##  Quick fixes
+
+Here’s how to troubleshoot:
+
+1. **Make sure your app is up**
+
+   ```
+   curl http://localhost:8888
+   ```
+
+   You should see HTML or a JSON response, not a timeout or error.
+2. **Check the port** Your app must run on port 8888 for the Hivenet URL to work.
+3. **Update binding address** Some apps default to:
+
+   ```
+   127.0.0.1:8888
+   ```
+
+   You need:
+
+   ```
+   0.0.0.0:8888
+   ```
+
+   Add `--host 0.0.0.0` if you're launching the app from the command line.
+4. **Restart the app if needed** After changing host or port configs.
+
+##  When in doubt, forward the port yourself
+
+If you can’t get the public link working, use SSH port forwarding:
+
+```
+ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
+```
+
+Then open http://localhost:8888 in your browser. This is usually more reliable.

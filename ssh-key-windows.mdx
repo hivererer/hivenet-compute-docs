@@ -1,0 +1,82 @@
+---
+title: "How can I generate and add an SSH key on Windows?"
+description: "A quick-start for first-time Compute users on Windows"
+sidebarTitle: "Add SSH key on Windows"
+---
+
+## What you’ll need
+
+- A Hivenet account with Compute credits
+- Windows 10 or later
+- Windows Terminal (or PowerShell)
+- OpenSSH installed (enabled by default on Windows 10+)
+
+## Step 1 – Create your SSH key pair
+
+Open Windows Terminal and run this command:
+
+```
+ssh-keygen
+```
+
+- Press Enter to accept the default location (`C:\Users\<yourname>\.ssh\id_ed25519`)
+- When prompted, you can set a passphrase (optional but recommended)
+
+This creates two files:
+
+- `id_ed25519` (your **private key**) — never share this
+- `id_ed25519.pub` (your **public key**) — you’ll upload this to Hivenet
+
+**Tip:** If you see a message that the file already exists, you can overwrite it or cancel and use a new name (e.g., `id_hivenet`, `id_rsa`).
+
+<Tip>
+  Already use a password manager? Many, including 1Password and Bitwarden, can generate and store SSH keys for you in one click. If that’s your workflow, feel free to skip the `ssh-keygen` command and copy the public key straight from your manager.
+</Tip>
+
+## Step 2 – Find your key files
+
+Your key files are located in:
+
+```
+C:\Users\<yourname>\.ssh\
+```
+
+You can open this folder in File Explorer or use PowerShell:
+
+```
+cd $env:USERPROFILE\.ssh explorer .
+```
+
+## Step 3 – Add your public key to Hivenet
+
+1. Open the `.pub` file in a text editor (right-click \> Open with Notepad)
+2. Copy the entire contents of the file
+3. Paste it into the **SSH Key** field when creating your instance on the Compute dashboard
+
+**Important:** Only paste the `.pub` file contents. Do **not** paste the private key.
+
+## Step 4 – Create a basic SSH config file (optional but useful)
+
+In the same `.ssh` folder, create a new file named `config` (no file extension). Paste this in (make sure your SSH key name is similar to the name given):
+
+```
+Host hivenet     
+HostName <your-instance-id>.ssh.hivecompute.ai     
+User ubuntu     
+IdentityFile ~/.ssh/id_ed25519   
+ProxyCommand ssh bastion@ssh.hivecompute.ai %h
+```
+
+This lets you connect with:
+
+```
+ssh hivenet
+```
+
+instead of typing the full connection string every time.
+
+## Troubleshooting
+
+- **"Permission denied (publickey)"** — Your public key may not be added correctly or you're using the wrong private key.
+- **"Connection timed out"** — Check your config file or try adding `-v` for more detailed output.
+- **Terminal closes too fast?** Open a terminal first, then paste the command manually instead of double-clicking a script.

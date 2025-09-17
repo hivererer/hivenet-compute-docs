@@ -1,5 +1,145 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Glossary"
+description: "A quick reference to terms used across Hivenet’s docs. Short, plain‑English definitions. Alphabetical."
+sidebarTitle: "Glossary"
 ---
 
+_Last updated: 17 September 2025_
+
+<Tip>
+  Use your browser’s find (Ctrl/Cmd + F) to jump to a term.
+</Tip>
+
+## A
+
+**auto top‑up** — An optional setting that adds prepaid credits when your balance drops below a threshold.
+
+## B
+
+**benchmark** — A measurement that compares performance (e.g., tokens/sec for inference or throughput on GPUs).
+
+**billing (per‑second)** — Compute with Hivenet charges while an instance is running, calculated per second.
+
+## C
+
+**Compute with Hivenet** — Hivenet’s compute platform for running workloads on GPUs/CPUs.
+
+**Compute account (Hivenet)** — A separate account used only for Compute with Hivenet. Has its own balance and billing, even if you already have a general Hivenet account.
+
+**concurrency (inference)** — How many requests your server can handle at the same time.
+
+**context length** — The maximum number of tokens a model accepts in one request (prompt + response window).
+
+**credits (prepaid)** — Funds you add in advance and spend across Hivenet services.
+
+**custom template **— Your saved instance configuration (image, packages, ports, env) you can reuse.
+
+## D
+
+**delete account** — Permanently removes your Compute account and associated data after a grace period. Not the same as terminating an instance.
+
+**distributed cloud** — Hivenet’s model that uses underutilized devices (not central data centers) to provide storage and compute.
+
+## E
+
+**egress** — Data that leaves Hivenet to the internet (downloads, API responses). May be subject to limits or fees depending on the feature.
+
+**endpoint (HTTPS)** — The public URL where your running service (e.g., vLLM) is reachable over TLS.
+
+**encryption at rest / in transit** — Protecting data stored on devices (at rest) and moving across networks (in transit).
+
+## G
+
+**GPU instance** — A virtual machine with a dedicated GPU for your workload.
+
+**GPU memory (VRAM)** — Memory on the GPU used to hold model weights, activations, and KV cache.
+
+## H
+
+**HTTPS** — Encrypted HTTP. All public endpoints on Compute are served over HTTPS by default.
+
+**Hivenet ID** — The email you use to sign in. Also your owner identity for teams and access.
+
+## I
+
+**image (OS / container)** — The base software environment an instance boots with (e.g., Ubuntu, a CUDA image, or a vLLM template).
+
+**inference (LLM)** — Running a trained model to generate outputs. On Compute, you can run a vLLM server.
+
+**instance** — A running virtual machine on Compute. Billed while running; can be stopped or terminated.
+
+**instance logs** — Console/application logs you can view or export for debugging or support.
+
+**instance template** — A saved recipe for new instances (image, ports, startup commands, etc.). See **custom template**.
+
+## K
+
+**KV cache** — Key‑value cache used by LLM servers to speed up generation by reusing attention states.
+
+## M
+
+**memory fraction (vLLM)** — How much of the GPU VRAM the server is allowed to use.
+
+**model (LLM)** — The neural network you run for inference, defined by name and weights.
+
+## N
+
+**network ports** — You can expose TCP/UDP ports on an instance. Limits apply. See instance networking.
+
+## O
+
+**on-demand instances** — Standard pricing. Start and stop whenever you need.
+
+**organization (team)** — A shared workspace in Hivenet for multiple members, with separate billing and permissions.
+
+## P
+
+**prepaid credits** — See **credits**. Add funds in advance to control spend and enable features like auto top‑up.
+
+**private key / public key (SSH)** — Credentials you use to securely connect to a running instance.
+
+## Q
+
+**quantization** — Techniques to reduce model precision (e.g., INT8/FP8) to fit in VRAM and improve throughput.
+
+## R
+
+**RAM (system memory)** — Memory on the instance’s CPU side. Separate from GPU VRAM.
+
+**rate limits (API)** — Caps on how often you can call an endpoint within a window.
+
+## S
+
+**SSH** — Secure Shell. Use it to access your instance’s terminal.
+
+**stop / start (instances)** — Stop pauses your instance and billing for compute; start brings it back. Data on the instance disk stays unless you terminate.
+
+**storage (instance)** — Local disk on the instance for your OS, packages, and temporary data. Not the same as Store.
+
+## T
+
+**temperature (LLM)** — Controls randomness of generated text. Higher values produce more diverse outputs.
+
+**terminate (instance)** — Permanently ends an instance and erases its local storage. Different from **stop**.
+
+**top‑k / top‑p (LLM)** — Decoding settings that limit the token selection space during generation.
+
+## U
+
+**UDP / TCP** — Transport protocols. TCP is connection‑oriented (APIs). UDP is connectionless (some services/tools).
+
+**usage (billing)** — Your historical spend and activity for Store, Compute, and Send.
+
+## V
+
+**vCPU** — Virtual CPU cores available to your instance.
+
+**vLLM** — An open‑source LLM serving engine optimized for throughput and memory efficiency.
+
+**VRAM** — See **GPU memory**.
+
+## W
+
+**web console** — The browser UI for managing Hivenet services, billing, and settings.
+
+---

@@ -1,0 +1,85 @@
+---
+title: "How to forward ports to reach your web app"
+description: "Serve UIs running on Compute back to your local browser"
+sidebarTitle: "Forward ports"
+---
+
+## When you need port forwarding
+
+If your app says something like:
+
+```
+App started at http://127.0.0.1:7865
+```
+
+…it means the web interface is only accessible _inside_ the Compute instance. You’ll need to forward the port to use it in your local browser.
+
+This is common with:
+
+- Fooocus
+- Stable Diffusion UIs
+- Jupyter Notebook
+- Gradio / Streamlit apps
+
+##  Step 1 – Set up local port forwarding
+
+In your Windows Terminal, run:
+
+```
+ssh -L 7865:localhost:7865 ubuntu@<your-instance-id>.ssh.hivecompute.ai
+```
+
+Replace:
+
+- `7865` with the actual port your app uses
+- `<your-instance-id>` with your Compute instance ID
+
+Now open http://localhost:7865 in your browser.
+
+**Tip:** Keep the terminal open! If the SSH session closes, the connection breaks.
+
+##  Step 2 – Get your port and IP details
+
+If you’re not sure which port your app uses:
+
+Run this from inside your instance:
+
+```
+whoami hostname -I
+```
+
+Then test your app inside the VM:
+
+```
+curl http://localhost:7865
+```
+
+If that works, you can forward the port.
+
+##  Step 3 – Trying the public Hivenet URL
+
+You can try visiting:
+
+```
+https://<your-instance-id>-8888.tenants.hivecompute.ai
+```
+
+This is a public-facing URL Hivenet creates automatically for instances.
+
+However, it only works if:
+
+- Your app listens on port 8888
+- It's bound to `0.0.0.0` (not just `localhost`)
+- It's currently running
+
+If it doesn’t work or shows “Bad Gateway,” fall back to SSH port forwarding.
+
+##  Bonus: Forward multiple ports
+
+You can add more `-L` flags to forward several ports at once:
+
+```
+ssh -L 7865:localhost:7865 -L 8888:localhost:8888 ubuntu@<your-instance-id>.ssh.hivecompute.ai
+```
+
+Great for debugging or running multiple services.

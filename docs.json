@@ -27,9 +27,9 @@
               "essentials/create-instance",
               "essentials/custom-templates",
               "essentials/start-stop",
-              "essentials/vcpu",
-              "essentials/vllms",
-              "essentials/settings"
+              "essentials/how-to-vcpu",
+              "essentials/how-to-vllm",
+              "essentials/general-settings"
             ]
           },
             {
@@ -50,7 +50,10 @@
             "group": "Reference",
             "pages": [
               "articles/reference/faq",
-              "articles/reference/glossary"
+              "articles/reference/glossary",
+              "articles/reference/gpu-types",
+              "articles/reference/cpu-types",
+              "articles/reference/vllm-models"
             ]
           }
         ]

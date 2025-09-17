@@ -1,5 +1,25 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "CPU-only types and sizes"
+description: "CPU-only instances on Compute with AMD EPYC 7713 hosts, fixed vCPU, RAM, and disk options."
+sidebarTitle: "CPU types"
 ---
 
+Use CPU-only instances for web services, CI, preprocessing, or light workloads that don’t need a GPU. All sizes run on **AMD EPYC 7713** hosts.
+
+### Sizes and specs
+
+| Size    | vCPU | RAM   | Disk space | Price\* |
+| ------- | ---- | ----- | ---------- | ------- |
+| X-Small | 2    | 4 GB  | 50 GB      | €0.06/h |
+| Small   | 4    | 8 GB  | 100 GB     | €0.11/h |
+| Medium  | 8    | 16 GB | 200 GB     | €0.22/h |
+| Large   | 16   | 32 GB | 400 GB     | €0.45/h |
+| X-Large | 32   | 64 GB | 800 GB     | €0.90/h |
+
+\* Prices shown are from internal references and may change. See the dashboard for current rates.
+
+### Notes
+
+- Architecture: **x86_64** (AMD EPYC 7713).
+- Billing: **per-second using credits**.
+- You can [**start/stop instances**](/articles/essentials/start-stop-instances) without extra fees

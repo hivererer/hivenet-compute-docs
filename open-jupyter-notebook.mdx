@@ -1,0 +1,56 @@
+---
+title: "How can I open a Jupyter notebook with Compute?"
+description: "Launch and use a Jupyter notebook in your browser. No SSH or command line required."
+sidebarTitle: "Open a Jupyter notebook"
+---
+
+Sometimes, you just want a fast way to run Python code or data science notebooks without fiddling with the command line or SSH keys. With Compute, you can launch a Jupyter notebook straight from your browser and start working right away. This is handy for anyone who prefers a graphical interface or needs to get up and running quickly.
+
+ Below, you’ll find a simple walkthrough on how to spin up a Jupyter notebook with Compute, open it in your browser, and even use the built-in terminal for command-line tasks. There’s also a video tutorial at the end, so you can follow along visually.
+
+##  What you’ll need
+
+- A Hivenet account with access to Compute
+- An active Compute balance
+- A web browser (Firefox, Chrome, Edge, or Safari recommended)
+
+## How to launch and access a Jupyter notebook
+
+<Steps>
+  <Step title="Create your Compute instance">
+    - Sign in to your Hivenet account and go to the Compute dashboard.
+    - Click **Create new instance**.
+    - Select your desired resources (GPU, CPU, RAM, and storage).\
+      ​_(You can start small—just make sure it fits your workload.)_
+    - Under **Connectivity**, toggle on **Jupyter Lab Notebook**.
+    - Finalize your settings and launch the instance.
+  </Step>
+  <Step title="Find the Notebook endpoint">
+    - Once your instance is running, look for the three-dot menu next to it.
+    - Select **Connectivity options**.
+    - Copy the **Notebook endpoint** URL.
+  </Step>
+  <Step title="Open the notebook in your browser">
+    - Paste the Notebook endpoint URL into a new browser tab.
+    - Your browser may show a security warning because of a self-signed certificate. This is normal—just confirm you want to proceed.
+
+    <Tip>
+      Most browsers let you click “Advanced” and then “Proceed anyway.”
+    </Tip>
+  </Step>
+  <Step title="Start working in Jupyter">
+    - The Jupyter notebook interface will load in your browser.
+    - Create or upload a new notebook and start coding as usual.
+  </Step>
+  <Step title="(Bonus) Use the built-in terminal">
+    - In Jupyter, you can open a **Terminal** tab to run command-line tasks. No need for SSH!
+    - This is perfect for quick file management or package installs right from your browser.
+  </Step>
+</Steps>
+
+## What’s next?
+
+- Remember to shut down your kernels and stop or terminate your instance when you’re done to avoid extra charges.
+- For more tips on using Compute, see our [Getting Started with Compute](https://help.hivenet.com/en/articles/303638-launch-and-connect-to-your-first-compute-instance) guide.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6kOl9qsjWQ8?si=onC4S2C9kXsB2cfC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen />

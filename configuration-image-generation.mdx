@@ -1,0 +1,48 @@
+---
+title: "How to choose the right Compute configuration for image-generation tools"
+description: "Match your workload to the right GPU for best results"
+sidebarTitle: "Config for image gen"
+---
+
+## **What are you trying to run?**
+
+Here are some common tools and the GPU specs they usually need:
+
+| Tool                     | Recommended GPU       | Notes                               |
+| :----------------------- | :-------------------- | :---------------------------------- |
+| Fooocus                  | 1x RTX 4090           | Smoothest experience with 24GB VRAM |
+| Stable Diffusion         | 1x RTX 3090 or better | Needs ~16GB VRAM+ for full models   |
+| InvokeAI / AUTOMATIC1111 | 2x RTX 4090           | For faster batch processing         |
+| ComfyUI                  | 1x RTX 4090 or higher | Works well with large workflows     |
+
+<Tip>
+  Choose the lowest configuration that runs your model comfortably. You can always scale up later.
+</Tip>
+
+## What if you don’t know what to pick?
+
+Start small and test.
+
+- Use 1x RTX 4090 to get going
+- Monitor VRAM usage using `nvidia-smi`
+- If you hit limits or run into crashes, consider upgrading to 2x
+
+## How to change configuration later
+
+You can’t resize an instance directly, but you can:
+
+1. Stop or terminate the current instance
+2. Spin up a new one with a higher configuration
+3. Reinstall your app or transfer your data if needed
+
+<Info>
+  Save your model/data files before terminating an instance!
+</Info>
+
+## Want to go faster?
+
+More GPUs = more parallelism. Use 2x configs if you:
+
+- Run large prompts or batch generations
+- Train or fine-tune models
+- Need lower latency for interactive work

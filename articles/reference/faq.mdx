@@ -1,5 +1,200 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Frequently asked questions"
+description: "Description of your new file."
+sidebarTitle: "FAQ"
 ---
 
+A practical FAQ for running workloads on **Compute with Hivenet**. It covers billing, instances, templates, networking, and inference. If you’re new, start here. If you’re stuck, jump to **Troubleshooting** at the end.
+
+## Billing and pricing
+
+### How does billing work?
+
+Compute uses **pre‑paid credits** (in euros) with **per‑second billing**. You add credits first, then start instances. Your balance decreases while instances run.
+
+### What’s the minimum balance to start an instance?
+
+Have at least **one hour** of credit for your chosen configuration. If your balance is lower, add funds or select a smaller instance.
+
+### Are there hidden fees?
+
+No. You **only pay for compute time**. Storage attached to your on‑demand instance and network traffic are included.
+
+<Note>
+  Auto top‑up is available after your first purchase. Set a threshold and amount so your balance refills before it hits zero.
+</Note>
+
+### What happens if I run out of credits?
+
+Compute monitors your remaining balance. When you have **~5 minutes** of runtime left, your instance is **pre‑emptively terminated**. Top up ahead of time or enable auto top‑up to avoid interruptions.
+
+### How is storage billed?
+
+For on‑demand instances, storage is included with your instance. All storage is **NVMe SSD**. If you need more space or options, contact support.
+
+### Where can I find invoices and payment history?
+
+Invoices and transaction history are available via **Stripe**. You can access your billing records from the **Billing** tab in the console.
+
+## Instances and lifecycle
+
+### Can I stop and start an instance later?
+
+Yes. You can [****stop an instance and start it again****](/articles/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact.
+
+<Note>
+  Stop/Start currently has **no extra fee**. This may change; always check the latest pricing.
+</Note>
+
+### Do my files persist when stopped?
+
+Yes. Your environment is preserved when you stop an instance. Termination (manual or due to low balance) ends the session; use a template or image to recreate your setup quickly.
+
+### What operating systems and images are available?
+
+You can launch from clean **Ubuntu** images, **PyTorch** images, or **vLLM** images for inference. Choose the one that matches your workflow.
+
+### What are custom templates?
+
+A [**custom template**](/articles/essentials/custom-templates) saves your configured environment (OS, packages, dependencies, and settings) so you can relaunch the same stack quickly. It’s ideal for repeatable experiments or team workflows.
+
+## Inference and APIs
+
+### Do you support an OpenAI‑compatible API?
+
+Yes. Compute offers **vLLM** servers with an **OpenAI‑compatible** API surface. Most clients work by changing the **base URL** (and your key/environment variables where needed).
+
+### Can I tune inference settings?
+
+Yes. vLLM templates expose common controls (e.g., context length, sampling parameters, memory usage) so you can balance **latency** and **throughput** for your workload.
+
+## Networking and access
+
+### How do I expose my service?
+
+Enable networking on your instance and choose the protocol: **HTTPS**, **TCP**, or **UDP**. For vLLM servers, HTTPS is the default. Point your app or client to the generated endpoint.
+
+### Can I use SSH?
+
+Yes. You can connect over **SSH**. Tools like `tmux` are helpful for long‑running sessions.
+
+## Providers, regions, and reliability
+
+### What provider options are available?
+
+**Hive‑Certified providers** are available now, offering dedicated hardware and a **99.9% uptime SLA**. A broader **Spot** **Providers** tier for cost‑sensitive use cases is planned.
+
+### How does Compute with Hivenet operate?
+
+Hivenet runs on a **distributed cloud** backed by real devices and certified providers, rather than traditional centralized data centers. This design aims for efficiency and resilience.
+
+## Security and data
+
+### What are Hivenet‑Certified providers?
+
+Hivenet‑Certified providers are audited hosts that run **dedicated machines** in controlled locations and agree to our security, privacy, and uptime standards (including a 99.9% uptime SLA).
+
+### How are my workloads isolated from others?
+
+Each instance runs in its own isolated environment with dedicated GPU and storage on the selected host. Certified providers operate single‑tenant machines per customer session to reduce cross‑tenant risk.
+
+### Can a host or provider inspect my data?
+
+No. Certified providers are **contractually prohibited** from inspecting user data or workload content. Operational telemetry (like health metrics) may be collected for reliability, but hosts can’t read your files, prompts, or model outputs.
+
+### Do you encrypt data in transit and at rest?
+
+- **In transit:** Public endpoints (e.g., inference over HTTPS) enforce TLS. Use HTTPS clients by default.
+- **At rest:** Storage lives on NVMe disks attached to the host. If you need strong, documented guarantees, use **application‑level encryption** or self‑encrypting volumes and contact support for current provider‑level controls and attestations.
+
+<Tip>
+  Never store long‑lived secrets unencrypted on disk. Prefer environment variables, short‑lived tokens, or a secrets manager you control.
+</Tip>
+
+### How should I handle secrets (API keys, tokens) on instances?
+
+Use environment variables or mounted files with restricted permissions, rotate keys regularly, and avoid committing secrets to images or templates. For team workflows, script secret injection at start‑up rather than baking credentials into templates.
+
+### Do you log or store prompts/model inputs by default?
+
+No. Compute doesn’t capture or retain your application payloads by default. Any logging you enable in your apps (stdout, files, APM tools) is under **your** control.
+
+### Can my data stay in a specific country or region (e.g., EU)?
+
+Yes. Pick a **region** when launching. Runs and attached storage remain in that region. For compliance reviews, document your chosen region(s) in your internal data maps.
+
+### Which workloads should choose Certified vs. spot providers?
+
+Use **Certified** for regulated, confidential, or production workloads. Spot providers suit experiments, pre‑production tests, or non‑sensitive jobs. If in doubt, pick Certified.
+
+### What security documentation can you share (e.g., GDPR posture, audits)?
+
+We can provide current security and privacy docs on request. If you require formal certifications or DPAs, contact support, and we’ll share what’s available under the appropriate terms.
+
+### What happens to my data after termination—any data remanence guarantees?
+
+Terminating an instance ends the session and detaches its storage. For sensitive projects, store data in encrypted volumes you control and wipe/rotate credentials at the end of a run.
+
+### How do I report a security issue or incident?
+
+Click on **Chat with us** in your dashboard or email [**support@hivenet.com**](mailto:support@hivenet.com) with "Security" in the subject. Include affected instance IDs, region, timestamps (UTC), and a short description. For urgent outages, also [post in the community channel](https://discord.com/cTmPDPrMG2) for faster visibility.
+
+<AccordionGroup>
+  <Accordion title="Security quick checklist (production/regulatory workloads)" icon="vault">
+    - Choose a **Hivenet‑Certified provider** and select the correct **region** (e.g., EU) before launch.
+    - Expose only what you need: prefer **HTTPS**; close unused TCP/UDP ports.
+    - Use **SSH keys** (no passwords), rotate keys regularly, and restrict user access.
+    - Treat disks as untrusted: use **application‑level encryption** for sensitive data.
+    - Inject **secrets at start‑up** (env vars or mounted files with tight permissions); don’t bake them into templates.
+    - Keep logs minimal and **ship them to your own system** (SIEM, object storage) with retention controls.
+    - Enable **auto top‑up** to prevent balance‑related termination during critical runs.
+    - On teardown, **revoke tokens/keys** and remove any temporary credentials.
+  </Accordion>
+  <Accordion title="For legal & compliance reviewers" icon="book">
+    - Read **Security at Hivenet** (architecture, provider standards, isolation): https://compute.hivenet.com/security-page
+    - Request current **Terms of Service**, **SLA/uptime**, and any available **security attestations/DPAs** via [**support@hivenet.com**](mailto:support@hivenet.com).
+    - Document chosen **region(s)** and provider tier (Certified vs cost‑focused) in your data map.
+    - We can provide clarifications on **data flow**, **incident response**, and **regional residency** upon request.
+  </Accordion>
+</AccordionGroup>
+
+## GPUs and performance
+
+### Which GPUs can I rent?
+
+Availability varies by region, but [**RTX 4090**](https://compute.hivenet.com/nvidia-rtx-4090) and [**RTX 5090**](https://compute.hivenet.com/nvidia-rtx-5090) tiers are commonly offered for AI and HPC workloads.
+
+### How do 4090/5090 compare to A100 for inference?
+
+For small and medium LLM inference, 4090/5090 often deliver **lower latency and strong throughput** at a better cost profile. Check our [benchmarks](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100) for details.
+
+## Support
+
+### Where can I get help?
+
+Join our [**Discord** community](https://discord.com/cTmPDPrMG2) or contact **support** from the console. For pricing or account issues, use the **Billing** tab.
+
+## Troubleshooting
+
+### My instance was terminated unexpectedly
+
+Check your **credit balance**. Instances auto‑terminate when funds are low (with a short pre‑emptive window). Enable **auto top‑up** or add credits.
+
+### I can’t connect to my inference server
+
+Make sure networking is **enabled** and the correct **protocol** (HTTPS/TCP/UDP) is open. Confirm the **endpoint URL**, your **API key** or headers, and that your balance is sufficient.
+
+### SSH fails to connect
+
+Verify the **public key** on the instance, confirm the **public IP/endpoint**, ensure your **firewall** allows outbound SSH, and check that the instance is **running** (not stopped or terminated).
+
+## See also
+
+- Managed vLLM servers: quick start and tuning
+- [Create and reuse custom templates](/articles/essentials/custom-templates)
+- [Stop/Start instances: how it works](/articles/essentials/start-stop-instances)
+- [Pricing and billing](/articles/account-billing/billing-info)
+- [Benchmarks: RTX 4090/5090 vs A100](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100)
+
+> **Feedback**\
+> Did we miss something? Use the **Suggest edits** button in the docs or ping us on Discord. We review FAQ suggestions regularly.

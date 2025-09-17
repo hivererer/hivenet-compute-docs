@@ -1,0 +1,52 @@
+---
+title: "Agent network and firewall basics for Compute"
+description: "What the Hivenet Agent does and how to avoid connection issues"
+sidebarTitle: "Firewall basics"
+---
+
+## **What the Hivenet Agent is**
+
+The Hivenet Agent is a lightweight network tool that:
+
+- Helps your instance discover and connect with others on the network
+- Manages secure tunnels for HTTPS endpoints
+- Enables peer-to-peer communication without needing a central gateway
+
+If your instance’s public URL isn’t working—or if SSH fails unexpectedly—the Agent might be blocked or misconfigured.
+
+## **Which ports the Agent needs**
+
+To work correctly, the Agent uses:
+
+- **Port 4001 (TCP/UDP)** – For peer discovery and swarm networking
+- **Port 4443 (TCP)** – For secure tunneling and HTTPS exposure
+
+These should be open on your machine or network if you're running the Agent directly or using advanced features.
+
+## **When you need to open these ports**
+
+Most users on Hivenet Compute don’t need to manually open ports unless:
+
+- You're behind a corporate firewall or router with strict rules
+- You're contributing resources (via Contribute) or hosting long-running HTTPS endpoints
+- You want to ensure best-case network performance with external tools
+
+<Tip>
+  _Test your setup on a mobile hotspot to see if network restrictions are the cause_.
+</Tip>
+
+## **How to check if the Agent is working**
+
+| Where you’re running          | What to do                                             |
+| :---------------------------- | :----------------------------------------------------- |
+| **Inside a Compute instance** | Open the logs:\`journalctl -u hivenet-agent --no-pager |
+
+<Note>
+  Root is disabled on all Compute containers. Commands that require sudo will fail.
+</Note>
+
+## **Firewall troubleshooting tips**
+
+- Allow outgoing connections on ports 4001 and 4443
+- Temporarily disable firewall apps or try switching to a less restricted network
+- Restart the instance and check if the error persists

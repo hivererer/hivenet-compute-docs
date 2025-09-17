@@ -1,0 +1,62 @@
+---
+title: "Known_hosts, identity files, and the SSH config file explained"
+description: "Understand what’s happening inside your .ssh folder"
+sidebarTitle: "The SSH config file explained"
+---
+
+## **What's inside **`.ssh`**?**
+
+After generating a key, your `.ssh` folder (usually in `C:\Users\<yourname>\.ssh\`) might contain:
+
+- `id_ed25519` or `id_rsa` – your **private key** (keep this safe!)
+- `id_ed25519.pub` or `id_rsa.pub` – your **public key** (used to connect)
+- `known_hosts` – tracks servers you’ve connected to before
+- `config` – optional but handy file to simplify commands
+
+## **What does **`known_hosts`**do?** 
+
+Every time you connect to a new server, its signature is added here. This helps verify the identity of the server next time.
+
+If you ever see:
+
+```
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+```
+
+…it means the server key doesn’t match what’s in `known_hosts`. This can happen if:
+
+- The instance was terminated and replaced
+- You're connecting to a different host than expected
+
+Fix it by deleting the old entry:
+
+```
+ssh-keygen -R <hostname>
+```
+
+## **What’s in a config file?**
+
+Create a plain text file named `config` inside `.ssh` and add:
+
+```
+Host hivenet     HostName <your-instance-id>.ssh.hivecompute.ai     User ubuntu     IdentityFile ~/.ssh/id_ed25519     ProxyCommand ssh bastion@ssh.hivecompute.ai %h
+```
+
+Now you can connect with:
+
+```
+ssh hivenet
+```
+
+instead of typing everything out every time.
+
+<Tip>
+  _Create a new Host block for each instance if you use multiple._
+</Tip>
+
+## **Public key vs. private key**
+
+- The `.pub` file (public) is safe to share—it’s how servers recognize you
+- The private key must stay private—it proves who you are
+
+Never send someone your private key, and don’t copy it into web forms.

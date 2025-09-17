@@ -1,5 +1,33 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "GPU types and sizes"
+description: "Pick a GPU instance on Compute with fixed vCPU, RAM, disk, and bandwidth. Choose RTX 4090 or RTX 5090 based on your model needs."
+sidebarTitle: "GPU types"
 ---
 
+Hivenet GPU instances pair NVIDIA cards with a fixed amount of vCPU, ECC RAM, and disk so you can launch fast without tuning every knob.
+
+### Available GPU families
+
+- **NVIDIA RTX 4090** — 24 GB of GDDR6X memory per GPU
+- **NVIDIA RTX 5090** — 32 GB of GDDR7 per GPU
+
+<Note>
+  “RAM” in the tables refers to system memory (ECC). 
+</Note>
+
+### Sizes and specs
+
+| Size    | GPUs                | vCPU | RAM (ECC) | Disk space | Bandwidth | Typical price\*   |
+| ------- | ------------------- | ---- | --------- | ---------- | --------- | ----------------- |
+| X-Small | 1 × RTX 4090 / 5090 | 8    | 48 GB     | 250 GB     | 1 Gb/s    | €0.60/h (example) |
+| Small   | 2 × RTX 4090 / 5090 | 16   | 96 GB     | 500 GB     | 1 Gb/s    | €1.20/h (example) |
+| Medium  | 4 × RTX 4090 / 5090 | 32   | 192 GB    | 1 TB       | 1 Gb/s    | €2.40/h (example) |
+| Large   | 8 × RTX 4090 / 5090 | 64   | 384 GB    | 2 TB       | 1 Gb/s    | €4.80/h (example) |
+
+_\* Prices are illustrative, based on recent dashboard screenshots. Final prices and availability can vary by pool and region—please check the Compute dashboard._
+
+### Quick tips
+
+- **VRAM vs RAM:** VRAM affects maximum model size per GPU; system RAM supports your runtime and dataset loaders.
+- **Throughput:** Scale from 1 → 8 GPUs for higher parallelism.
+- **CPU host:** Nodes use **AMD EPYC 7713** processors.
