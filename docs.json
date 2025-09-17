@@ -50,7 +50,13 @@
               "articles/connectivity/ssh-key-linux",
               "articles/connectivity/ssh-key-macos",
               "articles/connectivity/ssh-key-windows",
-              "articles/connectivity/ssh-puttygen-openssh",
+              "articles/connectivity/ssh-puttygen-openssh"
+            ]
+          },
+          {
+            "group": "File transfer",
+            "pages": [
+              "articles/transfer-files-sftp"
             ]
           },
             {
