@@ -75,8 +75,7 @@
               "documentation/reference/glossary",
               "documentation/reference/gpu-types",
               "documentation/reference/cpu-types",
-              "documentation/reference/vllm-models",
-              "changelog/changelog"
+              "documentation/reference/vllm-models"
             ]
           }
         ]
@@ -107,7 +106,7 @@
           {
             "group": "Updates",
             "pages": [
-              "changelog/changelog"
+              "changelog"
             ]
           }
         ]
