@@ -19,7 +19,6 @@
               "index",
               "about-hivenet",
               "quickstart"
-              
             ]
           },
           {
@@ -55,7 +54,7 @@
               "articles/transfer-files-sftp"
             ]
           },
-            {
+          {
             "group": "Troubleshooting",
             "pages": [
               "articles/troubleshooting/invalid-SSH-key"
@@ -103,19 +102,12 @@
       },
       {
         "tab": "Changelog",
-        "groups": [
-          {
-            "group": "Changelog",
-            "pages": [
-              "changelog"
-            ]
-          }
-        ]
+        "groups": []
       }
     ],
     "global": {
       "anchors": [
-           {
+        {
           "anchor": "Console",
           "href": "https://console.hivecompute.ai/",
           "icon": "computer"
