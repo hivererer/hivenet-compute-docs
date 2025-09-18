@@ -109,12 +109,12 @@
         ]
       },
       {
-        "tab": "Changelog",
+        "tab": "Updates",
         "groups": [
           {
             "group": "Changelog",
             "pages": [
-              "change-log"
+              "changelog"
             ]
           }
         ]
