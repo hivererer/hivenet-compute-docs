@@ -101,7 +101,7 @@
             ]
           }
         ]
-      }
+      },
       {
         "tab": "Changelog",
         "groups": [
@@ -110,7 +110,7 @@
             "pages": [
               "changelog"
             ]
-          },
+          }
         ]
       }
     ],
