@@ -99,7 +99,7 @@
             ]
           }
         ]
-      }
+      },
       {
         "tab": "Changelog",
         "groups": [
@@ -108,7 +108,7 @@
             "pages": [
               "changelog/changelog"
             ]
-          },
+          }
         ]
       }
     ],
