@@ -29,7 +29,7 @@
               "articles/essentials/create-instance",
               "articles/essentials/understand-choose-instance",
               "articles/essentials/custom-templates",
-              "articles/essentials/start-stop",
+              "articles/essentials/start-stop-instances",
               "articles/essentials/how-to-vcpu",
               "articles/essentials/how-to-vllm",
               "articles/essentials/general-settings",
