@@ -15,7 +15,6 @@
         "groups": [
           {
             "group": "Get Started",
-            "expanded": false,
             "pages": [
               "index",
               "about-hivenet",
@@ -98,17 +97,6 @@
               "articles/guides/sftp-not-ftps",
               "articles/guides/SSH-config-file-explained",
               "articles/guides/choosing-between-cpu-gpu"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Changelog",
-        "groups": [
-          {
-            "group": "Changelog",
-            "pages": [
-              "changelog"
             ]
           }
         ]
