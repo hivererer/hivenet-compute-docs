@@ -93,18 +93,18 @@
           {
             "group": "More guides",
             "pages": [
-              "documentation/more-guides/sftp-not-ftps",
-              "documentation/more-guides/SSH-config-file-explained",
-              "documentation/more-guides/choosing-between-cpu-gpu"
+              "tutorials/more-guides/sftp-not-ftps",
+              "tutorials/more-guides/SSH-config-file-explained",
+              "tutorials/more-guides/choosing-between-cpu-gpu"
             ]
           }
         ]
       },
       {
-        "tab": "Changelog",
+        "tab": "Updates",
         "groups": [
           {
-            "group": "Changelog",
+            "group": "Updates",
             "pages": [
               "changelog/changelog"
             ]
