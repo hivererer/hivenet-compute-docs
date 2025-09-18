@@ -24,58 +24,58 @@
           {
             "group": "Essentials",
             "pages": [
-              "articles/essentials/create-instance",
-              "articles/essentials/understand-choose-instance",
-              "articles/essentials/custom-templates",
-              "articles/essentials/start-stop-instances",
-              "articles/essentials/how-to-vcpu",
-              "articles/essentials/how-to-vllm",
-              "articles/essentials/general-settings",
-              "articles/essentials/stop-terminate-instance"
+              "documentation/essentials/create-instance",
+              "documentation/essentials/understand-choose-instance",
+              "documentation/essentials/custom-templates",
+              "documentation/essentials/start-stop-instances",
+              "documentation/essentials/how-to-vcpu",
+              "documentation/essentials/how-to-vllm",
+              "documentation/essentials/general-settings",
+              "documentation/essentials/stop-terminate-instance"
             ]
           },
           {
             "group": "Connectivity",
             "pages": [
-              "articles/connectivity/connect-instance-macos",
-              "articles/connectivity/connect-instance-windows",
-              "articles/connectivity/firewall-basics",
-              "articles/connectivity/forwards-ports",
-              "articles/connectivity/https-site-ssh-port-forwarding",
-              "articles/connectivity/ssh-key-linux",
-              "articles/connectivity/ssh-key-macos",
-              "articles/connectivity/ssh-key-windows",
-              "articles/connectivity/ssh-puttygen-openssh"
+              "documentation/connectivity/connect-instance-macos",
+              "documentation/connectivity/connect-instance-windows",
+              "documentation/connectivity/firewall-basics",
+              "documentation/connectivity/forwards-ports",
+              "documentation/connectivity/https-site-ssh-port-forwarding",
+              "documentation/connectivity/ssh-key-linux",
+              "documentation/connectivity/ssh-key-macos",
+              "documentation/connectivity/ssh-key-windows",
+              "documentation/connectivity/ssh-puttygen-openssh"
             ]
           },
           {
             "group": "File transfer",
             "pages": [
-              "articles/transfer-files-sftp"
+              "documentation/file-transfer/transfer-files-sftp"
             ]
           },
           {
             "group": "Troubleshooting",
             "pages": [
-              "articles/troubleshooting/invalid-SSH-key"
+              "documentation/troubleshooting/invalid-SSH-key"
             ]
           },
           {
             "group": "Account and Billing",
             "pages": [
-              "articles/account-billing/billing-info",
-              "articles/account-billing/track-costs-real-time",
-              "articles/account-billing/delete-account"
+              "documentation/account-billing/billing-info",
+              "documentation/account-billing/track-costs-real-time",
+              "documentation/account-billing/delete-account"
             ]
           },
           {
             "group": "Reference",
             "pages": [
-              "articles/reference/faq",
-              "articles/reference/glossary",
-              "articles/reference/gpu-types",
-              "articles/reference/cpu-types",
-              "articles/reference/vllm-models"
+              "documentation/reference/faq",
+              "documentation/reference/glossary",
+              "documentation/reference/gpu-types",
+              "documentation/reference/cpu-types",
+              "documentation/reference/vllm-models"
             ]
           }
         ]
@@ -86,18 +86,29 @@
           {
             "group": "How to",
             "pages": [
-              "articles/guides/configuration-image-generation",
-              "articles/guides/open-jupyter-notebook"
+              "tutorials/how-to/configuration-image-generation",
+              "tutorials/how-to/open-jupyter-notebook"
             ]
           },
           {
             "group": "More guides",
             "pages": [
-              "articles/guides/sftp-not-ftps",
-              "articles/guides/SSH-config-file-explained",
-              "articles/guides/choosing-between-cpu-gpu"
+              "documentation/more-guides/sftp-not-ftps",
+              "documentation/more-guides/SSH-config-file-explained",
+              "documentation/more-guides/choosing-between-cpu-gpu"
             ]
           }
+        ]
+      }
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog/changelog"
+            ]
+          },
         ]
       }
     ],
