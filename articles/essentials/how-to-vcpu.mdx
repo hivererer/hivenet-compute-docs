@@ -1,5 +1,47 @@
 ---
-title: "How to start a vCPU"
-description: "How to start a vCPU on Hivenet"
+title: "Using vCPUs"
+description: "Learn how vCPUs work in Compute with Hivenet, when to use them, and what instance sizes are available."
 icon: "recycle"
+sidebarTitle: "Start a CPU instance"
 ---
+
+vCPUs (virtual CPUs) let you run general-purpose workloads without a GPU. They’re ideal for everyday computing tasks, development, or background services where GPU acceleration isn’t required.
+
+## What is a vCPU?
+
+A vCPU is a portion of a physical CPU made available to your instance. In Compute with Hivenet, vCPUs come in preconfigured sizes that include matching RAM, disk, and bandwidth so you can get started quickly.
+
+## Available vCPU setups
+
+From the console, you can choose between GPU-powered instances or CPU-only instances. The CPU-only option gives you these configurations:
+
+| vCPU | RAM   | Disk space | Bandwidth | Price (/h) |
+| ---- | ----- | ---------- | --------- | ---------- |
+| 2    | 4 GB  | 50 GB      | 250 Mb/s  | €0.035     |
+| 4    | 8 GB  | 100 GB     | 250 Mb/s  | €0.07      |
+| 8    | 16 GB | 200 GB     | 500 Mb/s  | €0.14      |
+| 16   | 32 GB | 400 GB     | 1000 Mb/s | €0.28      |
+| 32   | 64 GB | 800 GB     | 1000 Mb/s | €0.56      |
+
+## When to use vCPUs
+
+vCPUs are a good fit when your workload doesn’t need GPU acceleration. Common use cases include:
+
+- Running lightweight web servers or APIs
+- Hosting databases for development or testing
+- Running CI/CD pipelines and automated builds
+- Data processing scripts that don’t rely on GPU parallelism
+- Background services or always-on workloads
+
+If your workload depends heavily on parallelism (like machine learning training, video rendering, or simulations), a GPU instance is usually the better choice.
+
+## Things to keep in mind
+
+- **Scaling**: Start with 2 vCPUs and scale up as your project grows.
+- **Billing**: Instances are billed per second via credits, with the hourly rate shown in the console.
+- **Flexibility**: You can stop and start vCPU instances without losing data on attached disks.
+
+## See also
+
+- [Choosing between GPU and vCPU instances](/articles/guides/choosing-between-cpu-gpu)
+- [Using GPUs in Compute with Hivenet](/articles/essentials/create-instance)

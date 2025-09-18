@@ -1,0 +1,54 @@
+---
+title: "Welcome to Compute with Hivenet"
+description: "A plain-English introduction to Compute with Hivenet—what it is, why it exists, and how a distributed cloud changes how you run workloads."
+sidebarTitle: "Quickstart"
+---
+
+You need a GPU at 2 a.m. Not tomorrow. Not after a quota request. Now.
+You open a tab, bounce between providers, and hit the usual walls: long waitlists, unclear pricing, or hardware that’s available everywhere except where you are.
+
+Hivenet grew out of that frustration. We asked a simple question: what if the cloud didn’t have to live in giant data centers at all? What if we could use the idle power already sitting in people’s machines around the world—and make it safe, fair, and practical for real work?
+
+Compute with Hivenet is the answer. It’s our compute platform for running GPU and CPU workloads on demand, built on a distributed network of real, underutilized devices instead of centralized facilities. You request resources; the network assigns them; you get to work.
+
+## What compute is (and what it isn’t)
+
+Compute with Hivenet lets you create and run instances for things like training models, serving inference (including vLLM servers), rendering, or just getting a reliable Linux box with GPU acceleration. Billing is per-second through prepaid credits. You can stop, start, or terminate instances when you’re done.
+
+It isn’t a black box. You see what you’re running, what it costs, and where to change it. No lock-in tricks. No maze of proprietary services you don’t need.
+
+## How it works at a glance
+
+1. Create a Hivenet **Compute** account (separate from a general Hivenet account).
+2. [Pick a template](/articles/essentials/custom-templates) (ready images or your custom template) and choose hardware (e.g., RTX 4090/5090 GPUs, AMD EPYC CPUs).
+3. Launch your instance and connect over SSH or via your chosen stack (e.g., vLLM).
+4. Pause work with [**stop/start**](/articles/essentials/start-stop-instances) or [**terminate**](/articles/essentials/stop-terminate-instance) when finished. You only pay for what runs.
+
+> **Note:** You’ll need credits in your balance before launching. You can enable auto top-up if you want to avoid interruptions.
+
+## Why a distributed cloud
+
+The cloud doesn’t have to mean new buildings and endless racks. Hivenet reuses existing hardware, which can reduce waste and avoid the queueing problems that happen when a few regions get congested. It also spreads workloads across a broader, community-powered network, rather than concentrating them in a single place.
+
+In practical terms, that means:
+
+- **Access without the red tape.** Get capacity when you need it, run it for as long as you need, and shut it down.
+- **Straightforward costs.** Per-second billing via credits, visible in your dashboard and invoices.
+- **A network that gives back.** Contributors can share resources and earn. Users get flexible compute. Everyone benefits from the same pool.
+
+## What we value
+
+Hivenet is opinionated about a few things:
+
+- **Sovereignty and control.** Your workloads and data stay under your control. We avoid vendor lock-in patterns.
+- **Efficiency.** Use existing hardware where possible, bill only what you actually run, and avoid idle spend.
+- **Clarity.** Plain English docs, transparent billing, and settings you can understand.
+- **Community.** People power the network. That should be visible—not hidden behind vague abstractions.
+
+## Before you dive in
+
+- **Accounts.** Compute requires its own Hivenet Compute account which is separate from the Hivenet account you might have for [cloud storage](https://www.hivenet.com/store-with-hivenet-cloud-storage).
+- **Credits.** Add credits before launching; per-second billing applies while instances are running.
+- **Basics.** You’ll interact with Linux, SSH, and (optionally) common AI tooling. If you’re new to any of that, our quickstart and templates are there to help.
+
+You came here to get work done, not to learn a provider’s quirks. Compute with Hivenet keeps the mental overhead low: pick your resources, launch, run your job, terminate, and move on. The rest of the docs stay strictly practical from here.

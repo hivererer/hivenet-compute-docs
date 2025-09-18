@@ -1,5 +1,47 @@
 ---
 title: "How to use custom templates"
-description: "Custom templates on Compute"
+description: "Learn how to create and manage custom templates on Compute with Hivenet for reusable container configurations."
 icon: "text-size"
+sidebarTitle: "Custom templates"
 ---
+
+Custom templates let you save and reuse container configurations for your compute jobs. Instead of manually setting up the same environment each time, you can create a template once and launch new instances from it whenever you need.
+
+## Why use custom templates
+
+- **Save time**: No need to retype registry paths, variables, or commands every time.
+- **Stay consistent**: Make sure all your instances use the same base image and environment.
+- **Reuse securely**: Keep sensitive values as secrets so they’re injected only at runtime.
+
+## Creating a new template
+
+You can create a custom template directly in the Hivenet console when launching a new instance. Select **New template** under the _Pick a template_ step.
+
+### General settings
+
+- **Name** – Choose a clear, descriptive name for your template.
+- **Instance type** – Select whether this template is for a **GPU** or **CPU** instance.
+- **Visibility** – Templates are **Private** by default (only you can see and use them). Public templates will be available in the future.
+
+![Custom Templates 1 Pn](/images/custom-templates-1.png)
+
+### Container configuration
+
+- **Registry** – Provide the full path to your container image (for example, `docker.io/library/nginx:latest`).
+- **Registry credentials** – Enable this option if you’re using a private registry that requires authentication.
+
+### Environment variables
+
+Define environment variables as `KEY=value` pairs. You can add:
+
+- **Variables** – Standard environment values.
+- **Secrets** – Sensitive keys (e.g., API tokens). Secrets are injected securely at runtime.
+
+### Instructions for base images
+
+When building your template, you can use the provided Hivenet base image and setup script:
+
+```dockerfile
+FROM 993cz8u0.c1.gra9.container-registry.ovh.net/hive-compute-public/base-ubuntu:latest
+CMD ["/usr/local/bin/setup_instance.sh"]
+```

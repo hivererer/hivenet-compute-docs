@@ -1,0 +1,57 @@
+---
+title: "Choosing between GPU and vCPU instances"
+description: "Learn the difference between GPU and vCPU instances in Compute with Hivenet and when to use each type."
+sidebarTitle: "Should i use GPU or CPU?"
+---
+
+When creating a Compute instance, you can choose between GPU-powered and vCPU-only setups. Both work the same way in the console, but they’re built for different types of workloads.
+
+This guide helps you decide which one fits your needs.
+
+## The short answer
+
+- **Choose a GPU** if you need parallel processing power for heavy workloads like AI, rendering, or simulations.
+- **Choose a vCPU** if you’re running general-purpose applications, background tasks, or smaller workloads that don’t benefit from GPU acceleration.
+
+## Key differences
+
+| Feature          | GPU instance                                        | vCPU instance                                     |
+| ---------------- | --------------------------------------------------- | ------------------------------------------------- |
+| Best for         | Machine learning, inference, rendering, simulations | Web apps, APIs, CI/CD, databases, background jobs |
+| Processing style | Parallel (many small cores at once)                 | Serial (fewer, faster cores)                      |
+| Speed            | Faster for math-heavy, parallel tasks               | Smoother for general-purpose tasks                |
+| Cost per hour    | Higher (specialized hardware)                       | Lower (cost-efficient)                            |
+| Availability     | Limited by GPU supply                               | Generally more available                          |
+
+## When to use GPU instances
+
+Pick a GPU instance if your workload depends on massive parallelism or requires specialized acceleration. Examples:
+
+- Training or fine-tuning AI/ML models
+- Running inference with frameworks like vLLM
+- Video rendering and encoding
+- Scientific modeling or simulations
+- Any workload that runs faster with GPU acceleration
+
+## When to use vCPU instances
+
+Pick a vCPU instance if your workload doesn’t benefit from GPU acceleration. Examples:
+
+- Hosting lightweight web servers or APIs
+- Running development and test databases
+- Automating builds and deployments (CI/CD pipelines)
+- Running scripts and background jobs
+- Always-on services that need to stay cost-efficient
+
+## How to decide
+
+Ask yourself two questions:
+
+1. **Does my workload rely on parallel processing?**\
+   If yes → GPU is usually better.
+2. **Do I need the lowest cost for general-purpose compute?**\
+   If yes → vCPU is the simpler and cheaper option.
+
+<Tip>
+  You don’t need to commit forever. You can start with vCPUs for development and testing, then move to GPUs when you’re ready to train or deploy heavier workloads.
+</Tip>

@@ -15,9 +15,12 @@
         "groups": [
           {
             "group": "Get Started",
+            "expanded": false,
             "pages": [
               "index",
-              "get-started/quickstart"
+              "about-hivenet",
+              "quickstart"
+              
             ]
           },
           {
@@ -99,7 +102,8 @@
             "group": "More guides",
             "pages": [
               "articles/guides/sftp-not-ftps",
-              "articles/guides/SSH-config-file-explained"
+              "articles/guides/SSH-config-file-explained",
+              "articles/guides/choosing-between-cpu-gpu"
             ]
           }
         ]

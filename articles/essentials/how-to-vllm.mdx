@@ -1,5 +1,71 @@
 ---
 title: "How to use vLLM"
-description: "How to use vLLMs on Hivenet"
+description: "Learn how vLLMs power inference servers on Compute with Hivenet, including default settings and optional configuration."
 icon: "map"
+sidebarTitle: "Deploy a vLLM model"
 ---
+
+## What is vLLM?
+
+vLLM is an inference engine designed to serve large language models (LLMs) efficiently. It’s built with **PagedAttention**, a technique that manages memory more effectively so you can run bigger models faster and with higher throughput.
+
+On Compute with Hivenet, vLLM is what runs under the hood when you launch an inference server. It handles batching, scheduling, and memory allocation so your model can respond to requests reliably, even under heavy load.
+
+## Default setup
+
+When you create an inference server in the Hivenet console, vLLM is configured automatically with sensible defaults. That means you can pick a model and get started right away. No need to adjust low-level parameters unless you want to.
+
+By default, vLLM applies:
+
+- Standard memory allocation (GPU-first, minimal CPU offload).
+- Context length up to 8192 tokens.
+- Batch scheduling for multiple concurrent requests.
+- Balanced sampling settings for deterministic yet flexible outputs.
+- HTTPS endpoint access, with optional TCP/UDP or Jupyter Notebook.
+
+## Optional configuration
+
+If you want more control, you can open the **vLLM configuration** panel during setup. Here you’ll find three groups of settings:
+
+### 1. Basic
+
+- **Authentication token**: Used to securely call your inference endpoint.
+- **Context length**: Maximum tokens processed per request.
+- **Concurrent requests**: How many clients can connect at once.
+- **Tensor parallel size & precision**: Let vLLM auto-configure or set manually.
+- **Prefix caching**: Speeds up repeated prompts.
+
+### 2. Sampling
+
+Controls how the model generates responses:
+
+- **Temperature**: Higher = more random, lower = more deterministic.
+- **Top-p (nucleus sampling)**: Probability cutoff for token selection.
+- **Top-k**: Limits selection to top-k tokens at each step.
+- **Repetition penalty**: Discourages repeated outputs.
+
+### 3. Advanced
+
+For fine-tuning performance and stability:
+
+- **GPU memory fraction**: How much GPU memory vLLM can use.
+- **CPU offload**: Offload some memory to CPU if GPU is full.
+- **Max batched tokens**: Total tokens across parallel requests.
+- **Quantization and KV cache settings**: Optimize memory and speed.
+
+## When to adjust settings
+
+Most users won’t need to touch these options. The defaults are optimized for balanced performance. Adjustments are useful if you need:
+
+- Longer sequences (increase context length).
+- Higher concurrency (more clients at once).
+- Specific generation behavior (sampling parameters).
+- Memory optimization (quantization or CPU offload).
+
+<Warning>
+  Changing advanced settings can reduce stability or performance if misconfigured. Only adjust if you know your workload’s needs.
+</Warning>
+
+## Next steps
+
+- [Advanced vLLM settings](/articles/advanced-vllm-settings)

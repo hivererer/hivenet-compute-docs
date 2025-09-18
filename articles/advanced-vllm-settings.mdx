@@ -1,0 +1,66 @@
+---
+title: "Advanced vLLM settings"
+description: "Detailed reference for advanced vLLM configuration options in Compute with Hivenet."
+---
+
+When you launch an inference server with vLLM on Hivenet, most users can rely on the default configuration. Advanced settings are available for those who need fine-grained control over performance, memory usage, or generation behavior.
+
+This page lists each advanced setting, what it does, and when you might want to adjust it.
+
+<Warning>
+   These settings can impact performance and stability. Only change them if you’re familiar with how vLLM works or have specific workload requirements. 
+</Warning>
+
+## Memory management
+
+| Setting                 | Description                                         | Default        | When to adjust                                                         |
+| ----------------------- | --------------------------------------------------- | -------------- | ---------------------------------------------------------------------- |
+| **GPU memory fraction** | Fraction of GPU memory vLLM can use.                | `0.9`          | Lower if you want to reserve memory for other processes.               |
+| **CPU offload (GB)**    | Amount of memory offloaded to CPU when GPU is full. | `0` (disabled) | Use if your model is too large for GPU memory. May reduce performance. |
+| **Max batched tokens**  | Total tokens across all concurrent requests.        | `8192`         | Increase for higher throughput if your GPU has enough memory.          |
+
+## Model loading and quantization
+
+| Setting            | Description                                                     | Default | When to adjust                                                           |
+| ------------------ | --------------------------------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| **Quantization**   | Reduces memory use by storing model weights at lower precision. | `None`  | Enable to fit larger models on smaller GPUs, at some cost to accuracy.   |
+| **KV cache DType** | Precision of key-value cache used for attention.                | `auto`  | Change if you want to experiment with performance vs. memory trade-offs. |
+| **Config format**  | How model configs are parsed.                                   | `auto`  | Rarely needs adjustment.                                                 |
+| **Load format**    | Format for model weights when loaded.                           | `auto`  | Rarely needs adjustment.                                                 |
+| **Tokenizer mode** | How tokenization is handled.                                    | `auto`  | Keep default unless testing custom tokenizers.                           |
+
+## Context settings
+
+| Setting                         | Description                             | Default | When to adjust                                                                       |
+| ------------------------------- | --------------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| **Max tokens / Context length** | Maximum tokens processed per request.   | `8192`  | Increase for longer prompts and outputs, if your GPU can handle it.                  |
+| **Concurrent requests**         | Maximum clients handled at once.        | `64`    | Adjust based on your traffic. Higher values allow more users but may slow responses. |
+| **Tensor parallel size**        | Splits model across multiple GPUs.      | `auto`  | Use only if your server setup supports multi-GPU parallelism.                        |
+| **Precision / DType**           | Data type used for calculations.        | `auto`  | Override if you want specific precision (e.g., FP16).                                |
+| **Prefix caching**              | Reuses prompt prefixes across requests. | `Off`   | Enable for repeated prompts to improve speed.                                        |
+
+## Sampling controls
+
+| Setting                      | Description                                                     | Default | When to adjust                                                     |
+| ---------------------------- | --------------------------------------------------------------- | ------- | ------------------------------------------------------------------ |
+| **Temperature**              | Controls randomness. `0` = deterministic, higher = more random. | `1.0`   | Lower for predictable outputs, higher for creativity.              |
+| **Top-p (nucleus sampling)** | Probability cutoff for token selection.                         | `0.9`   | Lower to restrict randomness, higher to allow more diverse tokens. |
+| **Top-k**                    | Limits token selection to top-k candidates.                     | `40`    | Adjust for finer control of diversity in responses.                |
+| **Repetition penalty**       | Penalizes repeated tokens.                                      | `1.2`   | Increase to reduce repetition in outputs.                          |
+
+## Optimization settings
+
+| Setting           | Description                                   | Default | When to adjust                                         |
+| ----------------- | --------------------------------------------- | ------- | ------------------------------------------------------ |
+| **Enforce eager** | Forces eager execution instead of graph mode. | `Off`   | Only enable if debugging or if your workload needs it. |
+
+## Best practices
+
+- Stick with defaults unless you have a clear reason to change.
+- Increase **context length** carefully; it uses significantly more memory.
+- Use **quantization** to run larger models on smaller GPUs, but test accuracy.
+- Tune **sampling parameters** for your application (e.g., deterministic chatbots vs. creative writing).
+
+## Related pages
+
+- [How vLLMs work](/articles/essentials/how-to-vllm)
