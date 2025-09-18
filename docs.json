@@ -102,7 +102,14 @@
       },
       {
         "tab": "Changelog",
-        "groups": []
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog"
+            ]
+          }
+        ]
       }
     ],
     "global": {
