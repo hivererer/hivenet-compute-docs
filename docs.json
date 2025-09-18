@@ -36,12 +36,6 @@
               "articles/essentials/stop-terminate-instance"
             ]
           },
-            {
-            "group": "Troubleshooting",
-            "pages": [
-              "articles/troubleshooting/invalid-SSH-key"
-            ]
-          },
           {
             "group": "Connectivity",
             "pages": [
@@ -107,16 +101,16 @@
             ]
           }
         ]
-      },
+      }
       {
-        "tab": "Updates",
+        "tab": "Changelog",
         "groups": [
           {
-            "group": "Changelog",
+            "group": "Updates",
             "pages": [
               "changelog"
             ]
-          }
+          },
         ]
       }
     ],
