@@ -138,8 +138,8 @@
     }
   },
   "logo": {
-    "light": "/logo/hivenet-logo-color-light",
-    "dark": "/logo/hivenet-logo-color-dark"
+    "light": "/logo/hivenet-logo-color-light.svg",
+    "dark": "/logo/hivenet-logo-color-dark.svg"
   },
   "navbar": {
     "links": [
