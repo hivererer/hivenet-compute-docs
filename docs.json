@@ -7,7 +7,7 @@
     "light": "#D46E35",
     "dark": "#D46E35"
   },
-  "favicon": "logo/hivenet_favicon.png",
+  "favicon": "logo/website_favicon.png",
   "navigation": {
     "tabs": [
       {
@@ -138,8 +138,8 @@
     }
   },
   "logo": {
-    "light": "/logo/logo-black.svg",
-    "dark": "/logo/logo-light.svg"
+    "light": "/logo/hivenet-logo-color-light",
+    "dark": "/logo/hivenet-logo-color-dark"
   },
   "navbar": {
     "links": [
