@@ -13,7 +13,7 @@ sidebarTitle: "Transfer files with SFTP"
 | **FileZilla (Windows / macOS / Linux)** | Same, but cross-platform. | Same hurdles as WinSCP; can freeze after a few failed attempts. |
 
 <Tip>
-  _All methods use the same SSH key you already uploaded for Compute._
+  All methods use the same SSH key you already uploaded for Compute_._
 </Tip>
 
 <Note>
@@ -36,7 +36,7 @@ sidebarTitle: "Transfer files with SFTP"
 | :----------------- | :------------------------------------------------------------------ | :----------------------------- | :-------------------- |
 | `put bigfile.zip`  | Upload a file                                                       | ―                              | ―                     |
 | `get results.csv`  | Download a file                                                     | ―                              | ―                     |
-| `lcd <local-path>` | **Change _local_ working folder**Use quotes if the path has spaces. | `lcd "C:\Users\You\Downloads"` | `lcd ~/Downloads`     |
+| `lcd <local-path>` | **_Change local working folder_**Use quotes if the path has spaces. | `lcd "C:\Users\You\Downloads"` | `lcd ~/Downloads`     |
 | `lpwd`             | Show current local folder                                           | ―                              | ―                     |
 | `ls` / `pwd`       | List / show path on the instance                                    | ―                              | ―                     |
 | `exit`             | Quit                                                                | ―                              | ―                     |
@@ -87,7 +87,7 @@ Drag‑and‑drop files between panels as usual.
 - Confirm the Proxy command is **exactly** `ssh bastion@ssh.hivecompute.ai %h`.
 - After several failures FileZilla can lock up—quit and relaunch before retrying.
 
- FileZilla setup (cross‑platform)
+### FileZilla setup (cross‑platform)
 
 1. Install FileZilla.
 2. File → Site Manager → **New Site**.
@@ -120,7 +120,3 @@ rsync -avz -e "ssh -i ~/.ssh/id_ed25519 \      -o ProxyCommand='ssh bastion@ssh.
 - `Permission denied` → wrong key or key not added to Compute.
 - `Connection closed` → missing ProxyCommand/bastion hop.
 - **GUI can’t find key file** → convert OpenSSH key to `.ppk` with PuTTYgen
-
----
-
-Still stuck? Ping us via the chat widget or join [Discord](https://discord.gg/cTmPDPrMG2).

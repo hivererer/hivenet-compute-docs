@@ -61,7 +61,9 @@ Some connections require a jump host (a "bastion") for access. If you're getting
 ssh -i ~/.ssh/id_ed25519 -o "ProxyCommand ssh bastion@ssh.hivecompute.ai %h" ubuntu@<your-instance-id>.ssh.hivecompute.ai
 ```
 
-**Note:** You may need to replace `id_ed25519` if your key has a different name.
+<Note>
+  You may need to replace `id_ed25519` if your key has a different name.
+</Note>
 
 This creates a secure tunnel from your machine to the instance through Hivenet’s bastion.
 
