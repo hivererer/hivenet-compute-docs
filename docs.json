@@ -57,7 +57,8 @@
           {
             "group": "Troubleshooting",
             "pages": [
-              "documentation/troubleshooting/invalid-SSH-key"
+              "documentation/troubleshooting/invalid-SSH-key",
+              "documentation/troubleshooting/get-instance-id"
             ]
           },
           {
