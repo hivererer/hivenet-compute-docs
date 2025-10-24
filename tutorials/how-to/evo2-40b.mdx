@@ -9,14 +9,14 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
 
 **Estimated time:** 15–20 minutes (includes model download)
 
-### What you’ll need
+## What you’ll need
 
 - A **Compute with Hivenet** medium instance (4 × RTX 4090 GPUs)
 - A valid **NVIDIA NGC API key**
   - You can request one for free from the [EVO2-40B page on NVIDIA NIM](https://build.nvidia.com/arc/evo2-40b/deploy)
 
 <Steps>
-  <Step title="Create the custom NIM template">
+  <Step title="Create the custom NIM template" titleSize="h2">
     - In the **Compute console**, go to **Templates** › **Create new template**.
 
     ![Evo2 40b Guide 1 Pn](/images/evo2-40b-guide-1.png)
@@ -38,7 +38,7 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
       This container image is based on the official EVO2 40B NIM container and made compatible with Hivenet’s Compute environment.
     </Note>
   </Step>
-  <Step title="Create a medium instance">
+  <Step title="Create a medium instance" titleSize="h3">
     - From the **Compute console**, select **Create new instance**.
     - Choose your **location**.
     - Under **Setup**, pick **4 × RTX 4090**.
@@ -51,7 +51,7 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
       The first start can take several minutes while the image initializes.
     </Note>
   </Step>
-  <Step title="Use your EVO2-40B model">
+  <Step title="Use your EVO2-40B model" titleSize="h3">
     Once your instance is running, open the **Logs** panel.\
     The NIM container automatically downloads the model weights (~ 80 GB).\
     You’ll see messages similar to this once it starts serving:
@@ -164,7 +164,7 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
   </Step>
 </Steps>
 
-### You’ve served EVO2 40B successfully
+## You’ve served EVO2 40B successfully
 
 Your Compute instance is now hosting the EVO2 40B model through a NIM container, ready for inference requests.\
 You can monitor usage directly from the Compute dashboard or SSH into the instance to view live GPU metrics.
