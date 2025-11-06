@@ -53,8 +53,14 @@ cd $env:USERPROFILE\.ssh explorer .
 2. Copy the entire contents of the file
 3. Paste it into the **SSH Key** field when creating your instance on the Compute dashboard
 
-<Note>
+<Warning>
   Only paste the `.pub` file contents. Do **not** paste the private key.
+</Warning>
+
+<Note>
+  The SSH key field accepts **one public key only**.
+
+  If you want to authorize more keys later (for teammates or alternate devices), connect to the instance and add them manually in `~/.ssh/authorized_keys`.
 </Note>
 
 ## Step 4 – Create a basic SSH config file (optional but useful)
