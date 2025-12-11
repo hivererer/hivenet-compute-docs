@@ -55,30 +55,6 @@ If the issuer is **not** Let’s Encrypt, something on your network is intercept
   If the certificate issuer is unfamiliar or tied to a security appliance, do not proceed until the connection is trusted again.
 </Warning>
 
-## Test the API endpoints
-
-These endpoints let you confirm whether the certificate is passed through correctly.
-
-### Health check
-
-A valid request to the health endpoint should return **200 OK**:
-
-```
-https://api.hivecompute.ai/health
-```
-
-### API root
-
-Visiting the root should return **401 Unauthorized**, which is expected:
-
-```
-https://api.hivecompute.ai/
-```
-
-<Note>
-  If either of these endpoints triggers a certificate warning, the certificate is being replaced on the client’s network.
-</Note>
-
 ## Common causes of certificate interception
 
 The most frequent sources are:
