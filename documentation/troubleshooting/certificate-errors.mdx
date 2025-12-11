@@ -4,7 +4,10 @@ description: "How to fix certificate errors caused by corporate firewalls or ant
 sidebarTitle: "Certificate warnings"
 ---
 
-Users may sometimes see certificate warnings when opening `https://console.hivecompute.ai` or calling the Compute API. This usually means something on the local network is intercepting HTTPS traffic. The certificates on Hivenet’s side are valid. The issue almost always comes from corporate firewalls, antivirus software, or SSL inspection tools that replace certificates during traffic scanning.
+
+Sometimes a browser shows a certificate warning when you open the Compute console or API. This feels alarming, especially when everything worked fine the day before. These errors almost always come from something on the user's network intercepting HTTPS traffic, like corporate firewalls, antivirus software, or SSL inspection tools that replace certificates during traffic scanning. The good news is that your data and our certificates are safe. The issue sits between your device and the internet.
+
+Most cases come from corporate firewalls or antivirus programs that inspect encrypted traffic. They replace the real certificate with one of their own. Browsers react to this by warning you that the connection doesn’t match what they expected.
 
 This page explains why it happens, how to confirm it, and how to fix it.
 
