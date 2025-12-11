@@ -1,0 +1,127 @@
+---
+title: "Why do I see certificate or HTTPS warnings when accessing Compute with Hivenet?"
+description: "How to fix certificate errors caused by corporate firewalls or antivirus HTTPS scanning."
+sidebarTitle: "Certificate warnings"
+---
+
+Users may sometimes see certificate warnings when opening `https://console.hivecompute.ai` or calling the Compute API. This usually means something on the local network is intercepting HTTPS traffic. The certificates on Hivenet’s side are valid. The issue almost always comes from corporate firewalls, antivirus software, or SSL inspection tools that replace certificates during traffic scanning.
+
+This page explains why it happens, how to confirm it, and how to fix it.
+
+## What a valid certificate should look like
+
+Compute uses certificates issued by Let’s Encrypt.
+
+A correct certificate shows:
+
+- **Issuer:** Let’s Encrypt (R12)
+- **Root:** ISRG Root X1
+- A valid, trusted status in the browser
+
+If you see a different issuer (such as a company name or an antivirus vendor), your connection is being intercepted and rewritten locally.
+
+## Quick checks
+
+Start with simple tests to narrow down the issue.
+
+### 1. Try a different network
+
+Use mobile data or a home Wi-Fi connection.
+
+If the warning disappears, the issue is caused by the corporate network or firewall.
+
+### 2. Try a private/incognito window
+
+This rules out browser extensions.
+
+### 3. Restart the browser
+
+A clean session can remove cached certificate states.
+
+## Check the certificate in your browser
+
+1. Open the page showing the warning.
+2. Select the padlock icon in the address bar.
+3. Open **Certificate** or **View certificate**.
+4. Check the **Issuer** and **Root**.
+
+If the issuer is **not** Let’s Encrypt, something on your network is intercepting SSL.
+
+<Warning>
+  If the certificate issuer is unfamiliar or tied to a security appliance, do not proceed until the connection is trusted again.
+</Warning>
+
+## Test the API endpoints
+
+These endpoints let you confirm whether the certificate is passed through correctly.
+
+### Health check
+
+A valid request to the health endpoint should return **200 OK**:
+
+```
+https://api.hivecompute.ai/health
+```
+
+### API root
+
+Visiting the root should return **401 Unauthorized**, which is expected:
+
+```
+https://api.hivecompute.ai/
+```
+
+<Note>
+  If either of these endpoints triggers a certificate warning, the certificate is being replaced on the client’s network.
+</Note>
+
+## Common causes of certificate interception
+
+The most frequent sources are:
+
+- Corporate firewalls performing SSL inspection
+- Antivirus software scanning encrypted traffic\
+  (Kaspersky, ESET, Avast, and similar tools)
+- Security appliances configured to rewrite certificates
+- Network security policies that intercept HTTPS by default
+
+These systems act as a “man-in-the-middle” proxy and install their own certificate authority. Browsers detect the mismatch and show warnings.
+
+## How to fix the issue
+
+### For individual users
+
+Check your antivirus settings for features such as:
+
+- “HTTPS scanning”
+- “SSL inspection”
+- “Encrypted traffic scanning”
+
+Disable these features or add exceptions for Hivenet domains:
+
+- `*.hivenet.com`
+- `console.hivecompute.ai`
+- `api.hivecompute.ai`
+
+### For corporate users
+
+If you are on a managed network, contact your IT team and request that the above domains be whitelisted or excluded from SSL inspection.
+
+Provide them with:
+
+- A screenshot of the certificate details
+- The exact domain you attempted to access
+- The time of the error
+- The expected certificate issuer (Let’s Encrypt / ISRG Root X1)
+
+## When to contact Hivenet Support
+
+If the certificate appears valid but you still cannot access the console or API, contact [**support@hivenet.com**](mailto:support@hivenet.com) with:
+
+- The full error message
+- Browser and operating system
+- Whether the issue changes on a different network
+- The certificate issuer as shown in the browser
+- Any relevant screenshots
+
+Support can confirm whether the issue is local or if something else needs investigation.
