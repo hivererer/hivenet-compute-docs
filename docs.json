@@ -2,13 +2,25 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
   "name": "Hivenet Docs",
-  "contextual":  {
-    "options": ["chatgpt", "claude"]
+  "contextual": {
+    "options": [
+      "copy",
+      "chatgpt",
+      "claude"
+    ]
   },
   "colors": {
     "primary": "#D46E35",
     "light": "#D46E35",
     "dark": "#D46E35"
+  },
+  "integrations": {
+    "mixpanel": {
+      "projectToken": "46ebe1e68e7ebacfc28d1e27e8ba0abf"
+    },
+    "intercom": {
+      "appId": "e7qrp69x"
+    }
   },
   "favicon": "logo/website_favicon.png",
   "navigation": {
