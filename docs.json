@@ -2,8 +2,12 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
   "name": "Hivenet Docs",
-  "contextual":  {
-    "options": ["chatgpt", "claude"]
+  "contextual": {
+    "options": [
+      "copy",
+      "chatgpt",
+      "claude"
+    ]
   },
   "colors": {
     "primary": "#D46E35",
@@ -165,6 +169,14 @@
     "socials": {
       "x": "https://x.com/hivenet_cloud",
       "linkedin": "https://www.linkedin.com/company/hivenetdistributedcloud/"
+    },
+    "integrations": {
+      "intercom": {
+        "appId": "e7qrp69x"
+      },
+      "mixpanel": {
+        "projectToken": "46ebe1e68e7ebacfc28d1e27e8ba0abf"
+      }
     }
   }
 }
