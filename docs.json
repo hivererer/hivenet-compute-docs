@@ -14,6 +14,14 @@
     "light": "#D46E35",
     "dark": "#D46E35"
   },
+  "integrations": {
+    "mixpanel": {
+      "projectToken": "46ebe1e68e7ebacfc28d1e27e8ba0abf"
+    },
+    "intercom": {
+      "appId": "e7qrp69x"
+    }
+  },
   "favicon": "logo/website_favicon.png",
   "navigation": {
     "tabs": [
@@ -169,14 +177,6 @@
     "socials": {
       "x": "https://x.com/hivenet_cloud",
       "linkedin": "https://www.linkedin.com/company/hivenetdistributedcloud/"
-    },
-    "integrations": {
-      "intercom": {
-        "appId": "e7qrp69x"
-      },
-      "mixpanel": {
-        "projectToken": "46ebe1e68e7ebacfc28d1e27e8ba0abf"
-      }
     }
   }
 }
