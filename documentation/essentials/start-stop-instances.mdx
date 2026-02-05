@@ -5,7 +5,9 @@ sidebarTitle: "Start/stop an instance"
 icon: "hourglass-start"
 ---
 
-With the Start/Stop feature in Compute, you can control when your instances are active. If you need to take a break, save on costs, or just pause a project, you can stop an instance and resume it later—no need to recreate anything.
+With the Start/Stop feature in Compute, you can control when your instances are active. If you need to take a break, save on costs, or just pause a project, you can stop an instance to temporarily pause it and stop compute charges. 
+
+When you start it again, the instance resumes from its previous state, as long as it hasn’t been automatically terminated.
 
 ## View your instances
 
@@ -13,9 +15,9 @@ With the Start/Stop feature in Compute, you can control when your instances are 
 - Select the **Instances** tab.
 - Here you'll see all of your instances—running or stopped—with details like uptime, resource usage, and hourly cost.
 
-To create a new instance, click **Create new instance** in the top-right corner.
+To create a new instance, click **Create **on the sidebar or in the top-right corner.
 
-![Start Stop Instances 1 Pn](/images/start-stop-instances-1.png)
+![Chooseinstancesidebarmenu](/images/chooseinstancesidebarmenu.gif)
 
 ## Stop an instance
 
@@ -27,6 +29,17 @@ To stop billing and pause usage:
 The instance status will update to **Stopped**, and you will no longer be billed. Your configuration and data will be saved.
 
 ![Start Stop Instances 2 Pn](/images/start-stop-instances-2.png)
+
+<Warning>
+  **Important: stopped instances are temporary**
+
+  When an instance is stopped, it isn’t kept indefinitely.\
+  If an instance remains stopped for more than 5 days, it is automatically terminated.
+
+  Once terminated, the instance and its data can’t be recovered. To keep an instance, make sure to start it again within that time window.
+
+  If an instance was stopped for more than 5 days, it may have already been terminated and won’t be available to start.
+</Warning>
 
 ## Start a stopped instance
 
@@ -42,7 +55,7 @@ Review the configuration details, then click **Start instance** to confirm.
 
 ![Start Stop Instances 4 Pn](/images/start-stop-instances-4.png)
 
-The instance will return to a **Running** state and billing will resume.
+The instance will return to a **Running** state, and billing will resume.
 
 ![Start Stop Instances 5 Pn](/images/start-stop-instances-5.png)
 

@@ -1,6 +1,6 @@
 ---
 title: "Compute quickstart"
-description: "Launch your first GPU or CPU instance—or a vLLM inference server—in minutes with Compute by Hivenet."
+description: "Launch your first GPU or CPU instance—or a vLLM inference server—in minutes."
 sidebarTitle: "Quickstart"
 ---
 
@@ -24,10 +24,11 @@ Get from zero to a running environment fast. This guide covers account setup, cr
     </Tip>
   </Step>
   <Step title="Create a GPU or CPU instance">
-    1. From the left sidebar, select **Create new instance** (or **Create instance** from the Console card).
+    1. From the left sidebar, select **Create** (or **Create** from the Console card).
+    1. \*\*Choose \*\*what you want to create: Container or Virtual machine.
     2. **Choose a location.** Pick what’s closest to your users or data.
     3. **Choose your setup.** Select **GPU** or **vCPU only**.
-    4. **Pick a template.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates come pre-installed so you can start faster.
+    4. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed so you can start faster.
     5. **Connectivity.**
        - **SSH:** Paste your **public key**.
          - Need one?
@@ -38,7 +39,7 @@ Get from zero to a running environment fast. This guide covers account setup, cr
 
            Then paste the contents of `~/.ssh/id_ed25519.pub`.
        - **HTTPS / TCP / UDP:** Keep defaults unless your app needs open ports.
-    6. Review the summary and select **Create instance**.
+    6. Review the summary and select ****Create instance orCreate virtual machine.****
     7. Wait for **Status: Running** on the **Instances** page.
   </Step>
   <Step title="Connect over SSH">
@@ -60,7 +61,7 @@ Get from zero to a running environment fast. This guide covers account setup, cr
     3. (Optional) **vLLM configuration.** Leave defaults for your first run. You can tune things later (e.g., context length, concurrency, sampling parameters).
     4. **Choose a location** and **setup** (GPU).
     5. Confirm **Connectivity** (SSH is required; HTTPS is available by default for the endpoint when applicable).
-    6. Select \*\*Run inference \*\*and wait for **Running**.
+    6. Select **Run inference** and wait for **Running**.
   </Step>
   <Step title="Manage and clean up">
     - **Stop/Start:** You can stop and later start an instance from **Instances**.
@@ -88,7 +89,6 @@ Get from zero to a running environment fast. This guide covers account setup, cr
 
 Now that you’ve launched your first instance, you’re ready to explore more:
 
-- Learn how to [use templates](/articles/essentials/custom-templates) to speed up setup with preinstalled environments.
 - Create [custom templates](/articles/essentials/custom-templates) tailored to your own workflows.
 - Dive into [vLLM configuration](/articles/essentials/how-to-vllm) to adjust context length, concurrency, and other parameters.
 - Check [benchmark results](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100) for RTX 4090 and RTX 5090 GPUs.
@@ -97,6 +97,6 @@ Now that you’ve launched your first instance, you’re ready to explore more:
 
 ## Need help?
 
-- Join the Hivenet Compute community on [Discord](https://discord.com/cTmPDPrMG2).
+- Join the Hivenet community on [Discord](https://discord.com/cTmPDPrMG2).
 - Submit a request through our chatbot (you can find it on our [website](https://compute.hivenet.com)).
 - Contact us anytime at [support@hivenet.com](mailto:support@hivenet.com).

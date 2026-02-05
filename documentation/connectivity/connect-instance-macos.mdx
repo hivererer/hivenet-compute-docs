@@ -1,5 +1,5 @@
 ---
-title: "How can I connect to a Compute instance from macOS"
+title: "How can I connect to a Compute instance from macOS?"
 description: "Quick steps to access your Compute instance from the macOS Terminal"
 sidebarTitle: "Connect to an instance from macOS"
 ---
@@ -13,19 +13,19 @@ Make sure you have:
 - Your **private SSH key** (.pem or .ed25519 file you downloaded)
 - A Mac with Terminal (you’ll find it in Spotlight)
 
-##  Step 1: Find your instance ID
+## Step 1: Find your instance ID
 
 In the Hivenet dashboard, copy your instance ID (looks like `ba184ade-84ed...`). You’ll use this when connecting.
 
-##  Step 2: Open Terminal
+## Step 2: Open Terminal
 
 Press **Cmd + Space**, type `Terminal`, and hit **Return** to open it.
 
-##  Step 3: Prepare your SSH key (recommended for security)
+## Step 3: Prepare your SSH key (recommended for security)
 
-To keep things tidy and secure, move your downloaded key to your Mac’s SSH folder. 
+To keep things tidy and secure, move your downloaded key to your Mac’s SSH folder.
 
- In Terminal, run these commands one by one:
+In Terminal, run these commands one by one:
 
 ```
 mkdir -p ~/.ssh                # Make the SSH folder if it doesn’t exist
@@ -34,7 +34,7 @@ mv ~/Downloads/your-key.pem ~/.ssh/     # Move your downloaded key
 chmod 600 ~/.ssh/your-key.pem  # Lock the key file
 ```
 
- Replace `/path/to/your-key.pem` with the actual path to the key you downloaded.
+Replace `/path/to/your-key.pem` with the actual path to the key you downloaded.
 
 ## Step 4: Connect to your instance
 
@@ -58,7 +58,7 @@ Are you sure you want to continue connecting (yes/no)?
 
 Type `yes` and hit **Return**.
 
-##  You're in
+## You're in
 
 You’ll land in your instance’s terminal, ready to install packages, run apps, or start a Jupyter notebook.
 

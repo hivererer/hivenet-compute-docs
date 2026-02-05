@@ -1,0 +1,93 @@
+---
+title: "Choosing between a virtual machine and a container"
+icon: "computer-speaker"
+sidebarTitle: "Choose instance type"
+description: "Pick the right instance type based on how much OS control you need and how you plan to run your workload."
+---
+
+---
+
+When you create a Compute instance, you choose how it runs: as a **container **or as a **virtual machine** (VM). Both options can run real workloads. The difference is how much control you get over the operating system and how you manage software.
+
+If you’re unsure, start with a container. It’s usually the quickest path to getting work done, and you can switch by creating a new instance later if you run into OS limits.
+
+## Quick rule of thumb
+
+Choose a **container** if you want a fast, managed runtime for scripts, apps, and models.
+
+Choose a **virtual machine** if you need full OS control, sudo access, kernel-level settings, or a specific Linux distribution.
+
+## Containers in Compute
+
+Containers are designed for most common workloads. They’re a good fit when you want to run code and ship a working environment without managing the operating system.
+
+A container-based instance is usually the right choice when you’re:
+
+- Running scripts, apps, or APIs
+- Doing standard ML workflows with typical dependencies
+- Serving models and inference workloads with a supported template
+- Prioritizing a simple setup and quick startup
+
+A few things to know up front:
+
+- Containers don’t support root access. Commands that require `sudo` won’t work.
+- System-level changes are handled through templates rather than modifying the OS directly.
+
+Note: If your workflow depends on installing OS packages manually, running system services, or changing low-level settings, you’ll likely want a VM instead.
+
+## Virtual machines in Compute
+
+Virtual machines are for workloads that need a traditional server experience. You get full control of the operating system, including the ability to install and configure software at the OS level.
+
+A VM is usually the right choice when you’re:
+
+- Installing system packages with your OS package manager and managing services
+- Running software that expects full OS behavior
+- Working with tools that require deeper system access
+- Needing a specific Linux distribution or custom OS image
+- Depending on kernel-level configuration or system drivers
+
+With a VM, you can expect to work more like you would on a typical Linux server. That flexibility can be worth it, but it also means you’re taking on more responsibility for OS setup and maintenance.
+
+## Common scenarios
+
+If you’re running a Python script, a small service, or a straightforward app, start with a **container**.
+
+If you’re serving an LLM using a standard inference setup, a **container** is often enough. Choose a **VM** if your setup requires OS-level customization, system services, or a specific distro.
+
+If you need to install system packages, configure services, or rely on `sudo`, choose a **VM**.
+
+If you’re not sure and you just want the simplest path to “it works,” choose a **container**.
+
+## What changes between containers and VMs
+
+Here’s what users notice most in practice:
+
+- OS control: containers have limited OS control, VMs give full OS access
+- Installing software: containers rely on templates and app-level dependencies, VMs use standard OS package tools and configuration
+- Setup speed: containers tend to be faster to get running, VMs are more flexible but require more setup
+- Compatibility: containers cover most workflows, VMs are better when your workload depends on OS-specific behavior or a specific distribution
+
+Tip: If you hit a wall with OS-level requirements, that’s a strong signal you should move the workload to a VM.
+
+## Switching if you picked the wrong one
+
+You can switch approaches by creating a new instance of the other type and redeploying your workload.
+
+Before you switch, it helps to write down:
+
+- The template or base image you used
+- Your application dependencies and install steps
+- Any environment variables or secrets your workload needs
+- The commands you use to run your workload
+
+If you’re moving from a container to a VM, plan for OS-level setup that you may not have needed before (packages, services, users, and startup scripts).
+
+[VERIFY]: If the product supports converting an existing instance from container to VM (or the reverse), document that here. If it doesn’t, keep the guidance as “create a new instance.”
+
+## Next steps
+
+- [Launch and connect to your first instance](/documentation/essentials/create-instance)
+- [Templates and images](/documentation/essentials/custom-templates)
+- [Start and stop instances](/documentation/essentials/start-stop-instances)
+- [Troubleshoot instance errors](/documentation/troubleshooting/bad-gateway-errors)

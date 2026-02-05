@@ -1,61 +1,80 @@
 ---
 title: "Understand and choose your Compute instance"
-description: "A quick guide to picking, launching, and connecting to the right instance for your needs."
+description: "A practical guide to choosing, launching, and connecting to the right Compute instance for your workload."
 icon: "chart-tree-map"
-sidebarTitle: "How to choose an instance"
+sidebarTitle: "Understanding instances"
 ---
 
 ## What makes up a Compute instance?
 
-Each Compute instance is a container built for high-performance workloads. When you create one, you’re choosing a mix of hardware and settings that define how it performs.
+A Compute instance is a unit of compute resources you run on Hivenet. Depending on your use case, an instance can run as a **container** or as a **virtual machine**.
 
-<Note>
-  Root access is disabled on Compute containers. Use a Custom Template for system packages.
-</Note>
+When you create an instance, you choose a combination of hardware, runtime type, and configuration that determines how it behaves and what level of control you have.
 
-Here’s what’s included:
+### **Container-based instances**
 
-- **GPU(s):** The core of your instance. Choose from NVIDIA RTX 4090s — up to 8 per machine — ideal for training AI models, running ML workloads, 3D rendering, and other GPU-heavy tasks.
-- **vCPUs & RAM:** These are automatically matched to your GPU setup, so everything runs smoothly without manual tweaking.
-- **Storage:** Every instance comes with fast local SSD storage. Persistent or expandable storage isn’t available yet, but it’s coming soon.
-- **Region:** Pick where your instance runs —  (for now, we support France or the UAE). Your choice can affect latency and data residency.
-- **Billing type:** We currently support on-demand billing (pay-as-you-go). You get high availability without long-term commitments.
+Containers are designed for most common workloads, such as running scripts, applications, and models.
 
-<Tip>
-  You don’t pay when your instance is off. Terminate it when you're done to stop billing.
-</Tip>
+- Root access is disabled. Commands that require sudo won’t work.
+- System-level packages are managed through templates rather than manual installation.
 
-## How to choose the right instance
+### **Virtual machine instances**
 
-The right setup depends on what you’re working on. Here are a few tips to guide your decision:
+Virtual machines are intended for workloads that need full operating system control.
 
-- **Training AI models?** Each RTX 4090 has **24 GB of VRAM**. Pick the number of GPUs that matches your model’s size and memory needs.
-- **Not sure what to choose?** That’s okay. Reach out via the chatbot or join us on Discord — we're here to help.
+- Full OS-level access, including sudo and kernel-level configuration.
+- Support for standard Linux distributions such as Ubuntu, Fedora, and Debian.
+
+## What you choose when creating an instance
+
+Regardless of the instance type, you’ll configure the following:
+
+- **GPU(s)**\
+  Choose the number and type of GPUs for your workload. NVIDIA RTX 4090 GPUs are available, with up to 8 GPUs per instance, suitable for training, inference, rendering, and other GPU-heavy tasks.
+- **vCPUs and RAM**\
+  CPU and memory resources are matched to your GPU selection to ensure balanced performance without manual tuning.
+- **Storage**\
+  Instances include fast local SSD storage. Storage behavior depends on the instance type and lifecycle. See the instance lifecycle documentation for details.
+- **Region**\
+  Select where your instance runs. Currently supported regions include France and the UAE. Region choice affects latency and data residency.
+- **Billing type**\
+  Instances use on-demand billing. You pay only while the instance is running.
+
+### How to choose the right instance
+
+The right choice depends on what you’re building.
+
+- Running scripts, apps, or model inference?\
+  A container-based instance is usually the simplest and fastest option.
+- Training large models or running GPU-heavy workloads?\
+  Choose the number of GPUs based on your model size and VRAM needs. Each RTX 4090 provides 24 GB of VRAM.
+- Need full OS control, custom system packages, or kernel access?\
+  Use a virtual machine instance.
+
+If you’re unsure, that’s normal. You can reach out through the in-app chatbot or [join the community on Discord](https://discord.gg/invite/f5aBCn5HZK) for guidance.
 
 ## Managing your instance from the dashboard
 
-Once it’s live, your instance is fully under your control:
+Once your instance is running, you can manage it from the Compute dashboard:
 
-- **Start/Stop** anytime
-- **Monitor** usage, uptime, and cost in real time
-- **Terminate** the instance when you're done — billing stops as soon as it’s off
+- Start or stop the instance at any time
+- Monitor usage, uptime, and cost
+- Terminate the instance when you’re finished
 
-<Info>
-  Instances are billed per second, so you’re never stuck paying for idle time.
-</Info>
+Instances are billed per second. When an instance is stopped or terminated, compute charges stop according to the instance lifecycle rules.
 
 ## How to connect to your instance
 
-As soon as your instance is ready, you’ll get:
+When your instance is ready, you’ll have access to:
 
-- A public **IP address**
-- **SSH credentials**
-- GPU details (so you can run `nvidia-smi` and check your setup)
+- A public IP address
+- SSH access details
+- GPU information for verification and diagnostics
 
-You can connect using your terminal with a standard SSH command:
+You can connect using a standard SSH command:
 
 ```
 ssh [your-username]@[your-instance-ip]
 ```
 
-You can use your terminal or a GUI SSH client — whichever you prefer.
+You can use a terminal or a graphical SSH client, depending on your workflow.

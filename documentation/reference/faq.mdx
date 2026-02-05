@@ -1,7 +1,7 @@
 ---
 title: "Frequently asked questions"
-description: "Description of your new file."
 sidebarTitle: "FAQ"
+description: "Answers to common questions about Compute, instances, billing, and usage."
 ---
 
 A practical FAQ for running workloads on **Compute with Hivenet**. It covers billing, instances, templates, networking, and inference. If you’re new, start here. If you’re stuck, jump to **Troubleshooting** at the end.
@@ -38,17 +38,28 @@ Invoices and transaction history are available via **Stripe**. You can access yo
 
 ## Instances and lifecycle
 
-### Are Compute instances virtual machines?
+### Are Compute instances containers or virtual machines?
 
-No. Compute instances run in containers. They cover most workflow needs like running scripts, apps, and models, but they don’t give full OS-level control. VMs will be available soon for users who need full kernel access or custom OS images.
+You can choose. Compute instances are not limited to a single runtime type. Depending on your setup, an instance can run as a container or as a virtual machine. Containers cover most workflows like running scripts, apps, and models. Virtual machines are available for use cases that require full OS-level control, kernel access, or custom images.
 
 ### Can I stop and start an instance later?
 
 Yes. You can [****stop an instance and start it again****](/articles/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact.
 
+<Warning>
+  **Important:** Stopped instances are not kept indefinitely.\
+  If an instance remains stopped for more than 5 days, it is automatically terminated. Once terminated, the instance and its data cannot be recovered.
+</Warning>
+
 <Note>
   Stop/Start currently has **no extra fee**. This may change; always check the latest pricing.
 </Note>
+
+### What happens to errored instances?
+
+If an instance enters an error state, it isn’t deleted right away. You can try to restart the instance from the Compute console. In many cases, this is enough to recover it. If the instance remains in an error state, it is automatically deleted after 15 days. This helps prevent unused resources from lingering and generating confusion later.
+
+If you’re not sure why the instance failed, check the instance logs in the app. They usually give enough context to understand what went wrong or what to try next.
 
 ### Do my files persist when stopped?
 
@@ -56,7 +67,9 @@ Yes. Your environment is preserved when you stop an instance. Termination (manua
 
 ### What operating systems and images are available?
 
-You can launch from clean **Ubuntu** images, **PyTorch** images, or **vLLM** images for inference. Choose the one that matches your workflow.
+For container-based instances, you can launch from clean **Ubuntu **images, **PyTorch **images, or **vLLM **images for inference. Choose the one that best matches your workflow.
+
+For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**.
 
 ### What are custom templates?
 
@@ -126,10 +139,6 @@ No. Compute doesn’t capture or retain your application payloads by default. An
 ### Can my data stay in a specific country or region (e.g., EU)?
 
 Yes. Pick a **region** when launching. Runs and attached storage remain in that region. For compliance reviews, document your chosen region(s) in your internal data maps.
-
-### Which workloads should choose Certified vs. spot providers?
-
-Use **Certified** for regulated, confidential, or production workloads. Spot providers suit experiments, pre‑production tests, or non‑sensitive jobs. If in doubt, pick Certified.
 
 ### What security documentation can you share (e.g., GDPR posture, audits)?
 

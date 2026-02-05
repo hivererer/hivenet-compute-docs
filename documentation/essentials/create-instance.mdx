@@ -17,12 +17,6 @@ You'll learn how to create an account, launch your first instance, connect to it
   - Optional: a payment method to add credits later
 </Info>
 
-<iframe width="640" height="362" src="https://www.loom.com/embed/43725f1835e74746b58c41f6e94e3c01?sid=81559429-0c9c-4fa7-afc4-955282619c2b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen />
-
-<Note>
-  Compute instances on Hivenet run in secure containers. They behave like lightweight virtual environments, but they’re not full virtual machines. Containers start faster and use fewer resources, which keeps pricing low and performance steady. Full VMs are coming soon for users who need full OS control.
-</Note>
-
 ## **Create your account**
 
 To get started:
@@ -32,7 +26,7 @@ To get started:
 
 Your dashboard is where you'll manage your projects, launch instances, and track usage.
 
-![compute dashboard](images/compute-dashboard.png)
+![Dashboard](/images/dashboard)
 
 <Note>
   Compute uses a separate account from the one you may already have for Hivenet storage and other services. We know that’s not ideal, and we’re actively working on unifying accounts across the platform.
@@ -42,21 +36,22 @@ Your dashboard is where you'll manage your projects, launch instances, and track
 
 Once you’re in the dashboard:
 
-- Go to the **Instances** page.
-- Click **Launch new instance**.
+- Click on **Create**.
+- Choose what you want to launch, a \*\*Container \*\*or a **Virtual machine**.
 
-![Createinstance Gi](/images/Createinstance.gif)
+![Chooseinstanceselector](/images/Chooseinstanceselector.gif)
 
-- Under **Location**, choose a region.
-- Under **Type**, select your instance type (GPU or vCPU).
+- **Choose a** **location**.
+- Under **Choose your setup**, select your instance type (GPU or vCPU).
 - Choose a **Size** (Small, Medium, Large).
-- Upload your **SSH key**.
-- Click **Deploy**.
+- \*\*Pick a template \*\*(container) or **Pick an OS** (virtual machine).
+- Go through the \*\*Connectivity \*\*options and upload your **SSH key**.
+- Click on \*\*Create container \*\*or **Create virtual machine**.
 
 Your instance will now appear on the **Instances** page with its current status.
 
 <Note>
-  Root access is disabled on Compute containers. Use a Custom Template for system packages.
+  Root access is disabled on containers. Use a Custom Template for system packages.
 </Note>
 
 ## **Connect to your instance via SSH**

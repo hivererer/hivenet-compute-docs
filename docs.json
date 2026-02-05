@@ -24,6 +24,30 @@
   },
   "favicon": "logo/website_favicon.png",
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Console",
+          "icon": "computer",
+          "href": "https://console.hivecompute.ai/"
+        },
+        {
+          "anchor": "Help Center",
+          "icon": "book-open-cover",
+          "href": "https://help.hivenet.com/en/"
+        },
+        {
+          "anchor": "Community",
+          "icon": "discord",
+          "href": "https://discord.com/invite/p2CwYSKsQU"
+        },
+        {
+          "anchor": "Blog",
+          "icon": "newspaper",
+          "href": "https://compute.hivenet.com/computes-blog"
+        }
+      ]
+    },
     "tabs": [
       {
         "tab": "Documentation",
@@ -41,12 +65,13 @@
             "pages": [
               "documentation/essentials/create-instance",
               "documentation/essentials/understand-choose-instance",
+              "documentation/essentials/choosing-between-a-virtual-machine-and-a-container",
               "documentation/essentials/custom-templates",
               "documentation/essentials/start-stop-instances",
+              "documentation/essentials/stop-terminate-instance",
               "documentation/essentials/how-to-vcpu",
               "documentation/essentials/how-to-vllm",
-              "documentation/essentials/general-settings",
-              "documentation/essentials/stop-terminate-instance"
+              "documentation/essentials/general-settings"
             ]
           },
           {
@@ -130,31 +155,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Console",
-          "href": "https://console.hivecompute.ai/",
-          "icon": "computer"
-        },
-        {
-          "anchor": "Help Center",
-          "href": "https://help.hivenet.com/en/",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://discord.com/invite/p2CwYSKsQU",
-          "icon": "discord"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://compute.hivenet.com/computes-blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/hivenet-logo-color-light.svg",
