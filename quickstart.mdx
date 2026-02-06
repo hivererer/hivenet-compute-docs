@@ -25,10 +25,10 @@ Get from zero to a running environment fast. This guide covers account setup, cr
   </Step>
   <Step title="Create a GPU or CPU instance">
     1. From the left sidebar, select **Create** (or **Create** from the Console card).
-    1. \*\*Choose \*\*what you want to create: Container or Virtual machine.
+    1. Choose what you want to create: **Container **or **Virtual machine**.
     2. **Choose a location.** Pick what’s closest to your users or data.
     3. **Choose your setup.** Select **GPU** or **vCPU only**.
-    4. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed so you can start faster.
+    4. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed, so you can start faster.
     5. **Connectivity.**
        - **SSH:** Paste your **public key**.
          - Need one?
@@ -39,7 +39,7 @@ Get from zero to a running environment fast. This guide covers account setup, cr
 
            Then paste the contents of `~/.ssh/id_ed25519.pub`.
        - **HTTPS / TCP / UDP:** Keep defaults unless your app needs open ports.
-    6. Review the summary and select ****Create instance orCreate virtual machine.****
+    6. Review the summary and select ****Create instance ****or ****Create virtual machine.****
     7. Wait for **Status: Running** on the **Instances** page.
   </Step>
   <Step title="Connect over SSH">
@@ -50,7 +50,7 @@ Get from zero to a running environment fast. This guide covers account setup, cr
     ```
 
     <Note>
-      \_username \_depends on the template. For Ubuntu images it’s usually `ubuntu`.
+      \_username \_depends on the template. For Ubuntu images, it’s usually `ubuntu`.
     </Note>
   </Step>
   <Step title="Launch a vLLM inference server (optional)">
@@ -79,9 +79,9 @@ Get from zero to a running environment fast. This guide covers account setup, cr
 ## Troubleshooting
 
 - **“Permission denied (publickey)”** when SSHing\
-  Ensure you added the **public key** during creation and you’re using the matching **private key** with correct file permissions (`chmod 600`).
+  Ensure you added the **public key** during creation, and you’re using the matching **private key** with correct file permissions (`chmod 600`).
 - **Can’t reach the service**\
-  Check that the required **port** is enabled under **Connectivity** and any firewall rules are correct.
+  Check that the required **port** is enabled under **Connectivity** and that any firewall rules are correct.
 - **Instance won’t start or pauses**\
   Verify you have **enough credits**. Top up in **Billing**.
 

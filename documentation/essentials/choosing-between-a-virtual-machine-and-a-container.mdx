@@ -7,7 +7,7 @@ description: "Pick the right instance type based on how much OS control you need
 
 ---
 
-When you create a Compute instance, you choose how it runs: as a **container **or as a **virtual machine** (VM). Both options can run real workloads. The difference is how much control you get over the operating system and how you manage software.
+When you create a Compute instance, you choose how it runs: as a **container** or as a **virtual machine** (VM). Both options can run real workloads. The difference is how much control you get over the operating system and how you manage software.
 
 If you’re unsure, start with a container. It’s usually the quickest path to getting work done, and you can switch by creating a new instance later if you run into OS limits.
 
@@ -33,7 +33,9 @@ A few things to know up front:
 - Containers don’t support root access. Commands that require `sudo` won’t work.
 - System-level changes are handled through templates rather than modifying the OS directly.
 
-Note: If your workflow depends on installing OS packages manually, running system services, or changing low-level settings, you’ll likely want a VM instead.
+<Note>
+  If your workflow depends on installing OS packages manually, running system services, or changing low-level settings, you’ll likely want a VM instead.
+</Note>
 
 ## Virtual machines in Compute
 
@@ -68,7 +70,9 @@ Here’s what users notice most in practice:
 - Setup speed: containers tend to be faster to get running, VMs are more flexible but require more setup
 - Compatibility: containers cover most workflows, VMs are better when your workload depends on OS-specific behavior or a specific distribution
 
-Tip: If you hit a wall with OS-level requirements, that’s a strong signal you should move the workload to a VM.
+<Tip>
+  If you hit a wall with OS-level requirements, that’s a strong signal you should move the workload to a VM.
+</Tip>
 
 ## Switching if you picked the wrong one
 
@@ -82,8 +86,6 @@ Before you switch, it helps to write down:
 - The commands you use to run your workload
 
 If you’re moving from a container to a VM, plan for OS-level setup that you may not have needed before (packages, services, users, and startup scripts).
-
-[VERIFY]: If the product supports converting an existing instance from container to VM (or the reverse), document that here. If it doesn’t, keep the guidance as “create a new instance.”
 
 ## Next steps
 

@@ -4,10 +4,9 @@ description: "An introduction to Hivenet and Compute: what it is, why it exists,
 sidebarTitle: "What is Hivenet?"
 ---
 
-You need a GPU at 2 a.m. Not tomorrow. Not after a quota request. Now.
-You open a tab, bounce between providers, and hit the usual walls: long waitlists, unclear pricing, or hardware that’s available everywhere except where you are.
+You need a GPU at 2 a.m. Not tomorrow. Not after a quota request. Now. You open a tab, bounce between providers, and hit the usual walls: long waitlists, unclear pricing, or hardware that’s available everywhere except where you are.
 
-Hivenet grew out of that frustration. We asked a simple question: what if the cloud didn’t have to live in giant data centers at all? What if we could use the idle power already sitting in people’s machines around the world—and make it safe, fair, and practical for real work?
+Hivenet grew out of that frustration. We asked a simple question: what if the cloud didn’t have to live in giant data centers at all? What if we could use the idle power already sitting in people’s machines and micro data-centers around the world—and make it safe, fair, and practical for real work?
 
 Compute with Hivenet is the answer. It’s our compute platform for running GPU and CPU workloads on demand, built on a distributed network of real, underutilized devices instead of centralized facilities. You request resources; the network assigns them; you get to work.
 
@@ -19,12 +18,15 @@ It isn’t a black box. You see what you’re running, what it costs, and where 
 
 ## How it works at a glance
 
-1. Create a Hivenet **Compute** account (separate from a general Hivenet account).
-2. [Pick a template](/articles/essentials/custom-templates) (ready images or your custom template) and choose hardware (e.g., RTX 4090/5090 GPUs, AMD EPYC CPUs).
+1. Create a **Compute** account (separate from a general Hivenet account).
+2. [Pick a template or OS](/articles/essentials/custom-templates) (ready images or your custom template) and choose hardware (e.g., RTX 4090/5090 GPUs, AMD EPYC CPUs).
 3. Launch your instance and connect over SSH or via your chosen stack (e.g., vLLM).
-4. Pause work with [**stop/start**](/articles/essentials/start-stop-instances) or [**terminate**](/articles/essentials/stop-terminate-instance) when finished. You only pay for what runs.
 
-> **Note:** You’ll need credits in your balance before launching. You can enable auto top-up if you want to avoid interruptions.
+Pause work with [**stop/start**](/articles/essentials/start-stop-instances) or [**terminate**](/articles/essentials/stop-terminate-instance) when finished. You only pay for what runs.
+
+<Note>
+  You’ll need credits in your balance before launching. You can enable auto top-up if you want to avoid interruptions.
+</Note>
 
 ## Why a distributed cloud
 
@@ -47,7 +49,7 @@ Hivenet is opinionated about a few things:
 
 ## Before you dive in
 
-- **Accounts.** Compute requires its own Hivenet Compute account which is separate from the Hivenet account you might have for [cloud storage](https://www.hivenet.com/store-with-hivenet-cloud-storage).
+- **Accounts.** Compute requires its own account, which is separate from the Hivenet account you might have for [cloud storage](https://www.hivenet.com/store-with-hivenet-cloud-storage).
 - **Credits.** Add credits before launching; per-second billing applies while instances are running.
 - **Basics.** You’ll interact with Linux, SSH, and (optionally) common AI tooling. If you’re new to any of that, our [quickstart](/quickstart) and [templates](/documentation/essentials/custom-templates) are there to help.
 
