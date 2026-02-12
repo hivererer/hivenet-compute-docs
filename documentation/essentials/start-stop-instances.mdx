@@ -28,6 +28,10 @@ To stop billing and pause usage:
 
 The instance status will update to **Stopped**, and you will no longer be billed. Your configuration and data will be saved.
 
+<Note>
+  Stopping an instance releases the underlying capacity. When you start again, availability depends on current demand, and you may not get the same host or GPU.
+</Note>
+
 ![Start Stop Instances 2 Pn](/images/start-stop-instances-2.png)
 
 <Warning>
@@ -61,4 +65,4 @@ The instance will return to a **Running** state, and billing will resume.
 
 ## If resources aren't available
 
-If the network can’t allocate resources immediately, you’ll see a message asking you to try again later. Your data and settings will remain safe while you wait.
+If the network can’t allocate the same configuration immediately, you’ll see a message asking you to try again later. This usually means there’s no matching capacity in that region right now. Your data and settings remain safe while you wait.

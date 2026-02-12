@@ -44,7 +44,7 @@ You can choose. Compute instances are not limited to a single runtime type. Depe
 
 ### Can I stop and start an instance later?
 
-Yes. You can [****stop an instance and start it again****](/articles/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact.
+Yes. You can [**stop an instance and start it again**](/articles/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact. Stopping releases the underlying capacity back to the pool. When you start again, availability depends on demand, and you may be placed on different hardware.
 
 <Warning>
   **Important:** Stopped instances are not kept indefinitely.\
@@ -55,11 +55,19 @@ Yes. You can [****stop an instance and start it again****](/articles/essentials/
   Stop/Start currently has **no extra fee**. This may change; always check the latest pricing.
 </Note>
 
+### Do I keep the same GPU when I stop and start?
+
+No. Stop/Start preserves your environment, but it doesn’t reserve the underlying GPU. When you start again, Compute allocates whatever matching capacity is available in that region. If nothing matches, you’ll be asked to try again later.
+
 ### What happens to errored instances?
 
 If an instance enters an error state, it isn’t deleted right away. You can try to restart the instance from the Compute console. In many cases, this is enough to recover it. If the instance remains in an error state, it is automatically deleted after 15 days. This helps prevent unused resources from lingering and generating confusion later.
 
 If you’re not sure why the instance failed, check the instance logs in the app. They usually give enough context to understand what went wrong or what to try next.
+
+### Is there a time limit on how long an instance can run?
+
+There’s no fixed time limit. An instance can run as long as it stays healthy and your balance covers the runtime. In rare cases, we may need to schedule maintenance that requires a restart.
 
 ### Do my files persist when stopped?
 
