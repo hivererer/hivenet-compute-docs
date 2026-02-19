@@ -1,0 +1,208 @@
+---
+title: "How to install Docker on a Compute VM"
+sidebarTitle: "Install Docker on a VM"
+description: "Launch a Compute virtual machine, connect over SSH, install Docker Engine on Ubuntu, Debian, or Fedora, and verify it works."
+---
+
+Docker is easiest when it runs on a normal Linux host. On Compute, that means using a virtual machine (VM). This tutorial walks you through launching a VM, connecting over SSH, installing Docker Engine, and verifying everything works.
+
+If you don’t have a VM yet, start here: [Launch and connect to your first Compute instance](/documentation/essentials/create-instance). (This tutorial assumes you’re using a VM, not a container.)
+
+## What you’ll need
+
+- A Compute VM instance (Ubuntu, Debian, or Fedora)
+- An SSH public key added when you created the VM
+- SSH access from your computer
+- A user account with sudo access on the VM
+
+If you need an SSH key first, use one of these:\
+[How to generate and add an SSH key on macOS](/documentation/connectivity/ssh-key-macos)\
+[How to generate and add an SSH key on Windows](/documentation/connectivity/ssh-key-windows)\
+[How to generate and add an SSH key on Linux](/documentation/connectivity/ssh-key-linux)
+
+## Step 1 – Launch a VM
+
+1. In the Compute console, select Create.
+2. Choose Virtual machine.
+3. Pick a location and your setup (GPU or vCPU).
+4. Pick an OS (Ubuntu is usually the simplest choice if you don’t have a preference).
+5. Under Connectivity, add your SSH public key.
+6. Create the VM and wait until Status is Running.
+
+## Step 2 – Connect over SSH
+
+1. Go to Instances.
+2. Open your VM and select Connectivity options.
+3. Copy the SSH command and run it in your terminal.
+
+## Step 3 – Install Docker Engine
+
+These commands follow Docker’s official installation steps for each Linux distribution. If you’re on Ubuntu/Debian, we use the apt repository method. If you’re on Fedora, we use the rpm repository method.
+
+### Choose your OS below and run the matching commands.
+
+#### Ubuntu 24.04 LTS (recommended)
+
+1. Remove conflicting packages (safe if they’re not installed):
+
+```
+sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc podman-docker containerd runc | cut -f1)
+```
+
+2. Add Docker’s GPG key and repository:
+
+```
+sudo apt update
+sudo apt install ca-certificates curl
+
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt update
+```
+
+3. Install Docker Engine and the Compose plugin:
+
+```
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+4. Verify:
+
+```
+sudo docker run hello-world
+```
+
+Docker’s Ubuntu instructions note that the Docker service usually starts automatically after installation.
+
+#### Debian (Bookworm/Trixie)
+
+1. Remove conflicting packages:
+
+```
+sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-doc podman-docker containerd runc | cut -f1)
+```
+
+2. Add Docker’s GPG key and repository:
+
+```
+sudo apt update
+sudo apt install ca-certificates curl
+
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt update
+```
+
+If you’re on a Debian derivative and that codename value is missing or wrong, replace it with the Debian release codename (for example `bookworm`).
+
+3. Install Docker Engine and the Compose plugin:
+
+```
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+4. Verify:
+
+```
+sudo docker run hello-world
+```
+
+#### Fedora
+
+1. Remove conflicting packages:
+
+```
+sudo dnf remove docker \
+  docker-client \
+  docker-client-latest \
+  docker-common \
+  docker-latest \
+  docker-latest-logrotate \
+  docker-logrotate \
+  docker-selinux \
+  docker-engine-selinux \
+  docker-engine
+```
+
+2. Add Docker’s repository:
+
+```
+sudo dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
+```
+
+3. Install Docker Engine and the Compose plugin:
+
+```
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+4. Start Docker:
+
+```
+sudo systemctl enable --now docker
+```
+
+5. Verify:
+
+```
+sudo docker run hello-world
+```
+
+Docker’s Fedora instructions call out that installing packages doesn’t start Docker automatically, so you need the systemctl step.
+
+## Optional – Run Docker without sudo
+
+By default, Docker commands require sudo. If you want to run Docker as your normal user, add yourself to the `docker` group, then refresh your session.
+
+```
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+Important: being in the `docker` group effectively grants root-level power on the machine. Only do this if you trust the users who have access to the VM. (This is standard Docker behavior.)
+
+## Quick sanity checks
+
+These help confirm you have both Docker and Compose working:
+
+```
+docker --version
+docker compose version
+docker run --rm hello-world
+```
+
+## What’s next
+
+- If you’re running a web UI inside Docker and can’t reach it from your browser, you’ll usually need one of these:
+  - open ports in Connectivity, or
+  - SSH port forwarding\
+    See: [[Docs: How to forward ports to reach your web app]].
+- If you want the non-technical “when Docker is worth it” overview, read:\
+  [[Interlink: Run Docker the normal way on a Compute VM]].
+
+## See also
+
+- [Compute quickstart](/quickstart)
+- [Launch and connect to your first Compute instance](/documentation/essentials/create-instance)
+- [Connect using OpenSSH](/documentation/connectivity/ssh-puttygen-openssh)
+- [Transfer files with SFTP](/documentation/file-transfer/transfer-files-sftp)

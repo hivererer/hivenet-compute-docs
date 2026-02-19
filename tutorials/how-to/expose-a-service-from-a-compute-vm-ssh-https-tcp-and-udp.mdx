@@ -1,0 +1,137 @@
+---
+title: "Expose a service from a Compute VM: SSH, HTTPS, TCP, and UDP"
+description: "Learn more about the four connectivity options you’ll see when you create a virtual machine on Compute."
+sidebarTitle: "Expose a service from a VM"
+---
+
+This tutorial explains the four connectivity options you’ll see when you create a Compute virtual machine (VM): SSH, HTTPS, TCP, and UDP. You’ll learn what each one is for, what to enable, and the small set of checks that prevent most “it’s running but I can’t reach it” problems.
+
+<Note>
+  If you haven’t created a VM yet, start here [Launch and connect to your first Compute instance](/documentation/essentials/create-instance).\
+  If you’re still deciding between VM and container, read: [Choose instance type](/documentation/essentials/understand-choose-instance).
+</Note>
+
+## Quick chooser
+
+Use **SSH **when you want terminal access. It’s also the safest way to access a web UI during setup, because you can tunnel a port without exposing it publicly.
+
+Use **HTTPS **when you want a browser-friendly URL to reach a web app. This is the usual choice for things like Jupyter, Gradio, or Streamlit when you want a public link.
+
+Use **TCP **when you want inbound connections for a TCP service (most APIs, many databases, custom clients).
+
+Use **UDP **when you need inbound connections for a UDP service (some game servers, streaming, realtime protocols).
+
+One important constraint: connectivity settings are chosen during creation, and some options can’t be changed later. Plan your ports early if you know you’ll need them.
+
+## Before you open anything: make your app reachable on the VM
+
+Most connection issues come from one of these:
+
+1. The app is listening on localhost only (127.0.0.1).
+2. The app is listening on the wrong port.
+3. The network protocol isn’t enabled in the Compute Connectivity settings.
+
+Two simple checks from inside the VM are usually enough:
+
+- Confirm your app is up from inside the VM:\
+  `curl http://localhost:<port>`
+- Make sure it’s listening on the right interface. For web apps, prefer binding to `0.0.0.0` so the network layer can reach it.
+
+If you’re using the Hivenet browser URL for web apps, make sure you’re using the expected port and bind address. See: [Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
+
+## SSH: remote terminal access (and the safest way to test UIs)
+
+SSH is your default way to administer a VM: install packages, run services, inspect logs, and keep long-running tasks alive (tmux helps).
+
+### How to set it up
+
+During VM creation, paste your SSH public key in the SSH section.
+
+Then connect from your computer using the SSH command shown on the instance page, or use one of these OS guides:
+
+[Connect to an instance from macOS](/documentation/connectivity/connect-instance-macos)\
+[Connect to an instance from Windows](/documentation/connectivity/connect-instance-windows)
+
+## SSH port forwarding (recommended for private access)
+
+If your web UI is only meant for you, don’t make it public. Forward the port over SSH instead.
+
+Example (local forwarding):
+
+```
+ssh -L 7865:localhost:7865 ubuntu@<instance-id>.ssh.hivecompute.ai
+```
+
+Then open `http://localhost:7865` in your browser.\\
+
+<Info>
+  Full walkthrough: [How to forward ports to reach your web app](/documentation/connectivity/forwards-ports)
+</Info>
+
+## HTTPS: public browser access for web apps
+
+HTTPS gives you a public URL to reach a web app running on your instance. This is the easiest way to share a demo link or access a UI without keeping an SSH tunnel open.
+
+### What you need to do on the VM
+
+Run your web app on the expected port and bind it so it’s reachable. If you use the default URL pattern, your app must run on port 8888 and bind to `0.0.0.0`.
+
+If you see Bad Gateway, it usually means one of these is wrong: app isn’t running yet, it’s listening on localhost, or it’s on a different port. Use: [Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
+
+### A practical pattern for a quick test
+
+If you just want to validate that HTTPS access works, you can run a simple server on port 8888 and bind to `0.0.0.0`.
+
+<Info>
+  Tutorial: [How to serve a simple HTTPS site on Compute with SSH port forwarding](/documentation/connectivity/https-site-ssh-port-forwarding)
+</Info>
+
+## TCP: direct inbound connections for APIs and services
+
+Enable TCP when you want inbound connections to a TCP service you’re running on the VM, such as:
+
+- HTTP APIs (if you’re not using the HTTPS URL approach)
+- custom model servers
+- databases or internal services you explicitly want reachable
+
+### How to use it
+
+1. Enable TCP during creation under Connectivity.
+2. Start your service on the VM and make sure it listens on the port you expect, and on an address reachable from outside (often `0.0.0.0`).
+3. In the console, copy the generated endpoint details for that TCP service and connect from your client.
+
+If you’re unsure whether the service is running, test it locally first with curl, then move outward.
+
+## UDP: direct inbound connections for UDP services
+
+Enable UDP when your application uses UDP and needs inbound traffic. This is less common for AI/ML, but it’s the right tool for UDP-native protocols.
+
+### How to use it
+
+The pattern is the same as TCP:
+
+1. Enable UDP during creation under Connectivity.
+2. Run the UDP service on the VM and bind it correctly.
+3. Use the console’s generated endpoint details to connect.
+
+## Security notes that save you from future pain
+
+Open the smallest surface area you can.
+
+- If you’re just testing a UI, use SSH port forwarding instead of a public endpoint.
+- If you need public access, use HTTPS for web apps and add authentication in your app.
+- Don’t expose admin dashboards, Docker APIs, or databases to the public internet unless you know exactly why you’re doing it.
+
+If you’re on a strict network (corporate firewall, locked-down router) and things fail in odd ways, see: [Agent network and firewall basics](/documentation/connectivity/firewall-basics).
+
+## Troubleshooting checklist
+
+If you can’t connect:
+
+- Confirm the instance is **Running **(not stopped).
+- Confirm the right protocol is enabled (HTTPS/TCP/UDP).
+- Confirm the app is actually running.
+- Confirm the app is listening on the right port.
+- Confirm it’s not bound only to localhost (use `0.0.0.0` when needed).
+- If HTTPS shows Bad Gateway, use: [[Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
+- If you’re trying to reach a local-only UI, skip public access and use: [How to forward ports to reach your web app](/documentation/connectivity/forwards-ports).

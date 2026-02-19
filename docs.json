@@ -131,7 +131,9 @@
             "pages": [
               "tutorials/how-to/configuration-image-generation",
               "tutorials/how-to/open-jupyter-notebook",
-              "tutorials/how-to/evo2-40b"
+              "tutorials/how-to/evo2-40b",
+              "tutorials/how-to/install-docker",
+              "tutorials/how-to/expose-a-service-from-a-compute-vm-ssh-https-tcp-and-udp"
             ]
           },
           {
