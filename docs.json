@@ -181,5 +181,8 @@
       "x": "https://x.com/hivenet_cloud",
       "linkedin": "https://www.linkedin.com/company/hivenetdistributedcloud/"
     }
+  },
+  "appearance": {
+    "strict": false
   }
 }
