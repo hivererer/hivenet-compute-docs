@@ -147,10 +147,10 @@
         ]
       },
       {
-        "tab": "Updates",
+        "tab": "Changelog",
         "groups": [
           {
-            "group": "Updates",
+            "group": "Changelog",
             "pages": [
               "changelog"
             ]
