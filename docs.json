@@ -45,11 +45,6 @@
           "anchor": "Blog",
           "icon": "newspaper",
           "href": "https://compute.hivenet.com/computes-blog"
-        },
-        {
-          "anchor": "Changelog",
-          "icon": "pen",
-          "href": "changelog"
         }
       ]
     },
