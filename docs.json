@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "luma",
   "name": "Hivenet Docs",
   "contextual": {
     "options": [
@@ -45,6 +45,11 @@
           "anchor": "Blog",
           "icon": "newspaper",
           "href": "https://compute.hivenet.com/computes-blog"
+        },
+        {
+          "anchor": "Changelog",
+          "icon": "pen",
+          "href": "changelog"
         }
       ]
     },
