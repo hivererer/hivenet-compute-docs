@@ -4,8 +4,36 @@ description: "Product updates and announcements"
 sidebarTitle: "Product updates"
 ---
 
-<Update label="April 2026" description="v1.30.1">
-  > ## **Improvements to instance management, billing, and reliability, plus a few UI polish updates.**
+<Update label="April 2026" description="v1.30.2">
+  > ## This release improves GPU VM reliability, instance cleanup, SSH compatibility, and auto top-up stability.
+
+  **GPU VMs**
+
+  - Fixed GPU driver issues that could prevent GPU VMs from starting correctly on supported operating systems.
+  - Prevented automatic OS updates from breaking GPU drivers after a reboot on GPU VM images.
+  - Fixed a boot issue that could affect 8-GPU VMs.
+  - Improved image tagging for more predictable deployments across environments.
+
+  **Instance lifecycle**
+
+  - Fixed cleanup issues that could leave resources behind after an instance was terminated.
+  - Fixed an issue that could incorrectly show some instances as sold out in certain environments.
+  - Instances stuck in an error state are now automatically terminated and cleaned up.
+  - Fixed several edge cases affecting instance status updates and restart flows.
+
+  **SSH and security**
+
+  - Added ECDSA SSH key support.
+  - Enforced a minimum RSA key length of 2048 bits.
+  - Improved SSH connection performance for large file transfers.
+
+  **Infrastructure**
+
+  - Improved the reliability of auto top-up credit handling for accounts with automatic billing enabled.
+</Update>
+
+<Update label="March 2026" description="v1.30.1">
+  > ## Improvements to instance management, billing, and reliability, plus a few UI polish updates.
 
   **Instances**
 
@@ -30,7 +58,7 @@ sidebarTitle: "Product updates"
 </Update>
 
 <Update label="October 2025" description="v1.25">
-  > ## **Lower GPU pricing, faster startup, and smoother custom networking.**
+  > ## Lower GPU pricing, faster startup, and smoother custom networking.
 
   **Pricing update:**
 
