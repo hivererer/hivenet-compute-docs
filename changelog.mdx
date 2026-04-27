@@ -4,6 +4,38 @@ description: "Product updates and announcements"
 sidebarTitle: "Product updates"
 ---
 
+<Update label="November 2025" description="v1.31">
+  > ## More reliable GPU VM restarts, cleaner billing, and easier instance access.
+
+  **GPU VM reliability improved**
+
+  Fixed several issues that could prevent GPU VMs from restarting, booting, or recovering cleanly, especially on Ubuntu GPU VMs and larger eight-GPU configurations.
+
+  NVIDIA driver configuration now persists more reliably across package reinstalls and kernel upgrades, reducing the chance of GPU drivers breaking after a reboot.
+
+  **Instance lifecycle fixes**
+
+  Stuck instances are now detected and recovered more reliably.
+
+  Deleted instances now clean up related resources more consistently and are marked as terminated correctly.
+
+  Deprecated Ubuntu and older image variants have been removed from the template catalog so unsupported builds can no longer be launched.
+
+  **Connectivity improvements**
+
+  Instance connection panels now show full access URLs for each open port, making it easier to open Jupyter and custom services.
+
+  Fixed an issue where newly created instances could show an external TCP port as `0` in the Connectivity panel.
+
+  **Billing reliability improved**
+
+  Fixed billing drift on stopped and errored instances.
+
+  Compute now checks stopped instances regularly and closes any billing records that should no longer be active.
+
+    Additional infrastructure and monitoring improvements were added to support more reliable regional routing and faster issue detection.
+</Update>
+
 <Update label="April 2026" description="v1.30.2">
   > ## This release improves GPU VM reliability, instance cleanup, SSH compatibility, and auto top-up stability.
 
