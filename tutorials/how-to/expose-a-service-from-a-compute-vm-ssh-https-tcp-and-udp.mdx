@@ -13,13 +13,13 @@ This tutorial explains the four connectivity options you’ll see when you creat
 
 ## Quick chooser
 
-Use **SSH **when you want terminal access. It’s also the safest way to access a web UI during setup, because you can tunnel a port without exposing it publicly.
+Use **SSH** when you want terminal access. It’s also the safest way to access a web UI during setup, because you can tunnel a port without exposing it publicly.
 
-Use **HTTPS **when you want a browser-friendly URL to reach a web app. This is the usual choice for things like Jupyter, Gradio, or Streamlit when you want a public link.
+Use **HTTPS** when you want a browser-friendly URL to reach a web app. This is the usual choice for things like Jupyter, Gradio, or Streamlit when you want a public link.
 
-Use **TCP **when you want inbound connections for a TCP service (most APIs, many databases, custom clients).
+Use **TCP** when you want inbound connections for a TCP service (most APIs, many databases, custom clients).
 
-Use **UDP **when you need inbound connections for a UDP service (some game servers, streaming, realtime protocols).
+Use **UDP** when you need inbound connections for a UDP service (some game servers, streaming, realtime protocols).
 
 One important constraint: connectivity settings are chosen during creation, and some options can’t be changed later. Plan your ports early if you know you’ll need them.
 
@@ -58,7 +58,7 @@ If your web UI is only meant for you, don’t make it public. Forward the port o
 
 Example (local forwarding):
 
-```
+```text
 ssh -L 7865:localhost:7865 ubuntu@<instance-id>.ssh.hivecompute.ai
 ```
 
@@ -128,10 +128,10 @@ If you’re on a strict network (corporate firewall, locked-down router) and thi
 
 If you can’t connect:
 
-- Confirm the instance is **Running **(not stopped).
+- Confirm the instance is \*\*Running \*\*(not stopped).
 - Confirm the right protocol is enabled (HTTPS/TCP/UDP).
 - Confirm the app is actually running.
 - Confirm the app is listening on the right port.
 - Confirm it’s not bound only to localhost (use `0.0.0.0` when needed).
-- If HTTPS shows Bad Gateway, use: [[Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
+- If HTTPS shows Bad Gateway, use: \[[Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
 - If you’re trying to reach a local-only UI, skip public access and use: [How to forward ports to reach your web app](/documentation/connectivity/forwards-ports).

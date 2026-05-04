@@ -8,7 +8,7 @@ sidebarTitle: "Serve a simple HTTPS site "
 
 If your app prints something like:
 
-```
+```text
 Serving HTTP on 127.0.0.1 port 8888
 ```
 
@@ -17,10 +17,10 @@ and your public URL (e.g. `https://<instance-id>-8888.tenants.hivecompute.ai`) s
 - The app is only available locally (localhost)
 - HTTPS reverse proxy can’t reach it
 
-###  Step 1 – Start your server (pick **one**)
+### Step 1 – Start your server (pick **one**)
 
-| If you already have an app                                                                                                                  | If you just want to browse files                                                   |
-| :------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------- |
+| If you already have an app | If you just want to browse files |
+| :-- | :-- |
 | SSH into the instance and launch your app on **port 8888** with **host 0.0.0.0**.     Example (Flask): `app.run(host="0.0.0.0", port=8888)` | SSH in and run a one-off file server: `python3 -m http.server 8888 --bind 0.0.0.0` |
 
 <Warning>
@@ -32,12 +32,12 @@ and your public URL (e.g. `https://<instance-id>-8888.tenants.hivecompute.ai`) s
 Visit `https://<instance-id>-8888.tenants.hivecompute.ai`.\
 If you switched ports, replace `8888` in both the URL and your app command.
 
-###  Step 3 – Open the HTTPS URL
+### Step 3 – Open the HTTPS URL
 
 Once your app is running and listening on the correct interface and port, go to:
 
-```
-https://<instance-id>-8888.tenants.hivecompute.ai
+```text
+https://<instance-id>-8888.<location>.tenants.hivecompute.ai
 ```
 
 <Tip>
@@ -50,12 +50,12 @@ If you still see "Bad Gateway":
 - Use `curl http://localhost:8888` from inside the instance to test
 - Restart your app if needed
 
-##  Alternative: Use SSH port forwarding
+## Alternative: Use SSH port forwarding
 
 If HTTPS still doesn’t work or you prefer to access it directly:
 
-```
+```text
 ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
 ```
 
-Then open http://localhost:8888 on your Windows or Mac browser
+Then open [http://localhost:8888](http://localhost:8888) on your Windows or Mac browser

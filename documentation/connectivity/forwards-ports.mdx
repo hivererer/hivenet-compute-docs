@@ -8,7 +8,7 @@ sidebarTitle: "Forward ports"
 
 If your app says something like:
 
-```
+```text
 App started at http://127.0.0.1:7865
 ```
 
@@ -25,7 +25,7 @@ This is common with:
 
 In your Windows Terminal, run:
 
-```
+```text
 ssh -L 7865:localhost:7865 ubuntu@<your-instance-id>.ssh.hivecompute.ai
 ```
 
@@ -34,7 +34,7 @@ Replace:
 - `7865` with the actual port your app uses
 - `<your-instance-id>` with your Compute instance ID
 
-Now open http://localhost:7865 in your browser.
+Now open [http://localhost:7865](http://localhost:7865) in your browser.
 
 **Tip:** Keep the terminal open! If the SSH session closes, the connection breaks.
 
@@ -44,13 +44,13 @@ If you’re not sure which port your app uses:
 
 Run this from inside your instance:
 
-```
+```text
 whoami hostname -I
 ```
 
 Then test your app inside the VM:
 
-```
+```text
 curl http://localhost:7865
 ```
 
@@ -60,9 +60,13 @@ If that works, you can forward the port.
 
 You can try visiting:
 
+```text
+https://<instance-id>-8888.<location>.tenants.hivecompute.ai
 ```
-https://<your-instance-id>-8888.tenants.hivecompute.ai
-```
+
+<Note>
+  Replace `<location>` with the region shown for your instance.
+</Note>
 
 This is a public-facing URL Hivenet creates automatically for instances.
 
@@ -78,7 +82,7 @@ If it doesn’t work or shows “Bad Gateway,” fall back to SSH port forwardin
 
 You can add more `-L` flags to forward several ports at once:
 
-```
+```text
 ssh -L 7865:localhost:7865 -L 8888:localhost:8888 ubuntu@<your-instance-id>.ssh.hivecompute.ai
 ```
 

@@ -8,9 +8,15 @@ sidebarTitle: "Bad gateway errors"
 
 When you create a Compute instance, Hivenet generates a temporary web URL:
 
+```text
+https://<instance-id>-8888.<location>.tenants.hivecompute.ai
 ```
-https://<instance-id>-8888.tenants.hivecompute.ai
-```
+
+<Note>
+  UAE instances use an additional port at the end of the URL:\
+  \
+  https://\<instance-id\>-[8888.uae.tenants.hivecompute.ai:4443](http://8888.uae.tenants.hivecompute.ai:4443)
+</Note>
 
 These are public links to help you access web interfaces like:
 
@@ -33,25 +39,19 @@ Seeing a Bad Gateway error usually means one of these:
 Here’s how to troubleshoot:
 
 1. **Make sure your app is up**
-
-   ```
+   ```text
    curl http://localhost:8888
    ```
-
    You should see HTML or a JSON response, not a timeout or error.
 2. **Check the port** Your app must run on port 8888 for the Hivenet URL to work.
 3. **Update binding address** Some apps default to:
-
-   ```
+   ```text
    127.0.0.1:8888
    ```
-
    You need:
-
-   ```
+   ```text
    0.0.0.0:8888
    ```
-
    Add `--host 0.0.0.0` if you're launching the app from the command line.
 4. **Restart the app if needed** After changing host or port configs.
 
@@ -59,8 +59,8 @@ Here’s how to troubleshoot:
 
 If you can’t get the public link working, use SSH port forwarding:
 
-```
+```text
 ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
 ```
 
-Then open http://localhost:8888 in your browser. This is usually more reliable.
+Then open [http://localhost:8888](http://localhost:8888) in your browser. This is usually more reliable.
