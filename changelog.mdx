@@ -4,6 +4,32 @@ description: "Product updates and announcements"
 sidebarTitle: "Product updates"
 ---
 
+<Update label="[Month 2025]" description="v1.32">
+  > ## More accurate instance availability, Falcon-OCR inference, and more predictable networking.
+
+  **More accurate instance availability**
+
+  Instance presets now reflect real-time capacity more accurately. Configurations that can’t currently be provisioned appear disabled instead of disappearing from the list.
+
+  Sold-out and storage-constrained states are now more precise, reducing cases where an instance looked available but failed to launch.
+
+  **Inference improvements**
+
+  Falcon-OCR is now available in the managed model catalog.
+
+  Managed models now start faster and more reliably by loading weights from a local cache at launch instead of pulling them from an external endpoint.
+
+  vLLM runtime behavior is also more stable, with pinned dependencies and cleaner shutdown handling.
+
+  **Storage capacity checks improved**
+
+  Compute now checks available disk capacity more accurately before launch, including scheduling limits, disk reservations, and live replica state.
+
+  **Networking improvements**
+
+  Per-instance network controls now apply to both VM and container instances, helping make network behavior more predictable and reducing noisy-neighbor variability.
+</Update>
+
 <Update label="November 2025" description="v1.31">
   > ## More reliable GPU VM restarts, cleaner billing, and easier instance access.
 
