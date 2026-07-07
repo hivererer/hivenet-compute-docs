@@ -1,0 +1,224 @@
+---
+title: "Work with instances"
+sidebarTitle: "Instances"
+slug: "/public-api/instances"
+---
+
+Instances are the main Compute resource you’ll work with through the API. An instance runs a workload on a selected hardware preset in a chosen region.
+
+You can use the API to check instance state, build automation around instance workflows, restart stopped work, terminate resources you no longer need, and fetch recent logs for debugging.
+
+<Note>
+  If you prefer to manage instances from the web console, see [start and stop instances](/documentation/essentials/start-stop-instances) and [stop or terminate an instance](/documentation/essentials/stop-terminate-instance) in the [Essentials](/essentials) section. 
+</Note>
+
+## Instance lifecycle
+
+An instance moves through lifecycle states as it is created, started, stopped, or terminated.
+
+Common states include:
+
+| Status | What it means |
+| :-- | :-- |
+| `CREATED` | The instance record exists, but the instance has not been scheduled yet. |
+| `DEPLOYED` | The instance has been scheduled on a host and is waiting to start. |
+| `STARTING` | The instance is booting. |
+| `RUNNING` | The instance is running and should be accessible. |
+| `STOPPING` | Shutdown is in progress. |
+| `STOPPED` | The instance is stopped and can be restarted. |
+| `ERRORED` | The instance hit an error state. |
+| `TERMINATED` | The instance has been permanently removed and can’t be restarted. |
+
+Some actions are asynchronous. That means the API accepts the request and returns the current instance state while the platform continues working in the background.
+
+<Tip>
+  After starting or terminating an instance, poll `GET /instances/{id}` until the `status` field shows the expected state.
+</Tip>
+
+## List instances
+
+Use `GET /instances` to return the instances visible to your account.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?size=20" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+The response returns a `data` array and pagination details.
+
+```json
+{
+  "data": [
+    {
+      "instance_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "my-training-run",
+      "status": "RUNNING",
+      "gpu_type": "NVIDIA_A100_80G",
+      "region": "us-east-1"
+    }
+  ],
+  "pagination": {
+    "next": "eyJpZCI6ImExYjJjM2Q0In0",
+    "size": 20
+  }
+}
+```
+
+If `pagination.next` is not `null`, use it as the `cursor` query parameter to request the next page.
+
+## Filter instances
+
+You can filter the instance list when you only need a specific subset.
+
+Common filters include:
+
+| Filter | Use it to |
+| :-- | :-- |
+| `status` | Return instances with a specific lifecycle status. |
+| `gpu_type` | Return instances using a specific GPU model. |
+| `region` | Return instances in a specific region. |
+| `host_id` | Return instances running on a specific host node. |
+| `user_id` | Return instances owned by a specific user. |
+| `org_id` | Return instances in a specific organization. |
+| `date_range_begin` and `date_range_end` | Return instances created inside a date range. |
+| `free_text_search` | Search across instance names and related fields. |
+
+For example, to list running instances in a specific region:
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?status=running&region=us-east-1&size=20" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+<Note>
+  Date range filters use ISO 8601 timestamps in UTC. Use `date_range_begin` and `date_range_end` together.
+</Note>
+
+## Get one instance
+
+Use `GET /instances/{id}` when you need the current state of a single instance.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+Use this endpoint after actions such as start or terminate to check whether the instance has reached the expected state.
+
+## Start an instance
+
+Use `POST /instances/{id}/start` to start a stopped instance.
+
+```text
+curl --request POST \
+  --url "https://api.hivenet.com/v1/instances/a1b2c3d4-e5f6-7890-abcd-ef1234567890/start" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "reason_note": "Restarting the instance for a scheduled training run."
+  }'
+```
+
+The request body is optional. You can include `reason_note` when you want to keep a human-readable note for audit or operational context.
+
+After the request, the instance may move through `STARTING` before it reaches `RUNNING`.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+If the instance is already running, the API returns the current instance state.
+
+## Terminate an instance
+
+Use `POST /instances/{id}/terminate` to permanently terminate an instance.
+
+<Danger>
+  Terminating an instance is irreversible. A terminated instance can’t be restarted, and its data is deleted. 
+</Danger>
+
+```text
+curl --request POST \
+  --url "https://api.hivenet.com/v1/instances/a1b2c3d4-e5f6-7890-abcd-ef1234567890/terminate" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "reason_note": "Terminating the instance after the workload completed."
+  }'
+```
+
+After the request, poll `GET /instances/{id}` until the instance reaches `TERMINATED`.
+
+## Get instance logs
+
+Use `GET /instances/{id}/logs` to fetch recent container output from an instance.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances/a1b2c3d4-e5f6-7890-abcd-ef1234567890/logs?lines=100" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+The `lines` query parameter controls how many log lines are returned. The default is `100`, and the maximum is `1000`.
+
+A shortened response looks like this:
+
+```json
+{
+  "entries": [
+    {
+      "timestamp": "2026-06-26T10:01:00Z",
+      "message": "Training epoch 1/10 complete. Loss: 0.342"
+    },
+    {
+      "timestamp": "2026-06-26T10:02:15Z",
+      "message": "Training epoch 2/10 complete. Loss: 0.298"
+    }
+  ],
+  "line_count": 2
+}
+```
+
+## Suggested workflow
+
+<Steps>
+  <Step title="List your instances">
+    Call `GET /instances` to find the instance you want to inspect or manage.
+  </Step>
+  <Step title="Save the instance ID">
+    Copy the `instance_id` from the response. You’ll need it for instance-specific requests.
+  </Step>
+  <Step title="Check the current state">
+    Call `GET /instances/{id}` and read the `status` field before taking action.
+  </Step>
+  <Step title="Run the action">
+    Start or terminate the instance only after confirming that you’re using the correct ID.
+  </Step>
+  <Step title="Poll for the final state">
+    Call `GET /instances/{id}` again until the instance reaches the expected lifecycle state.
+  </Step>
+</Steps>
+
+## Common issues
+
+| Issue | What to check |
+| :-- | :-- |
+| The list is empty | Confirm the token has access to the expected account or organization. |
+| The instance returns `404` | Check the instance ID and confirm the token can access that resource. |
+| The instance stays in a transitional state | Poll again after a short delay. Some actions take time to complete. |
+| Logs are empty | The instance may not have recent container output, or it may not have produced logs in the available window. |
+| A terminate request succeeded by mistake | Termination is permanent. Create a new instance if you need to run the workload again. |
+
+## Next step
+
+Continue with **Use pagination and filters** to learn how to work with larger result sets and narrow API responses.

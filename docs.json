@@ -6,7 +6,11 @@
     "options": [
       "copy",
       "chatgpt",
-      "claude"
+      "claude",
+      "perplexity",
+      "download-pdf",
+      "view",
+      "assistant"
     ]
   },
   "colors": {
@@ -147,6 +151,23 @@
         ]
       },
       {
+        "tab": "Public API",
+        "pages": [
+          "public-api/get-started-with-the-compute-api",
+          "public-api/make-your-first-api-request",
+          "public-api/authenticate-api-requests",
+          "public-api/work-with-instances",
+          "public-api/use-pagination-and-filters",
+          "public-api/handle-errors-and-rate-limits",
+          "public-api/api-changelog",
+          {
+            "group": "API reference",
+            "expanded": true,
+            "openapi": "public-v1.yaml"
+          }
+        ]
+      },
+      {
         "tab": "Changelog",
         "groups": [
           {
@@ -184,5 +205,23 @@
   },
   "appearance": {
     "strict": false
+  },
+  "api": {
+    "openapi": [
+      "public-v1.json",
+      "public-v1.yaml"
+    ],
+    "playground": {
+      "proxy": true
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "Python"
+      ],
+      "autogenerate": true
+    },
+    "url": "full"
   }
 }

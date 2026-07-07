@@ -1,0 +1,218 @@
+---
+title: "Use pagination and filters"
+sidebarTitle: "Pagination and filters"
+description: "Learn how to page through API results and narrow responses with supported query parameters."
+slug: "/public-api/pagination-and-filters"
+---
+
+List endpoints can return more results than you want to handle in a single response. Pagination helps you move through results safely, while filters help you ask for a smaller, more useful set of data.
+
+Use pagination when you need to process many resources. Use filters when you already know what kind of resource you’re looking for.
+
+<Note>
+  Not every list endpoint supports the same filters. Check the API reference for the exact query parameters supported by each endpoint. 
+</Note>
+
+## How cursor pagination works
+
+The Compute API uses cursor-based pagination for list responses that support paging.
+
+A cursor is an opaque value that points to the next page of results. You don’t need to read or modify it. Pass it back exactly as the API returns it.
+
+A paginated response includes a `pagination` object:
+
+```json
+{
+  "data": [
+    {
+      "instance_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "my-training-run",
+      "status": "RUNNING"
+    }
+  ],
+  "pagination": {
+    "next": "eyJpZCI6ImExYjJjM2Q0In0",
+    "size": 20
+  }
+}
+```
+
+If `pagination.next` contains a value, there may be another page. If `pagination.next` is `null`, you’ve reached the last page.
+
+## Request the first page
+
+To request the first page, call the list endpoint without a cursor.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?size=20" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+The `size` query parameter controls the maximum number of items returned in that page.
+
+For `GET /instances`, `size` can be between `1` and `200`. The default is `50`.
+
+<Tip>
+  Use smaller page sizes while testing. Larger pages are useful for batch jobs, but small pages make responses easier to inspect when you’re debugging.
+</Tip>
+
+## Request the next page
+
+To request the next page, copy the value from `pagination.next` and pass it as the `cursor` query parameter.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?size=20&cursor=eyJpZCI6ImExYjJjM2Q0In0" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+Keep using the next cursor from each response until `pagination.next` is `null`.
+
+<Warning>
+  Treat cursors as temporary values. Don’t store them as permanent links to a specific page, and don’t edit them before sending them back to the API.
+</Warning>
+
+## Page through all results
+
+A typical pagination workflow looks like this:
+
+<Steps>
+  <Step title="Request the first page">
+    Call the list endpoint with a `size` value and no `cursor`.
+  </Step>
+  <Step title="Read the response">
+    Process the items in the `data` array.
+  </Step>
+  <Step title="Check for the next cursor">
+    Look at `pagination.next`.
+  </Step>
+  <Step title="Request the next page">
+    If `pagination.next` is not `null`, send another request with that value as the `cursor`.
+  </Step>
+  <Step title="Stop at the last page">
+    Stop when `pagination.next` is `null`.
+  </Step>
+</Steps>
+
+## Use filters to narrow results
+
+Filters are query parameters that reduce the results returned by a list endpoint.
+
+For example, this request lists running instances in a specific region:
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?status=running&region=us-east-1&size=20" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+Filters are useful when you want to:
+
+- Find resources in a specific state
+- Limit results to a region or hardware type
+- Search by owner, organization, or related identifier
+- Review resources created during a specific time window
+- Find resources by name or other searchable text
+
+## Supported instance filters
+
+`GET /instances` supports these filters:
+
+| Filter | Type | What it does |
+| :-- | :-- | :-- |
+| `cursor` | String | Requests the next page using a cursor from `pagination.next`. |
+| `size` | Integer | Sets the maximum number of items returned per page. |
+| `status` | String | Filters instances by lifecycle status. |
+| `gpu_type` | String | Filters instances by GPU model identifier. |
+| `region` | String | Filters instances by region slug. |
+| `host_id` | String | Filters instances running on a specific host node. |
+| `user_id` | UUID | Filters instances by owning user. |
+| `org_id` | UUID | Filters instances by organization. |
+| `date_range_begin` | Date-time | Returns instances created at or after this timestamp. |
+| `date_range_end` | Date-time | Returns instances created at or before this timestamp. |
+| `free_text_search` | String | Searches across instance names and related fields. |
+
+## Filter by status
+
+Use `status` when you only want instances in a specific lifecycle state.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?status=running" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+For `GET /instances`, supported status filters are:
+
+- `running`
+- `stopped`
+- `terminated`
+
+<Note>
+  Status filter values may use a different format from status values returned in the response. For example, a filter may use `running`, while the response may show `RUNNING`.
+</Note>
+
+ Filter by date range
+
+Use `date_range_begin` and `date_range_end` together when you want instances created within a specific time window.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?date_range_begin=2026-06-01T00:00:00Z&date_range_end=2026-06-30T23:59:59Z" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+Date range values use ISO 8601 timestamps in UTC.
+
+Use both parameters together:
+
+- `date_range_begin` sets the start of the range.
+- `date_range_end` sets the end of the range.
+
+## Search by text
+
+Use `free_text_search` when you want to search across instance names and related fields.
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?free_text_search=training-run" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+Text search is useful when you know part of a resource name but don’t know its ID.
+
+## Combine filters
+
+You can combine supported filters in one request.
+
+For example, this request searches for running instances in `us-east-1` that match `training-run`:
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?status=running&region=us-east-1&free_text_search=training-run&size=20" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+When combining filters, start with the narrowest useful set. If the response is empty, remove filters one at a time to find which condition is excluding the resource.
+
+## Common issues
+
+| Issue | What to check |
+| :-- | :-- |
+| The response is empty | The filters may be too narrow, or the token may not have access to matching resources. |
+| The API returns `400` | Check parameter names, allowed values, date formats, and UUID formats. |
+| The next page repeats results | Make sure you’re using the latest `pagination.next` cursor from the previous response. |
+| The cursor does not work | Request a fresh first page and use the new cursor. |
+| A date range returns unexpected results | Confirm the timestamps are in UTC and that both date range parameters are included. |
+
+## Next step
+
+Continue with **Handle errors and rate limits** to understand common API errors and how to retry requests safely.

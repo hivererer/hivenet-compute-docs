@@ -1,0 +1,76 @@
+---
+title: "Get started with the Compute API"
+sidebarTitle: "Get started"
+description: "Learn how the Compute API works, what you need before using it, and where to find endpoint details."
+slug: "/public-api/get-started"
+---
+
+The Compute with Hivenet API lets you manage Compute resources programmatically instead of working only through the web console.
+
+You can use the API to automate repeatable workflows, connect internal tools, check the state of your resources, or build scripts around common Compute tasks. Use these guides to understand the main workflows, then use the API reference when you need exact endpoint details.
+
+<Tip>
+  Use the guides when you want to understand how something works. Use the API reference when you need exact paths, parameters, request bodies, response schemas, and error formats.
+</Tip>
+
+## Base URL
+
+All public API requests use this base URL:
+
+`https://api.hivenet.com/v1`
+
+For example, the path `GET /instances` becomes:
+
+`https://api.hivenet.com/v1/instances`
+
+## Authentication
+
+All API requests require a bearer token.
+
+Send your token in the `Authorization` header with every request:
+
+`Authorization: Bearer <your-api-token>`
+
+<Warning>
+  Keep API tokens private. Don’t paste them into public issues, shared documents, support tickets, screenshots, or client-side code.
+</Warning>
+
+## What you can do with the API
+
+The available endpoints are listed in the API reference. Depending on your account and access level, you can use the API to work with supported Compute resources such as instances, authentication tokens, SSH keys, regions, presets, users, and organizations.
+
+For instance workflows, you can use the API to:
+
+- List instances visible to your account
+- Filter instances by status, GPU type, region, owner, organization, date range, or search text
+- Get the current state of a single instance
+- Start a stopped instance
+- Terminate an instance
+- Fetch recent container log output from an instance
+
+## How API actions work
+
+Some API actions return immediately while the platform continues working in the background.
+
+For example, when you start a stopped instance, the instance may move through `STARTING` before it reaches `RUNNING`. To check progress, call `GET /instances/{id}` until the `status` field shows the state you expect.
+
+<Danger>
+  Terminating an instance is permanent. A terminated instance can’t be restarted, and its data is deleted. 
+</Danger>
+
+## What you’ll need
+
+Before you make your first request, make sure you have:
+
+- A Compute with Hivenet account
+- An API token
+- A terminal, API client, or tool that can send HTTP requests
+- Access to the resource you want to read or manage
+
+You don’t need an SDK to get started. A simple `curl` request is enough for your first test.
+
+## Where to go next
+
+Start with **Make your first API request** to send a read-only request and confirm that your token works.
+
+Then use the API reference whenever you need the exact technical details for an endpoint.

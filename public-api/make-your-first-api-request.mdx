@@ -1,0 +1,118 @@
+---
+title: "Make your first API request"
+sidebarTitle: "First API request"
+description: "Send a read-only request to the Compute API and check that your token, base URL, and response handling work."
+slug: "/public-api/first-request"
+---
+
+Start with a read-only request before you try actions that change a resource.
+
+This page uses `GET /instances` because it’s a safe way to confirm that your API token works, your base URL is correct, and your client can read a JSON response.
+
+<Note>
+  This request lists Compute instances visible to your account. If the response is successful but the list is empty, your token may still be working. It may simply mean there are no instances available to that user or organization.
+</Note>
+
+## Before you start
+
+Make sure you have:
+
+- A Compute with Hivenet account
+- An API token
+- A terminal or API client that can send HTTP requests
+
+You’ll also need the public API base URL:
+
+`https://api.hivenet.com/v1`
+
+## Send a request
+
+<Steps>
+  <Step title="Prepare your API token">
+    Copy your API token from the place where your account or organization manages API access. 
+
+    ```text
+    Keep the token private. You’ll use it in the `Authorization` header.
+    ```
+  </Step>
+  <Step title="Call the instances endpoint">
+    Send a `GET` request to `/instances`.
+
+    Replace `YOUR_API_TOKEN` with your actual token before running the command.
+
+    ````text
+    ```bash
+    curl --request GET \
+      --url "https://api.hivenet.com/v1/instances?size=10" \
+      --header "Authorization: Bearer YOUR_API_TOKEN" \
+      --header "Accept: application/json"
+    ```
+    ````
+  </Step>
+  <Step title="Check the response">
+    A successful request returns `200 OK` and a JSON response. The response includes a `data` array and pagination information. A shortened example looks like this:
+
+    ````json
+    ```json
+    {
+      "data": [
+        {
+          "instance_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "name": "my-training-run",
+          "status": "RUNNING",
+          "gpu_type": "NVIDIA_A100_80G",
+          "region": "us-east-1"
+        }
+      ],
+      "pagination": {
+        "next": "eyJpZCI6ImExYjJjM2Q0In0",
+        "size": 10
+      }
+    }
+    ```
+    ````
+  </Step>
+</Steps>
+
+## Understand the request
+
+The request uses three important pieces:
+
+| Part | What it does |
+| :-- | :-- |
+| `GET` | Reads data without changing anything. |
+| `/instances` | Lists Compute instances visible to your account. |
+| `Authorization` | Sends your bearer token so the API can authenticate the request. |
+
+The query parameter `size=10` limits the response to 10 instances. You can remove it or change the number when you need a larger page.
+
+## Read the response
+
+In the response, check these fields first:
+
+| Field | What it means |
+| :-- | :-- |
+| `data` | The list of instances returned by the request. |
+| `instance_id` | The unique ID of an instance. You’ll use this for instance-specific requests. |
+| `status` | The current lifecycle state of the instance. |
+| `pagination.next` | The cursor for the next page of results. If it’s `null`, there are no more pages. |
+
+<Tip>
+  Save one `instance_id` from the response if you want to test instance-specific endpoints later, such as `GET /instances/{id}` or `GET /instances/{id}/logs`. 
+</Tip>
+
+## Common first errors
+
+| Status | What it usually means | What to do |
+| :-- | :-- | :-- |
+| `400` | A query parameter is invalid. | Check parameter names, formats, and allowed values. |
+| `401` | The token is missing, invalid, or expired. | Check the `Authorization` header and make sure the token is correct. |
+| `429` | You’ve sent too many requests in a short time. | Wait before retrying. If the response includes `Retry-After`, use that value. |
+
+<Warning>
+  Don’t test the API for the first time with a destructive action. Use read-only endpoints such as `GET /instances` until you’re sure your token and client are working. 
+</Warning>
+
+## Next step
+
+After your first request works, continue with **Authenticate API requests** to learn how bearer tokens are sent, stored, and handled safely.

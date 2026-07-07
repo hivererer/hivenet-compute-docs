@@ -1,0 +1,256 @@
+---
+title: "Handle errors and rate limits"
+sidebarTitle: "Errors and rate limits"
+description: "Learn how the Compute API returns errors, how to read error responses, and when to retry requests."
+slug: "/public-api/errors-and-rate-limits"
+---
+
+The Compute API uses standard HTTP status codes and JSON error responses.
+
+When a request fails, check the status code first. It tells you the broad type of problem. Then read the response body for the specific message, request path, and timestamp.
+
+<Note>
+  An error response does not always mean the API is unavailable. Many errors mean the request needs a different token, parameter, resource ID, or retry strategy.
+</Note>
+
+## Error response format
+
+Error responses use a standard JSON format.
+
+A typical error response looks like this:
+
+```text
+{
+  "statusCode": 401,
+  "message": "Missing API token",
+  "timestamp": "2026-06-26T10:00:00.000Z",
+  "path": "/v1/instances"
+}
+```
+
+Validation errors may include more than one message:
+
+```text
+{
+  "statusCode": 400,
+  "message": [
+    "status must be one of the following values: running, stopped, terminated"
+  ],
+  "error": "Bad Request",
+  "timestamp": "2026-06-26T10:00:00.000Z",
+  "path": "/v1/instances"
+}
+```
+
+## Error fields
+
+| Field | What it means |
+| :-- | :-- |
+| `statusCode` | The HTTP status code returned by the API. |
+| `message` | A human-readable error message. This may be a string or an array of strings. |
+| `error` | A short reason phrase. This may appear on validation errors. |
+| `timestamp` | The UTC time when the error occurred. |
+| `path` | The request path that returned the error. |
+
+<Tip>
+  When you contact support about an API error, include the endpoint, status code, timestamp, and a safe version of the error message. Don’t include your API token. 
+</Tip>
+
+## Common status codes
+
+| Status | Meaning | What to do |
+| :-- | :-- | :-- |
+| `400 Bad Request` | The request is invalid. | Check query parameters, request body fields, date formats, UUIDs, and allowed values. |
+| `401 Unauthorized` | The request is missing a valid API token. | Check the `Authorization` header and bearer token format. |
+| `403 Forbidden` | The token is valid, but the action is not allowed. | Confirm the token has access to the account, organization, or resource. |
+| `404 Not Found` | The resource was not found or is not visible to the token. | Check the resource ID and confirm the token can access it. |
+| `409 Conflict` | The request conflicts with the current resource state. | Refresh the resource and check whether the action is still valid. |
+| `429 Too Many Requests` | Too many requests were sent in a short time. | Wait before retrying. Use `Retry-After` if the response includes it. |
+| `500` or higher | The API could not complete the request because of a server-side issue. | Retry later. If the issue continues, contact support with the request details. |
+
+<Note>
+  Not every endpoint returns every status code. Check the API reference for the errors documented for a specific endpoint.
+</Note>
+
+## Handle validation errors
+
+A `400 Bad Request` usually means the API understood the request, but one or more values were not valid.
+
+For example, this request may fail if `status` does not match one of the supported filter values:
+
+```text
+curl --request GET \
+  --url "https://api.hivenet.com/v1/instances?status=active" \
+  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --header "Accept: application/json"
+```
+
+The response may look like this:
+
+```json
+{
+  "statusCode": 400,
+  "message": [
+    "status must be one of the following values: running, stopped, terminated"
+  ],
+  "error": "Bad Request",
+  "timestamp": "2026-06-26T10:00:00.000Z",
+  "path": "/v1/instances"
+}
+```
+
+To fix validation errors:
+
+- Check the exact parameter name.
+- Check the value format.
+- Check allowed enum values.
+- Check UUID and date-time formatting.
+- Remove optional parameters until the request works, then add them back one by one.
+
+## Handle authentication errors
+
+A `401 Unauthorized` response means the request did not include a valid token.
+
+Check that the request includes the `Authorization` header:
+
+```text
+Authorization: Bearer <your-api-token>
+```
+
+Then check these common issues:
+
+- The header is missing.
+- `Bearer` is misspelled.
+- The token was copied with extra spaces.
+- The token is expired, revoked, or invalid.
+- The request is being sent from a tool that strips headers.
+  <Warning>
+    Do not put API tokens in URLs. URLs can be stored in browser history, server logs, proxy logs, and shared screenshots.
+  </Warning>
+
+## Handle not found errors
+
+A `404 Not Found` response means the requested resource could not be found.
+
+For API users, this can mean one of two things:
+
+- The resource does not exist.
+- The resource exists, but your token cannot access it.
+
+For example, `GET /instances/{id}` may return `404` if the instance ID is wrong, or if the instance is not visible to the user or organization linked to the token.
+
+When you see a `404`:
+
+- Check the resource ID.
+- Confirm you are using the right environment and base URL.
+- Confirm the token can access the expected account or organization.
+- Try listing resources first, then copy the ID from the list response.
+
+## Handle conflict errors
+
+A `409 Conflict` means the request cannot be completed because the resource is not in the right state for that action.
+
+For example, an action may fail if the resource is already changing state, already terminated, or not ready for the requested operation.
+
+When you see a `409`:
+
+<Steps>
+  <Step title="Fetch the latest resource state">
+    Call the relevant `GET` endpoint again and check the current status.
+  </Step>
+  <Step title="Confirm the action is still valid">
+    Make sure the resource can still accept the action you want to run.
+  </Step>
+  <Step title="Wait if the resource is changing state">
+    If the resource is starting, stopping, or terminating, wait before trying again.
+  </Step>
+  <Step title="Retry only when safe">
+    Retry once you know the action is still valid and won’t cause an unwanted change.
+  </Step>
+</Steps>
+
+## Handle rate limits
+
+A `429 Too Many Requests` response means your client sent too many requests in a short time.
+
+If the response includes a `Retry-After` header, wait that many seconds before sending another request.
+
+Example response header:
+
+```text
+Retry-After: 60
+```
+
+A rate limit response may look like this:
+
+```json
+{
+  "statusCode": 429,
+  "message": "Too Many Requests",
+  "timestamp": "2026-06-26T10:00:00.000Z",
+  "path": "/v1/instances"
+}
+```
+
+<Tip>
+  For scripts and integrations, add retry logic with a short delay instead of retrying immediately in a tight loop.
+</Tip>
+
+## Retry safely
+
+Some requests are safer to retry than others.
+
+| Request type | Retry guidance |
+| :-- | :-- |
+| Read-only requests, such as `GET /instances` | Usually safe to retry after a short delay. |
+| Requests that start, stop, update, or terminate resources | Retry carefully. Check the current resource state before trying again. |
+| Requests that failed with `400` | Don’t retry without changing the request. |
+| Requests that failed with `401` or `403` | Don’t retry until you fix access or authentication. |
+| Requests that failed with `429` | Wait before retrying. Use `Retry-After` when available. |
+| Requests that failed with `500` or higher | Retry after a delay. If the issue continues, contact support. |
+
+<Danger>
+  Be careful retrying destructive actions. Before retrying a terminate request, fetch the resource state and confirm you still want to continue.
+</Danger>
+
+## Build simple retry behavior
+
+A safe retry flow looks like this:
+
+<Steps>
+  <Step title="Check the status code">
+    Use the status code to decide whether the request can be retried.
+  </Step>
+  <Step title="Fix request errors first">
+    For `400`, `401`, and `403`, change the request or access setup before retrying.
+  </Step>
+  <Step title="Respect rate limit">
+    For `429`, wait for the `Retry-After` value when it is included.
+  </Step>
+  <Step title="Pause before retrying server errors">
+    For `500` or higher, wait before retrying instead of sending repeated requests immediately.
+  </Step>
+  <Step title="Check resource state after actions">
+    For actions that change resources, fetch the resource again before deciding whether another request is needed.
+  </Step>
+</Steps>
+
+## What to include when asking for help
+
+If you need help with an API error, include:
+
+- The endpoint path, such as `GET /instances`
+- The HTTP status code
+- The response `message`
+- The response `timestamp`
+- The response `path`
+- Whether the request worked before
+- What changed before the error started
+
+<Warning>
+  Never share your full API token in a support message. If you need to show a request, replace the token with a placeholder such as `Bearer REDACTED`.
+</Warning>
+
+## Next step
+
+Continue with **API changelog** to track changes that may affect your API integrations.
