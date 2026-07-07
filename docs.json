@@ -163,7 +163,7 @@
           {
             "group": "API reference",
             "expanded": true,
-            "openapi": "public-v1.yaml"
+            "pages": []
           }
         ]
       },
