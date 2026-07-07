@@ -9,7 +9,7 @@ The Compute API uses bearer token authentication. Every request must include an 
 
 Bearer tokens let the API identify who is making the request and which Compute resources that user or organization can access.
 
- \<Warning\> Treat API tokens like passwords. Anyone with a valid token may be able to access or change Compute resources linked to that token. \</Warning\> 
+\<Warning\> Treat API tokens like passwords. Anyone with a valid token may be able to access or change Compute resources linked to that token. \</Warning\>
 
 ## Send your token in the Authorization header
 
@@ -51,7 +51,7 @@ curl --request GET \
 
 ## Check that your token works
 
-Use a read-only endpoint to test authentication.
+Use a read-only endpoint, such as [`GET /instances`](/public-api/endpoints/list-instances), to test authentication.
 
 ```text
 curl --request GET \
@@ -72,9 +72,9 @@ If a request succeeds for one resource but fails for another, the token may be v
 
 For example:
 
-- `GET /instances` may return only instances visible to your account.
-- `GET /instances/{id}` may return `404` if the instance doesn’t exist or isn’t visible to your token.
-- Actions such as starting or terminating an instance may require access to that instance.\
+- [`GET /instances`](/public-api/endpoints/list-instances) may return only instances visible to your account.
+- [`GET /instances/{id}`](/public-api/endpoints/get-instance) may return `404` if the instance doesn’t exist or isn’t visible to your token.
+- Actions such as [starting an instance](/public-api/endpoints/start-instance) or [terminating an instance](/public-api/endpoints/terminate-instance) may require access to that instance.
 
 ## Common authentication errors
 
@@ -82,7 +82,7 @@ For example:
 | :-- | :-- | :-- |
 | `401 Unauthorized` | The request is missing a valid token. | Check that the `Authorization` header exists and uses the `Bearer` format. |
 | `403 Forbidden` | The token is valid, but the request is not allowed. | Check whether the account, organization, or token has access to the resource. |
-| `404 Not Found` | The resource wasn’t found or isn’t visible to the token. | Check the resource ID and confirm the token can access it. |
+| `404 Not Found` | The resource wasn’t found or isn’t visible to the token. | Check the resource ID, or list resources first with an endpoint such as [`GET /instances`](/public-api/endpoints/list-instances). |
 | `429 Too Many Requests` | Too many requests were sent in a short time. | Wait before retrying. Use `Retry-After` when the response includes it. |
 
 ## Keep tokens safe
@@ -113,4 +113,4 @@ After revoking a token, update any scripts or integrations that still depend on 
 
 ## Next step
 
-Continue with **Work with instances** to understand how instance lifecycle states behave when you use the API.
+Continue with [Work with instances](/public-api/instances) to understand how instance lifecycle states behave when you use the API.

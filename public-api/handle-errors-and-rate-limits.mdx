@@ -10,7 +10,7 @@ The Compute API uses standard HTTP status codes and JSON error responses.
 When a request fails, check the status code first. It tells you the broad type of problem. Then read the response body for the specific message, request path, and timestamp.
 
 <Note>
-  An error response does not always mean the API is unavailable. Many errors mean the request needs a different token, parameter, resource ID, or retry strategy.
+  An error response does not always mean the API is unavailable. Many errors mean the request needs a different token, parameter, resource ID, or retry strategy. Check the endpoint reference for errors documented on a specific endpoint.
 </Note>
 
 ## Error response format
@@ -53,7 +53,7 @@ Validation errors may include more than one message:
 | `path` | The request path that returned the error. |
 
 <Tip>
-  When you contact support about an API error, include the endpoint, status code, timestamp, and a safe version of the error message. Don’t include your API token. 
+  When you contact support about an API error, include the endpoint, status code, timestamp, and a safe version of the error message. Don’t include your API token.
 </Tip>
 
 ## Common status codes
@@ -76,7 +76,7 @@ Validation errors may include more than one message:
 
 A `400 Bad Request` usually means the API understood the request, but one or more values were not valid.
 
-For example, this request may fail if `status` does not match one of the supported filter values:
+For example, a [`GET /instances`](/public-api/endpoints/list-instances) request may fail if `status` does not match one of the supported filter values:
 
 ```text
 curl --request GET \
@@ -137,18 +137,17 @@ For API users, this can mean one of two things:
 - The resource does not exist.
 - The resource exists, but your token cannot access it.
 
-For example, `GET /instances/{id}` may return `404` if the instance ID is wrong, or if the instance is not visible to the user or organization linked to the token.
+For example, [`GET /instances/{id}`](/public-api/endpoints/get-instance) may return `404` if the instance ID is wrong, or if the instance is not visible to the user or organization linked to the token.
 
 When you see a `404`:
 
 - Check the resource ID.
 - Confirm you are using the right environment and base URL.
 - Confirm the token can access the expected account or organization.
-- Try listing resources first, then copy the ID from the list response.
 
 ## Handle conflict errors
 
-A `409 Conflict` means the request cannot be completed because the resource is not in the right state for that action.
+A `409 Conflict` means the request cannot be completed because the resource is not in the right state for that action. This is most relevant for actions that change resources, such as [starting](/public-api/endpoints/start-instance) or [terminating](/public-api/endpoints/terminate-instance) an instance.
 
 For example, an action may fail if the resource is already changing state, already terminated, or not ready for the requested operation.
 
@@ -201,8 +200,8 @@ A rate limit response may look like this:
 Some requests are safer to retry than others.
 
 | Request type | Retry guidance |
-| :-- | :-- |
-| Read-only requests, such as `GET /instances` | Usually safe to retry after a short delay. |
+| --- | --- |
+| Read-only requests, such as [`GET /instances`](/public-api/endpoints/list-instances) | Usually safe to retry after a short delay. |
 | Requests that start, stop, update, or terminate resources | Retry carefully. Check the current resource state before trying again. |
 | Requests that failed with `400` | Don’t retry without changing the request. |
 | Requests that failed with `401` or `403` | Don’t retry until you fix access or authentication. |
@@ -210,7 +209,7 @@ Some requests are safer to retry than others.
 | Requests that failed with `500` or higher | Retry after a delay. If the issue continues, contact support. |
 
 <Danger>
-  Be careful retrying destructive actions. Before retrying a terminate request, fetch the resource state and confirm you still want to continue.
+  Be careful retrying destructive actions. Before retrying a [terminate request](/public-api/endpoints/terminate-instance), fetch the resource state and confirm you still want to continue.
 </Danger>
 
 ## Build simple retry behavior
@@ -231,7 +230,7 @@ A safe retry flow looks like this:
     For `500` or higher, wait before retrying instead of sending repeated requests immediately.
   </Step>
   <Step title="Check resource state after actions">
-    For actions that change resources, fetch the resource again before deciding whether another request is needed.
+    For actions that change resources, fetch the resource again before deciding whether another request is needed. For instances, use [`GET /instances/{id}`](/public-api/endpoints/get-instance).
   </Step>
 </Steps>
 
@@ -239,7 +238,6 @@ A safe retry flow looks like this:
 
 If you need help with an API error, include:
 
-- The endpoint path, such as `GET /instances`
 - The HTTP status code
 - The response `message`
 - The response `timestamp`
@@ -253,4 +251,4 @@ If you need help with an API error, include:
 
 ## Next step
 
-Continue with **API changelog** to track changes that may affect your API integrations.
+Continue with [API changelog](/public-api/changelog) to track changes that may affect your API integrations.

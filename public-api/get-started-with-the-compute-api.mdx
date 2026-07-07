@@ -41,21 +41,21 @@ The available endpoints are listed in the API reference. Depending on your accou
 
 For instance workflows, you can use the API to:
 
-- List instances visible to your account
-- Filter instances by status, GPU type, region, owner, organization, date range, or search text
-- Get the current state of a single instance
-- Start a stopped instance
-- Terminate an instance
-- Fetch recent container log output from an instance
+- [List instances](/public-api/endpoints/list-instances) visible to your account
+- [Filter instance results](/public-api/endpoints/list-instances) by status, GPU type, region, owner, organization, date range, or search text
+- [Get the current state of a single instance](/public-api/endpoints/get-instance)
+- [Start a stopped instance](/public-api/endpoints/start-instance)
+- [Terminate an instance](/public-api/endpoints/terminate-instance)
+- [Fetch recent container log output from an instance](/public-api/endpoints/get-instance-logs)
 
 ## How API actions work
 
 Some API actions return immediately while the platform continues working in the background.
 
-For example, when you start a stopped instance, the instance may move through `STARTING` before it reaches `RUNNING`. To check progress, call `GET /instances/{id}` until the `status` field shows the state you expect.
+For example, when you [start a stopped instance](/public-api/endpoints/start-instance), the instance may move through `STARTING` before it reaches `RUNNING`. To check progress, call [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `status` field shows the state you expect.
 
 <Danger>
-  Terminating an instance is permanent. A terminated instance can’t be restarted, and its data is deleted. 
+  Terminating an instance is permanent. A terminated instance can’t be restarted, and its data is deleted.
 </Danger>
 
 ## What you’ll need
@@ -71,6 +71,12 @@ You don’t need an SDK to get started. A simple `curl` request is enough for yo
 
 ## Where to go next
 
-Start with **Make your first API request** to send a read-only request and confirm that your token works.
+Start with [Make your first API request](/public-api/first-request) to send a read-only request and confirm that your token works.
 
-Then use the API reference whenever you need the exact technical details for an endpoint.
+Then use the endpoint reference whenever you need exact technical details:
+
+- [List instances](/public-api/endpoints/list-instances)
+- [Get instance](/public-api/endpoints/get-instance)
+- [Start instance](/public-api/endpoints/start-instance)
+- [Terminate instance](/public-api/endpoints/terminate-instance)
+- [Get instance logs](/public-api/endpoints/get-instance-logs)

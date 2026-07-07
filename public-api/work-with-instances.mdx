@@ -6,10 +6,10 @@ slug: "/public-api/instances"
 
 Instances are the main Compute resource you’ll work with through the API. An instance runs a workload on a selected hardware preset in a chosen region.
 
-You can use the API to check instance state, build automation around instance workflows, restart stopped work, terminate resources you no longer need, and fetch recent logs for debugging.
+You can use the API to check instance state, build automation around instance workflows, [start stopped work](/public-api/endpoints/start-instance), [terminate resources you no longer need](/public-api/endpoints/terminate-instance), and [fetch recent logs](/public-api/endpoints/get-instance-logs) for debugging.
 
 <Note>
-  If you prefer to manage instances from the web console, see [start and stop instances](/documentation/essentials/start-stop-instances) and [stop or terminate an instance](/documentation/essentials/stop-terminate-instance) in the [Essentials](/essentials) section. 
+  If you prefer to manage instances from the web console, see [start and stop instances](/documentation/essentials/start-stop-instances) and [stop or terminate an instance](/documentation/essentials/stop-terminate-instance) in the [Essentials](/essentials) section.
 </Note>
 
 ## Instance lifecycle
@@ -32,12 +32,12 @@ Common states include:
 Some actions are asynchronous. That means the API accepts the request and returns the current instance state while the platform continues working in the background.
 
 <Tip>
-  After starting or terminating an instance, poll `GET /instances/{id}` until the `status` field shows the expected state.
+  After starting or terminating an instance, poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `status` field shows the expected state.
 </Tip>
 
 ## List instances
 
-Use `GET /instances` to return the instances visible to your account.
+Use [`GET /instances`](/public-api/endpoints/list-instances) to return the instances visible to your account.
 
 ```text
 curl --request GET \
@@ -66,11 +66,11 @@ The response returns a `data` array and pagination details.
 }
 ```
 
-If `pagination.next` is not `null`, use it as the `cursor` query parameter to request the next page.
+If `pagination.next` is not `null`, use it as the `cursor` query parameter to request the next page. See [Use pagination and filters](/public-api/pagination-and-filters) for the full pagination workflow.
 
 ## Filter instances
 
-You can filter the instance list when you only need a specific subset.
+You can filter the [`GET /instances`](/public-api/endpoints/list-instances) response when you only need a specific subset.
 
 Common filters include:
 
@@ -109,11 +109,11 @@ curl --request GET \
   --header "Accept: application/json"
 ```
 
-Use this endpoint after actions such as start or terminate to check whether the instance has reached the expected state.
+Use this endpoint after actions such as [start](/public-api/endpoints/start-instance) or [terminate](/public-api/endpoints/terminate-instance) to check whether the instance has reached the expected state.
 
 ## Start an instance
 
-Use `POST /instances/{id}/start` to start a stopped instance.
+Use [`POST /instances/{id}/start`](/public-api/endpoints/start-instance) to start a stopped instance.
 
 ```text
 curl --request POST \
@@ -127,7 +127,7 @@ curl --request POST \
 
 The request body is optional. You can include `reason_note` when you want to keep a human-readable note for audit or operational context.
 
-After the request, the instance may move through `STARTING` before it reaches `RUNNING`.
+After the request, the instance may move through `STARTING` before it reaches `RUNNING`. Check progress with [`GET /instances/{id}`](/public-api/endpoints/get-instance).
 
 ```text
 curl --request GET \
@@ -140,10 +140,10 @@ If the instance is already running, the API returns the current instance state.
 
 ## Terminate an instance
 
-Use `POST /instances/{id}/terminate` to permanently terminate an instance.
+Use [`POST /instances/{id}/terminate`](/public-api/endpoints/terminate-instance) to permanently terminate an instance.
 
 <Danger>
-  Terminating an instance is irreversible. A terminated instance can’t be restarted, and its data is deleted. 
+  Terminating an instance is irreversible. A terminated instance can’t be restarted, and its data is deleted.
 </Danger>
 
 ```text
@@ -156,11 +156,11 @@ curl --request POST \
   }'
 ```
 
-After the request, poll `GET /instances/{id}` until the instance reaches `TERMINATED`.
+After the request, poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the instance reaches `TERMINATED`.
 
 ## Get instance logs
 
-Use `GET /instances/{id}/logs` to fetch recent container output from an instance.
+Use [`GET /instances/{id}/logs`](/public-api/endpoints/get-instance-logs) to fetch recent container output from an instance.
 
 ```text
 curl --request GET \
@@ -193,19 +193,19 @@ A shortened response looks like this:
 
 <Steps>
   <Step title="List your instances">
-    Call `GET /instances` to find the instance you want to inspect or manage.
+    Call [`GET /instances`](/public-api/endpoints/list-instances) to find the instance you want to inspect or manage.
   </Step>
   <Step title="Save the instance ID">
     Copy the `instance_id` from the response. You’ll need it for instance-specific requests.
   </Step>
   <Step title="Check the current state">
-    Call `GET /instances/{id}` and read the `status` field before taking action.
+    Call [`GET /instances/{id}`](/public-api/endpoints/get-instance) and read the `status` field before taking action.
   </Step>
   <Step title="Run the action">
-    Start or terminate the instance only after confirming that you’re using the correct ID.
+    [Start](/public-api/endpoints/start-instance) or [terminate](/public-api/endpoints/terminate-instance) the instance only after confirming that you’re using the correct ID.
   </Step>
   <Step title="Poll for the final state">
-    Call `GET /instances/{id}` again until the instance reaches the expected lifecycle state.
+    Call [`GET /instances/{id}`](/public-api/endpoints/get-instance) again until the instance reaches the expected lifecycle state.
   </Step>
 </Steps>
 
@@ -221,4 +221,4 @@ A shortened response looks like this:
 
 ## Next step
 
-Continue with **Use pagination and filters** to learn how to work with larger result sets and narrow API responses.
+Continue with [Use pagination and filters](/public-api/pagination-and-filters) to learn how to work with larger result sets and narrow API responses.

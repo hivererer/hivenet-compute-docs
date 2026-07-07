@@ -7,7 +7,7 @@ slug: "/public-api/changelog"
 
 Use this page to track changes to the Compute API that may affect your scripts, tools, or integrations.
 
-The API reference shows the current endpoint details. The changelog helps you understand what changed over time, especially when a request, response field, authentication behavior, or error response changes.
+The endpoint reference shows the current API details. The changelog helps you understand what changed over time, especially when a request, response field, authentication behavior, or error response changes.
 
 <Tip>
   If you’re building against the API, check the changelog before updating your integration or debugging behavior that recently changed.
@@ -21,7 +21,7 @@ Current version:
 
 `https://api.hivenet.com/v1`
 
-The `/v1` part of the URL identifies the major API version. Endpoint details, supported parameters, response schemas, and examples are available in the API reference.
+Endpoint details, supported parameters, response schemas, and examples are available in the endpoint reference pages, such as [List instances](/public-api/endpoints/list-instances), [Get instance](/public-api/endpoints/get-instance), and [Start instance](/public-api/endpoints/start-instance).
 
 ## How to read changelog entries
 
@@ -70,7 +70,7 @@ Examples include:
 - Requiring a new request body field for an existing endpoint
 - Changing authentication behavior in a way that affects existing tokens
 
- \<Danger\> Do not assume undocumented fields will stay available. Build integrations against the fields documented in the API reference. \</Danger\> 
+\<Danger\> Do not assume undocumented fields will stay available. Build integrations against the fields documented in the API reference. \</Danger\>
 
 ## What usually does not require action
 
@@ -85,17 +85,17 @@ Examples include:
 - Adding a new error message for a case that already failed
 - Fixing a bug without changing the documented request or response shape
 
- \<Note\> Your code should ignore response fields it doesn’t use. This helps your integration keep working when new optional fields are added. \</Note\> 
+\<Note\> Your code should ignore response fields it doesn’t use. This helps your integration keep working when new optional fields are added. \</Note\>
 
 ## How to stay compatible
 
 Use these habits when building against the API:
 
 - Use the versioned base URL shown in the docs.
-- Read endpoint details from the API reference.
+- Read endpoint details from the relevant endpoint reference page.
 - Handle unknown optional fields safely.
 - Check resource state before retrying actions.
-- Treat destructive actions, such as terminating an instance, with extra care.
+- Treat destructive actions, such as [terminating an instance](/public-api/endpoints/terminate-instance), with extra care.
 - Avoid relying on undocumented behavior.
 - Review this changelog when something changes unexpectedly.
 
@@ -112,8 +112,14 @@ Check the changelog when:
 
 ## Related pages
 
-For the exact current endpoint details, use the API reference.
+For current endpoint details, use the endpoint reference pages:
 
-For safe request handling, see **Handle errors and rate limits**.
+- [List instances](/public-api/endpoints/list-instances)
+- [Get instance](/public-api/endpoints/get-instance)
+- [Start instance](/public-api/endpoints/start-instance)
+- [Terminate instance](/public-api/endpoints/terminate-instance)
+- [Get instance logs](/public-api/endpoints/get-instance-logs)
 
-For instance workflows, see **Work with instances**.
+For safe request handling, see [Handle errors and rate limits](/public-api/errors-and-rate-limits).
+
+For instance workflows, see [Work with instances](/public-api/instances).

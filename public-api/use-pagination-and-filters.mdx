@@ -10,7 +10,7 @@ List endpoints can return more results than you want to handle in a single respo
 Use pagination when you need to process many resources. Use filters when you already know what kind of resource you’re looking for.
 
 <Note>
-  Not every list endpoint supports the same filters. Check the API reference for the exact query parameters supported by each endpoint. 
+  Not every list endpoint supports the same filters. For instance filters, see the [`GET /instances`](/public-api/endpoints/list-instances) endpoint reference.
 </Note>
 
 ## How cursor pagination works
@@ -41,7 +41,7 @@ If `pagination.next` contains a value, there may be another page. If `pagination
 
 ## Request the first page
 
-To request the first page, call the list endpoint without a cursor.
+To request the first page of instances, call [`GET /instances`](/public-api/endpoints/list-instances) without a cursor.
 
 ```text
 curl --request GET \
@@ -81,7 +81,7 @@ A typical pagination workflow looks like this:
 
 <Steps>
   <Step title="Request the first page">
-    Call the list endpoint with a `size` value and no `cursor`.
+    Call the list endpoint, such as [`GET /instances`](/public-api/endpoints/list-instances), with a `size` value and no `cursor`.
   </Step>
   <Step title="Read the response">
     Process the items in the `data` array.
@@ -99,7 +99,7 @@ A typical pagination workflow looks like this:
 
 ## Use filters to narrow results
 
-Filters are query parameters that reduce the results returned by a list endpoint.
+Filters are query parameters that reduce the results returned by a list endpoint, such as [`GET /instances`](/public-api/endpoints/list-instances).
 
 For example, this request lists running instances in a specific region:
 
@@ -120,7 +120,7 @@ Filters are useful when you want to:
 
 ## Supported instance filters
 
-`GET /instances` supports these filters:
+[`GET /instances`](/public-api/endpoints/list-instances) supports these filters:
 
 | Filter | Type | What it does |
 | :-- | :-- | :-- |
@@ -136,9 +136,13 @@ Filters are useful when you want to:
 | `date_range_end` | Date-time | Returns instances created at or before this timestamp. |
 | `free_text_search` | String | Searches across instance names and related fields. |
 
+<Note>
+  Use the endpoint reference for exact limits, allowed values, defaults, and examples.
+</Note>
+
 ## Filter by status
 
-Use `status` when you only want instances in a specific lifecycle state.
+Use `status` with [`GET /instances`](/public-api/endpoints/list-instances) when you only want instances in a specific lifecycle state.
 
 ```text
 curl --request GET \
@@ -157,7 +161,7 @@ For `GET /instances`, supported status filters are:
   Status filter values may use a different format from status values returned in the response. For example, a filter may use `running`, while the response may show `RUNNING`.
 </Note>
 
- Filter by date range
+Filter by date range
 
 Use `date_range_begin` and `date_range_end` together when you want instances created within a specific time window.
 
@@ -177,7 +181,7 @@ Use both parameters together:
 
 ## Search by text
 
-Use `free_text_search` when you want to search across instance names and related fields.
+Use `free_text_search` with [`GET /instances`](/public-api/endpoints/list-instances) when you want to search across instance names and related fields.
 
 ```text
 curl --request GET \
@@ -190,7 +194,7 @@ Text search is useful when you know part of a resource name but don’t know its
 
 ## Combine filters
 
-You can combine supported filters in one request.
+You can combine supported filters in one [`GET /instances`](/public-api/endpoints/list-instances) request.
 
 For example, this request searches for running instances in `us-east-1` that match `training-run`:
 
@@ -215,4 +219,4 @@ When combining filters, start with the narrowest useful set. If the response is 
 
 ## Next step
 
-Continue with **Handle errors and rate limits** to understand common API errors and how to retry requests safely.
+Continue with [Handle errors and rate limits](/public-api/errors-and-rate-limits) to understand common API errors and how to retry requests safely.
