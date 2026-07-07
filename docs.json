@@ -207,10 +207,7 @@
     "strict": false
   },
   "api": {
-    "openapi": [
-      "public-v1.json",
-      "public-v1.yaml"
-    ],
+    "openapi": "public-v1.yaml",
     "playground": {
       "proxy": true
     },
