@@ -219,7 +219,6 @@
     "strict": false
   },
   "api": {
-    "openapi": "public-v1.yaml",
     "playground": {
       "proxy": true
     },
