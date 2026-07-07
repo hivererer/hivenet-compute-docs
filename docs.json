@@ -153,18 +153,29 @@
       {
         "tab": "Public API",
         "pages": [
-          "public-api/get-started-with-the-compute-api",
-          "public-api/make-your-first-api-request",
-          "public-api/authenticate-api-requests",
-          "public-api/work-with-instances",
-          "public-api/use-pagination-and-filters",
-          "public-api/handle-errors-and-rate-limits",
-          "public-api/api-changelog",
+          {
+            "group": "Public API",
+            "pages": [
+              "public-api/get-started-with-the-compute-api",
+              "public-api/make-your-first-api-request",
+              "public-api/authenticate-api-requests",
+              "public-api/work-with-instances",
+              "public-api/use-pagination-and-filters",
+              "public-api/handle-errors-and-rate-limits"
+            ]
+          },
           {
             "group": "API reference",
             "expanded": true,
-            "pages": []
-          }
+            "pages": [
+              "public-api/endpoints/list-instances",
+              "public-api/endpoints/get-instance",
+              "public-api/endpoints/start-instance",
+              "public-api/endpoints/terminate-instance",
+              "public-api/endpoints/get-instance-logs"
+            ]
+          },
+          "public-api/api-changelog"
         ]
       },
       {
