@@ -1,6 +1,6 @@
 # Compute with Hivenet docs
 
-This repository contains the Mintlify documentation for Compute with Hivenet, including guide pages, tutorials, changelog entries, and public API reference pages.
+This repository contains the documentation for Compute with Hivenet, including guide pages, tutorials, changelog entries, and public API reference pages.
 
 Use this repo when you need to update the public documentation site, preview docs locally, or review changes before publishing.
 
