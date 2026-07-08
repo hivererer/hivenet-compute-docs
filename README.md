@@ -67,7 +67,7 @@ Before you make changes:
 - Keep file names short, lowercase, and descriptive.
 - Use `.mdx` for documentation pages.
 - Put reusable blocks in `snippets/` instead of copying the same content across pages.
-- Compress images before adding them to `images/`.\
+- Compress images before adding them to `images/`.
 
 ## Writing rules
 
@@ -82,7 +82,7 @@ Follow these rules:
 - Explain technical terms the first time they matter.
 - Avoid hype, vague claims, and marketing language.
 - Don’t promise roadmap items unless they’re confirmed for public docs.
-- Don’t duplicate long explanations across pages. Link to the canonical page instead.\
+- Don’t duplicate long explanations across pages. Link to the canonical page instead.
 
 ## Mintlify components
 
@@ -108,7 +108,7 @@ Don’t overuse components. A simple paragraph is often better.
 2. Add the page to `docs.json`.
 3. Run `mint dev`.
 4. Check the page in the local preview.
-5. Open a pull request.\
+5. Open a pull request.
 
 ### Rename or move a page
 
@@ -116,21 +116,21 @@ Don’t overuse components. A simple paragraph is often better.
 2. Update `docs.json`.
 3. Search the repo for old links.
 4. Update any broken links.
-5. Run `mint dev`.\
+5. Run `mint dev`.
 
 ### Update an API endpoint page
 
 1. Check the matching endpoint in `public-v1.yaml`.
 2. Update the endpoint page in `public-api/endpoints/`.
 3. Keep examples consistent with the OpenAPI file.
-4. Run the local preview and check formatting.\
+4. Run the local preview and check formatting.
 
 ### Add an image
 
 1. Add the image to `images/`.
 2. Use a clear file name.
 3. Keep the file size small.
-4. Add useful alt text where the image appears.\
+4. Add useful alt text where the image appears.
 
 ## Review checklist
 
@@ -142,7 +142,7 @@ Before merging, check that:
 - Warnings are used for destructive or irreversible actions.
 - Product names and labels match the current UI.
 - The page doesn’t duplicate content that should live elsewhere.
-- The local preview runs without errors.\
+- The local preview runs without errors.
 
 ## Publishing
 
