@@ -6,7 +6,11 @@
     "options": [
       "copy",
       "chatgpt",
-      "claude"
+      "claude",
+      "perplexity",
+      "download-pdf",
+      "view",
+      "assistant"
     ]
   },
   "colors": {
@@ -147,6 +151,15 @@
         ]
       },
       {
+        "tab": "Public API",
+        "groups": [
+          {
+            "group": "Pages",
+            "pages": []
+          }
+        ]
+      },
+      {
         "tab": "Changelog",
         "groups": [
           {
@@ -184,5 +197,20 @@
   },
   "appearance": {
     "strict": false
+  },
+  "api": {
+    "openapi": "public-v1.json",
+    "playground": {
+      "proxy": true
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "Python"
+      ],
+      "autogenerate": true
+    },
+    "url": "full"
   }
 }
