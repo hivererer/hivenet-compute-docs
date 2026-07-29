@@ -174,7 +174,7 @@
               "public-api/endpoints/terminate-instance",
               "public-api/endpoints/get-instance-logs"
             ],
-            "openapi": "/public-v1.yaml"
+            "openapi": "api/public-v1.yaml"
           },
           "public-api/api-changelog"
         ]
