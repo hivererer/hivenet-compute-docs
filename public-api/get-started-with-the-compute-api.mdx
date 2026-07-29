@@ -45,8 +45,16 @@ For instance workflows, you can use the API to:
 - [Filter instance results](/public-api/endpoints/list-instances) by status, GPU type, region, owner, organization, date range, or search text
 - [Get the current state of a single instance](/public-api/endpoints/get-instance)
 - [Start a stopped instance](/public-api/endpoints/start-instance)
+- [Stop a running instance](/public-api/endpoints/stop-instance)
 - [Terminate an instance](/public-api/endpoints/terminate-instance)
 - [Fetch recent container log output from an instance](/public-api/endpoints/get-instance-logs)
+
+For account and catalogue workflows, you can also:
+
+- [Register an SSH public key](/public-api/endpoints/create-ssh-key) to inject into instances you launch
+- [Get one of your registered SSH keys](/public-api/endpoints/get-ssh-key)
+- [List regions](/public-api/endpoints/list-regions) where instances can be launched
+- [List hardware presets](/public-api/endpoints/list-presets) with hourly pricing
 
 ## How API actions work
 
@@ -78,5 +86,10 @@ Then use the endpoint reference whenever you need exact technical details:
 - [List instances](/public-api/endpoints/list-instances)
 - [Get instance](/public-api/endpoints/get-instance)
 - [Start instance](/public-api/endpoints/start-instance)
+- [Stop instance](/public-api/endpoints/stop-instance)
 - [Terminate instance](/public-api/endpoints/terminate-instance)
 - [Get instance logs](/public-api/endpoints/get-instance-logs)
+- [Register SSH key](/public-api/endpoints/create-ssh-key)
+- [Get SSH key](/public-api/endpoints/get-ssh-key)
+- [List regions](/public-api/endpoints/list-regions)
+- [List presets](/public-api/endpoints/list-presets)

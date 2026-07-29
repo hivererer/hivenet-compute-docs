@@ -48,6 +48,20 @@ Changes are grouped by date, with the newest updates first.
 
 ## Latest changes
 
+<Update label="07/29/2026">
+  ## New endpoints: stop, SSH keys, regions, and presets
+
+  **Added**
+
+  - [`POST /instances/{id}/stop`](/public-api/endpoints/stop-instance) — stop a running instance without terminating it.
+  - [`POST /ssh-keys`](/public-api/endpoints/create-ssh-key) — register an SSH public key on your account.
+  - [`GET /ssh-keys/{id}`](/public-api/endpoints/get-ssh-key) — retrieve one of your registered SSH keys.
+  - [`GET /regions`](/public-api/endpoints/list-regions) — list regions where instances can be launched.
+  - [`GET /presets`](/public-api/endpoints/list-presets) — list hardware presets with hourly pricing.
+
+  No action required. These are new endpoints and do not change existing behavior.
+</Update>
+
 <Update label="07/07/2026">
   ## First version of API docs uploaded
 
@@ -117,8 +131,13 @@ For current endpoint details, use the endpoint reference pages:
 - [List instances](/public-api/endpoints/list-instances)
 - [Get instance](/public-api/endpoints/get-instance)
 - [Start instance](/public-api/endpoints/start-instance)
+- [Stop instance](/public-api/endpoints/stop-instance)
 - [Terminate instance](/public-api/endpoints/terminate-instance)
 - [Get instance logs](/public-api/endpoints/get-instance-logs)
+- [Register SSH key](/public-api/endpoints/create-ssh-key)
+- [Get SSH key](/public-api/endpoints/get-ssh-key)
+- [List regions](/public-api/endpoints/list-regions)
+- [List presets](/public-api/endpoints/list-presets)
 
 For safe request handling, see [Handle errors and rate limits](/public-api/errors-and-rate-limits).
 
