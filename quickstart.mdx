@@ -25,22 +25,20 @@ Get from zero to a running environment fast. This guide covers account setup, cr
   </Step>
   <Step title="Create a GPU or CPU instance">
     1. From the left sidebar, select **Create** (or **Create** from the Console card).
-    1. Choose what you want to create: **Container **or **Virtual machine**.
-    2. **Choose a location.** Pick what’s closest to your users or data.
-    3. **Choose your setup.** Select **GPU** or **vCPU only**.
-    4. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed, so you can start faster.
-    5. **Connectivity.**
+    2. Choose what you want to create: \*\*Container \*\*or **Virtual machine**.
+    3. **Choose a location.** Pick what’s closest to your users or data.
+    4. **Choose your setup.** Select **GPU** or **vCPU only**.
+    5. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed, so you can start faster.
+    6. **Connectivity.**
        - **SSH:** Paste your **public key**.
          - Need one?
-
            ```bash
            ssh-keygen -t ed25519 -C "you@example.com"
            ```
-
            Then paste the contents of `~/.ssh/id_ed25519.pub`.
        - **HTTPS / TCP / UDP:** Keep defaults unless your app needs open ports.
-    6. Review the summary and select ****Create instance ****or ****Create virtual machine.****
-    7. Wait for **Status: Running** on the **Instances** page.
+    7. Review the summary and select \*\*\*\*Create instance \*\*\*\*or **Create virtual machine.**
+    8. Wait for **Status: Running** on the **Instances** page.
   </Step>
   <Step title="Connect over SSH">
     From **Instances**, copy the SSH command shown for your instance, then connect:
@@ -78,12 +76,9 @@ Get from zero to a running environment fast. This guide covers account setup, cr
 
 ## Troubleshooting
 
-- **“Permission denied (publickey)”** when SSHing\
-  Ensure you added the **public key** during creation, and you’re using the matching **private key** with correct file permissions (`chmod 600`).
-- **Can’t reach the service**\
-  Check that the required **port** is enabled under **Connectivity** and that any firewall rules are correct.
-- **Instance won’t start or pauses**\
-  Verify you have **enough credits**. Top up in **Billing**.
+- **“Permission denied (publickey)”** when SSHing<br />Ensure you added the **public key** during creation, and you’re using the matching **private key** with correct file permissions (`chmod 600`).
+- **Can’t reach the service**<br />Check that the required **port** is enabled under **Connectivity** and that any firewall rules are correct.
+- **Instance won’t start or pauses**<br />Verify you have **enough credits**. Top up in **Billing**.
 
 ## Next steps
 
