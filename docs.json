@@ -173,7 +173,12 @@
               "public-api/endpoints/get-instance",
               "public-api/endpoints/start-instance",
               "public-api/endpoints/terminate-instance",
-              "public-api/endpoints/get-instance-logs"
+              "public-api/endpoints/stop-instance",
+              "public-api/endpoints/get-instance-logs",
+              "public-api/endpoints/create-ssh-key",
+              "public-api/endpoints/get-ssh-key",
+              "public-api/endpoints/list-regions",
+              "public-api/endpoints/list-presets"
             ]
           },
           "public-api/api-changelog"
@@ -230,7 +235,6 @@
       ],
       "autogenerate": true
     },
-    "url": "full",
-    "openapi": "public-v1.yaml"
+    "url": "full"
   }
 }
