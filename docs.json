@@ -167,7 +167,7 @@
           {
             "group": "API reference",
             "expanded": true,
-            "openapi": "api/public-v1.yaml",
+            "openapi": "/public-v1.yaml",
             "pages": [
               "public-api/endpoints/list-instances",
               "public-api/endpoints/get-instance",
