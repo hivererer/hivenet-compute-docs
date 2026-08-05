@@ -145,7 +145,8 @@
             "pages": [
               "tutorials/more-guides/sftp-not-ftps",
               "tutorials/more-guides/SSH-config-file-explained",
-              "tutorials/more-guides/choosing-between-cpu-gpu"
+              "tutorials/more-guides/choosing-between-cpu-gpu",
+              "tutorials/more-guides/advanced-vllm-settings"
             ]
           }
         ]
