@@ -1,0 +1,144 @@
+---
+title: "API changelog"
+sidebarTitle: "Changelog"
+description: "Track Compute API changes that may affect requests, responses, authentication, or integration behavior."
+slug: "/public-api/changelog"
+---
+
+Use this page to track changes to the Compute API that may affect your scripts, tools, or integrations.
+
+The endpoint reference shows the current API details. The changelog helps you understand what changed over time, especially when a request, response field, authentication behavior, or error response changes.
+
+<Tip>
+  If you’re building against the API, check the changelog before updating your integration or debugging behavior that recently changed.
+</Tip>
+
+## Current API version
+
+The public Compute API uses versioned paths.
+
+Current version:
+
+`https://api.hivenet.com/v1`
+
+Endpoint details, supported parameters, response schemas, and examples are available in the endpoint reference pages, such as [List instances](/public-api/endpoints/list-instances), [Get instance](/public-api/endpoints/get-instance), and [Start instance](/public-api/endpoints/start-instance).
+
+## How to read changelog entries
+
+Each changelog entry should tell you:
+
+- What changed
+- Which endpoints or resources are affected
+- Whether you need to update your integration
+- Whether the change is backward-compatible
+- What to do next, if action is needed
+
+Changes are grouped by date, with the newest updates first.
+
+## Change types
+
+| Type | What it means |
+| :-- | :-- |
+| Added | A new endpoint, field, parameter, status, or documented behavior is available. |
+| Changed | Existing behavior, wording, validation, or response shape has changed. |
+| Deprecated | A feature or behavior still works, but will be removed or replaced later. |
+| Removed | A feature, endpoint, field, or behavior is no longer available. |
+| Fixed | An issue was corrected without requiring most integrations to change. |
+| Security | A change affects authentication, authorization, token handling, or access behavior. |
+
+## Latest changes
+
+<Update label="07/29/2026">
+  ## New endpoints: stop, SSH keys, regions, and presets
+
+  **Added**
+
+  - [`POST /instances/{id}/stop`](/public-api/endpoints/stop-instance) — stop a running instance without terminating it.
+  - [`POST /ssh-keys`](/public-api/endpoints/create-ssh-key) — register an SSH public key on your account.
+  - [`GET /ssh-keys/{id}`](/public-api/endpoints/get-ssh-key) — retrieve one of your registered SSH keys.
+  - [`GET /regions`](/public-api/endpoints/list-regions) — list regions where instances can be launched.
+  - [`GET /presets`](/public-api/endpoints/list-presets) — list hardware presets with hourly pricing.
+
+  No action required. These are new endpoints and do not change existing behavior.
+</Update>
+
+<Update label="07/07/2026">
+  ## First version of API docs uploaded
+
+  No API changes have been added to this changelog yet.
+</Update>
+
+When changes are published, entries will appear here with the affected endpoints and any required action.
+
+## What counts as a breaking change
+
+A breaking change is a change that may require you to update code that already works.
+
+Examples include:
+
+- Removing an endpoint
+- Removing or renaming a response field
+- Removing a supported query parameter
+- Changing a field type
+- Changing the meaning of a status value
+- Requiring a new request body field for an existing endpoint
+- Changing authentication behavior in a way that affects existing tokens
+
+\<Danger\> Do not assume undocumented fields will stay available. Build integrations against the fields documented in the API reference. \</Danger\>
+
+## What usually does not require action
+
+Some changes should not break existing integrations.
+
+Examples include:
+
+- Adding a new optional response field
+- Adding a new optional query parameter
+- Improving descriptions or examples in the docs
+- Adding a new endpoint
+- Adding a new error message for a case that already failed
+- Fixing a bug without changing the documented request or response shape
+
+\<Note\> Your code should ignore response fields it doesn’t use. This helps your integration keep working when new optional fields are added. \</Note\>
+
+## How to stay compatible
+
+Use these habits when building against the API:
+
+- Use the versioned base URL shown in the docs.
+- Read endpoint details from the relevant endpoint reference page.
+- Handle unknown optional fields safely.
+- Check resource state before retrying actions.
+- Treat destructive actions, such as [terminating an instance](/public-api/endpoints/terminate-instance), with extra care.
+- Avoid relying on undocumented behavior.
+- Review this changelog when something changes unexpectedly.
+
+## When to check this page
+
+Check the changelog when:
+
+- An integration starts behaving differently
+- You update code that calls the API
+- You add support for a new endpoint
+- You see a new response field or status
+- You receive a different error response than before
+- You’re preparing a script or integration for production use
+
+## Related pages
+
+For current endpoint details, use the endpoint reference pages:
+
+- [List instances](/public-api/endpoints/list-instances)
+- [Get instance](/public-api/endpoints/get-instance)
+- [Start instance](/public-api/endpoints/start-instance)
+- [Stop instance](/public-api/endpoints/stop-instance)
+- [Terminate instance](/public-api/endpoints/terminate-instance)
+- [Get instance logs](/public-api/endpoints/get-instance-logs)
+- [Register SSH key](/public-api/endpoints/create-ssh-key)
+- [Get SSH key](/public-api/endpoints/get-ssh-key)
+- [List regions](/public-api/endpoints/list-regions)
+- [List presets](/public-api/endpoints/list-presets)
+
+For safe request handling, see [Handle errors and rate limits](/public-api/errors-and-rate-limits).
+
+For instance workflows, see [Work with instances](/public-api/instances).

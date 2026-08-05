@@ -1,0 +1,868 @@
+openapi: 3.0.3
+info:
+  title: Hive Compute Public API
+  description: |
+    The Hive Compute public API lets you manage compute instances and SSH keys
+    programmatically, and browse the hardware presets and regions available to
+    you.
+
+    **Base URL:** `https://api.hivenet.com/v1`
+
+    ## Authentication
+
+    Every endpoint requires an API key, sent as a Bearer token:
+
+    ```
+    Authorization: Bearer <your-api-key>
+    ```
+
+    API keys are issued manually at this release. Email
+    [support@hivenet.com](mailto:support@hivenet.com) to request one. There is
+    no self-service endpoint or console page for creating, listing or rotating
+    keys yet; both will arrive in a later release.
+
+    Treat the key as a password. It carries the full permissions of your
+    account, does not expire on its own, and can only be replaced by contacting
+    support.
+
+    ## Scope
+
+    Requests are scoped to the account the key belongs to. You can only see and
+    act on your own instances and SSH keys. Regions and presets are the shared
+    public catalogue and look the same to everyone.
+
+    ## Errors
+
+    Every error shares one envelope:
+
+    ```json
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Instance 7f3c... not found",
+        "request_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      }
+    }
+    ```
+
+    Quote `request_id` when contacting support: it identifies the exact request
+    in our logs.
+
+    ## Rate limiting
+
+    Requests are rate limited per key. Exceeding the limit returns `429` with a
+    `Retry-After` header giving the number of seconds to wait. Treat the limit
+    as subject to change and back off on `429` rather than pacing to a fixed
+    number.
+
+    ## Pagination
+
+    List endpoints are cursor-paginated and return the same envelope:
+
+    ```json
+    {
+      "data": [],
+      "pagination": { "next": "opaque-cursor", "size": 50 }
+    }
+    ```
+
+    Pass `pagination.next` back as the `cursor` query parameter to fetch the
+    following page. When it is `null` you have reached the last page. Cursors
+    are opaque; do not construct or parse them.
+  version: 1.0.0
+  contact:
+    name: Hive Compute Support
+    email: support@hivenet.com
+    url: https://hivenet.com
+
+servers:
+  - url: https://api.hivenet.com/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Instances
+    description: |
+      Compute instances are the core resource of the platform. Each instance
+      runs a GPU-backed workload on a hardware preset in a region, and moves
+      through this lifecycle:
+
+      `CREATED → DEPLOYED → STARTING → RUNNING → STOPPING → STOPPED → TERMINATING → TERMINATED`
+
+      A stopped instance can be started again and keeps its storage. A
+      terminated instance is gone permanently and cannot be recovered.
+  - name: SSH keys
+    description: |
+      Public keys used to reach your instances over SSH. A key you register is
+      owned by your account and is not visible to anyone else.
+  - name: Catalogue
+    description: |
+      The regions and hardware presets available to launch instances on. This
+      is shared public reference data, identical for every caller.
+
+paths:
+  /instances:
+    get:
+      operationId: listInstances
+      tags: [Instances]
+      summary: List your instances
+      description: |
+        Returns a cursor-paginated list of your instances, newest first.
+
+        Only instances belonging to your account are returned. There is no way
+        to widen the result set to another account or organisation.
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Size'
+        - name: status
+          in: query
+          description: Return only instances in this state.
+          schema:
+            type: string
+            enum: [running, stopped, terminated, errored]
+        - name: region
+          in: query
+          description: Return only instances in this region, e.g. `eu-west`.
+          schema:
+            type: string
+        - name: gpu_type
+          in: query
+          description: Return only instances on this GPU model, e.g. `RTX 4090`.
+          schema:
+            type: string
+        - name: date_range_begin
+          in: query
+          description: Return only instances created at or after this ISO 8601 timestamp.
+          schema:
+            type: string
+            format: date-time
+        - name: date_range_end
+          in: query
+          description: Return only instances created at or before this ISO 8601 timestamp.
+          schema:
+            type: string
+            format: date-time
+        - name: free_text_search
+          in: query
+          description: Match against instance name, region and GPU type.
+          schema:
+            type: string
+            maxLength: 255
+        - name: sort_field
+          in: query
+          description: Field to order by. Defaults to creation time, newest first.
+          schema:
+            type: string
+            enum:
+              [NAME, GPU_TYPE, SIZE, REGION, HOURLY_RATE, CURRENT_COST, STATUS]
+        - name: sort_direction
+          in: query
+          description: Order direction. Defaults to `DESC`.
+          schema:
+            type: string
+            enum: [ASC, DESC]
+      responses:
+        '200':
+          description: A page of instances.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Instance'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /instances/{id}:
+    get:
+      operationId: getInstance
+      tags: [Instances]
+      summary: Get an instance
+      description: Returns the full detail of one of your instances.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+      responses:
+        '200':
+          description: The instance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /instances/{id}/logs:
+    get:
+      operationId: getInstanceLogs
+      tags: [Instances]
+      summary: Read an instance's logs
+      description: |
+        Returns recent console output from one of your instances, oldest line
+        first. The window reaches back at most 10 hours; older output is not
+        retrievable through this endpoint.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+        - name: lines
+          in: query
+          description: Maximum number of lines to return. Defaults to 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+      responses:
+        '200':
+          description: The requested log lines.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: When the line was emitted.
+                        line:
+                          type: string
+                          description: The log line, without a trailing newline.
+                  line_count:
+                    type: integer
+                    description: Number of entries returned.
+                    example: 100
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /instances/{id}/start:
+    post:
+      operationId: startInstance
+      tags: [Instances]
+      summary: Start an instance
+      description: |
+        Starts a stopped instance. The call returns as soon as the request is
+        accepted; the instance moves `STARTING → RUNNING` in the background, so
+        poll `GET /instances/{id}` to observe the transition.
+
+        Starting an already-running instance is accepted and changes nothing.
+        A terminated instance cannot be started.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceAction'
+      responses:
+        '201':
+          description: The request was accepted; the instance's current state is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /instances/{id}/stop:
+    post:
+      operationId: stopInstance
+      tags: [Instances]
+      summary: Stop an instance
+      description: |
+        Stops a running instance. The call returns as soon as the request is
+        accepted; the instance moves `STOPPING → STOPPED` in the background.
+
+        Storage is retained and the instance can be started again. Billing for
+        compute stops; storage may still be charged.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceAction'
+      responses:
+        '201':
+          description: The request was accepted; the instance's current state is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /instances/{id}/terminate:
+    post:
+      operationId: terminateInstance
+      tags: [Instances]
+      summary: Terminate an instance
+      description: |
+        Permanently destroys an instance and its storage.
+
+        **This cannot be undone.** The instance moves `TERMINATING → TERMINATED`
+        and can never be started again. Use `POST /instances/{id}/stop` if you
+        only want to pause billing.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceAction'
+      responses:
+        '201':
+          description: The request was accepted; the instance's current state is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /ssh-keys:
+    post:
+      operationId: createSshKey
+      tags: [SSH keys]
+      summary: Register an SSH public key
+      description: |
+        Registers a public key under your account so it can be injected into
+        instances you launch.
+
+        Send the **public** key only, in the usual OpenSSH one-line format
+        (`ssh-ed25519 AAAA... comment`). Never send a private key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  description: The public key, in OpenSSH format.
+                  example: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIexample ada@example.com
+      responses:
+        '201':
+          description: The key was registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKey'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /ssh-keys/{id}:
+    get:
+      operationId: getSshKey
+      tags: [SSH keys]
+      summary: Get an SSH key
+      description: |
+        Returns one of your registered public keys.
+
+        A key belonging to another account responds `404`, the same as a key
+        that does not exist.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The key's unique identifier.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKey'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /regions:
+    get:
+      operationId: listRegions
+      tags: [Catalogue]
+      summary: List regions
+      description: |
+        Returns every region instances can be launched in. Use a region's
+        `name` as the `region` filter on `GET /presets` and `GET /instances`.
+
+        This list is short and changes rarely, so it is returned in full rather
+        than paginated.
+      responses:
+        '200':
+          description: The available regions.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: The region identifier.
+                      example: eu-west
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /presets:
+    get:
+      operationId: listPresets
+      tags: [Catalogue]
+      summary: List hardware presets
+      description: |
+        Returns a cursor-paginated list of the hardware configurations
+        instances can run on, with their hourly price.
+
+        A preset fixes the GPU model and count, CPU, memory and storage. The
+        same preset may be offered in several regions at different prices, so
+        filter by `region` when comparing.
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Size'
+        - name: region
+          in: query
+          description: Return only presets available in this region.
+          schema:
+            type: string
+        - name: sku
+          in: query
+          description: Return only presets with this SKU name, e.g. `8x-RTX-4090`.
+          schema:
+            type: string
+        - name: free_text_search
+          in: query
+          description: Match against SKU name, GPU model and region.
+          schema:
+            type: string
+            maxLength: 255
+        - name: sort_field
+          in: query
+          description: Field to order by.
+          schema:
+            type: string
+            enum: [REGION, LOCATION, GPU, CPU, MEMORY, STORAGE, HOURLY_PRICE]
+        - name: sort_direction
+          in: query
+          description: Order direction. Defaults to `DESC`.
+          schema:
+            type: string
+            enum: [ASC, DESC]
+      responses:
+        '200':
+          description: A page of presets.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Preset'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        An API key issued by Hive Compute support. See **Authentication**
+        above for how to request one.
+
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: |
+        Opaque cursor from a previous response's `pagination.next`. Omit to
+        start at the first page.
+      schema:
+        type: string
+    Size:
+      name: size
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+    InstanceId:
+      name: id
+      in: path
+      required: true
+      description: The instance's unique identifier.
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    Pagination:
+      type: object
+      description: Cursor pagination metadata.
+      properties:
+        next:
+          type: string
+          nullable: true
+          description: |
+            Cursor for the following page, or `null` on the last page.
+          example: eyJjcmVhdGVkX2F0IjoiMjAyNi0wNy0yOSJ9
+        size:
+          type: integer
+          description: Page size used for this response.
+          example: 50
+
+    Instance:
+      type: object
+      properties:
+        instance_id:
+          type: string
+          format: uuid
+          description: Unique identifier.
+        name:
+          type: string
+          description: Display name.
+          example: training-run-4
+        status:
+          type: string
+          enum:
+            - CREATED
+            - DEPLOYED
+            - STARTING
+            - RUNNING
+            - ERRORED
+            - TERMINATING
+            - TERMINATED
+            - STOPPING
+            - STOPPED
+          description: Current lifecycle state.
+        region:
+          type: string
+          description: Region the instance runs in.
+          example: eu-west
+        gpu_type:
+          type: string
+          description: GPU model.
+          example: RTX 4090
+        size:
+          type: string
+          description: SKU name of the preset the instance runs on.
+          example: 8x-RTX-4090
+        cpu_count:
+          type: integer
+          description: Virtual CPUs allocated.
+        resources:
+          type: string
+          description: Human-readable summary of the allocated hardware.
+        bandwidth:
+          type: number
+          description: Allocated bandwidth, in Mbps.
+        storage_used_gb:
+          type: number
+          description: Storage currently in use, in GB.
+        hourly_rate:
+          type: number
+          description: Price charged per hour while running, in credits.
+        current_cost:
+          type: number
+          description: Cost accrued during the current run, in credits.
+        total_cost_incurred:
+          type: number
+          description: Total cost over the instance's whole life, in credits.
+        total_runtime_hours:
+          type: number
+          description: Total hours the instance has spent running.
+        ttl_remaining_hours:
+          type: number
+          description: Hours remaining before the instance is stopped automatically.
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the instance last entered `RUNNING`.
+        terminated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the instance was terminated, if it has been.
+        termination_reason:
+          type: string
+          nullable: true
+          description: Why the instance was terminated, if it has been.
+        guest_ready:
+          type: string
+          description: Whether the guest OS has finished booting and is reachable.
+        guest_ready_reason:
+          type: string
+          nullable: true
+          description: Explanation when the guest is not ready.
+
+    InstanceAction:
+      type: object
+      description: Optional context recorded in the audit trail for this action.
+      properties:
+        reason_note:
+          type: string
+          maxLength: 10000
+          description: Free-text note explaining why the action was taken.
+          example: scaling down overnight
+
+    SshKey:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier.
+        content:
+          type: string
+          description: The public key, in OpenSSH format.
+        user_id:
+          type: string
+          format: uuid
+          description: Account the key belongs to.
+        created_at:
+          type: string
+          format: date-time
+          description: When the key was registered.
+
+    Preset:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier, used when launching an instance.
+        region:
+          type: string
+          description: Region this preset is offered in.
+          example: eu-west
+        location:
+          type: string
+          description: Datacentre within the region.
+        gpu:
+          type: string
+          description: GPU model and count.
+          example: 8x RTX 4090
+        cpu:
+          type: string
+          description: Virtual CPUs.
+          example: '32'
+        memory:
+          type: string
+          description: Memory, in GB.
+          example: '192'
+        storage:
+          type: string
+          description: Storage, in GB.
+          example: '500'
+        hourly_price:
+          type: string
+          description: List price per hour, in credits.
+          example: '3.2000'
+        price_discounted:
+          type: string
+          description: |
+            Price actually charged per hour when non-zero, in credits. `0`
+            means no discount applies and `hourly_price` is charged.
+          example: '2.8000'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - UNAUTHORIZED
+                - FORBIDDEN
+                - NOT_FOUND
+                - VALIDATION_ERROR
+                - TOO_MANY_REQUESTS
+                - INTERNAL_ERROR
+              description: Stable, machine-readable error code.
+            message:
+              type: string
+              description: Human-readable explanation. Do not match on this text.
+            request_id:
+              type: string
+              description: Identifies this request in our logs. Quote it to support.
+
+  responses:
+    ValidationError:
+      description: The request was malformed or a parameter was invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: VALIDATION_ERROR
+              message: size must not be greater than 200
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    Unauthorized:
+      description: The API key is missing, malformed or not valid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: Missing API token
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    Forbidden:
+      description: The resource exists but does not belong to your account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: instance does not belong to the caller
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    NotFound:
+      description: No such resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: NOT_FOUND
+              message: Instance 7f3c8f22-1f4e-4a5e-9b7a-0c1d2e3f4a5b not found
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    RateLimited:
+      description: |
+        Too many requests. Wait the number of seconds given in `Retry-After`
+        before retrying.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: TOO_MANY_REQUESTS
+              message: Too Many Requests
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    InternalError:
+      description: Something went wrong on our side. Retry, then contact support with the `request_id`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: Internal server error
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
