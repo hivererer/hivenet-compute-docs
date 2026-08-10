@@ -2,11 +2,15 @@ openapi: 3.0.3
 info:
   title: Hive Compute Public API
   description: |
-    The Hive Compute public API lets you manage compute instances and SSH keys
+    The Hive Compute public API lets you manage compute instances
     programmatically, and browse the hardware presets and regions available to
     you.
 
-    **Base URL:** `https://api.hivenet.com/v1`
+    Instances are created and their SSH keys registered through the Hive
+    Compute console. This release of the API covers reading and controlling
+    instances that already exist.
+
+    **Base URL:** `https://api.hivecompute.ai/v1`
 
     ## Authentication
 
@@ -28,8 +32,8 @@ info:
     ## Scope
 
     Requests are scoped to the account the key belongs to. You can only see and
-    act on your own instances and SSH keys. Regions and presets are the shared
-    public catalogue and look the same to everyone.
+    act on your own instances. Regions and presets are the shared public
+    catalogue and look the same to everyone.
 
     ## Errors
 
@@ -39,7 +43,7 @@ info:
     {
       "error": {
         "code": "NOT_FOUND",
-        "message": "Instance 7f3c... not found",
+        "message": "Not found.",
         "request_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       }
     }
@@ -48,10 +52,20 @@ info:
     Quote `request_id` when contacting support: it identifies the exact request
     in our logs.
 
+    Branch on `code`, never on `message`. Most messages are fixed strings
+    chosen per status rather than a description of your particular request:
+    `403`, `404` and `409` read the same every time, and `401` has two fixed
+    forms depending on whether the key was absent or rejected. Only
+    `VALIDATION_ERROR` carries detail, and even there a malformed path id
+    reports only that a UUID was expected, without naming the parameter. The
+    underlying detail is internal; `request_id` is how we trace a specific
+    failure.
+
     ## Rate limiting
 
-    Requests are rate limited per key. Exceeding the limit returns `429` with a
-    `Retry-After` header giving the number of seconds to wait. Treat the limit
+    Requests are rate limited per source IP address, not per key, so callers
+    sharing an egress IP share a budget. Exceeding the limit returns `429` with
+    a `Retry-After` header giving the number of seconds to wait. Treat the limit
     as subject to change and back off on `429` rather than pacing to a fixed
     number.
 
@@ -76,8 +90,10 @@ info:
     url: https://hivenet.com
 
 servers:
-  - url: https://api.hivenet.com/v1
+  - url: https://api.hivecompute.ai/v1
     description: Production
+  - url: https://staging-api.hivecompute.ai/v1
+    description: Staging
 
 security:
   - bearerAuth: []
@@ -93,10 +109,6 @@ tags:
 
       A stopped instance can be started again and keeps its storage. A
       terminated instance is gone permanently and cannot be recovered.
-  - name: SSH keys
-    description: |
-      Public keys used to reach your instances over SSH. A key you register is
-      owned by your account and is not visible to anyone else.
   - name: Catalogue
     description: |
       The regions and hardware presets available to launch instances on. This
@@ -118,15 +130,35 @@ paths:
         - $ref: '#/components/parameters/Size'
         - name: status
           in: query
-          description: Return only instances in this state.
+          description: |
+            Return only instances in this state.
+
+            Each value is a bucket covering the transitional states that lead
+            into it, so an instance is always matched by exactly one of them:
+
+            - `running` — also matches `CREATED`, `DEPLOYED` and `STARTING`
+            - `stopped` — also matches `STOPPING`
+            - `terminated` — also matches `TERMINATING`
+            - `errored` — `ERRORED` only
+
+            There is no filter for a transitional state on its own. Read
+            `status` on each instance to tell them apart.
           schema:
             type: string
             enum: [running, stopped, terminated, errored]
         - name: region
           in: query
-          description: Return only instances in this region, e.g. `eu-west`.
+          description: |
+            Return only instances in this region. Use a `name` from
+            `GET /regions`.
+
+            An unrecognised value is not an error: it matches nothing and
+            returns an empty page. Note this is **not** the same vocabulary as
+            the `region` field on an instance, which carries the datacenter
+            location — see the `Instance` schema.
           schema:
             type: string
+            enum: [UAE, FR, US]
         - name: gpu_type
           in: query
           description: Return only instances on this GPU model, e.g. `RTX 4090`.
@@ -134,19 +166,29 @@ paths:
             type: string
         - name: date_range_begin
           in: query
-          description: Return only instances created at or after this ISO 8601 timestamp.
+          description: |
+            Return only instances that **started** at or after this ISO 8601
+            timestamp. Despite the name, the bound is on `started_at`, not on
+            creation time.
+
+            An instance that never started running has no `started_at`, so it is
+            excluded as soon as either bound is set — including a range wide
+            enough to cover everything. Omit both bounds to see those instances.
           schema:
             type: string
             format: date-time
         - name: date_range_end
           in: query
-          description: Return only instances created at or before this ISO 8601 timestamp.
+          description: |
+            Return only instances that **started** at or before this ISO 8601
+            timestamp. The same `started_at` semantics as `date_range_begin`,
+            including the exclusion of instances that never started.
           schema:
             type: string
             format: date-time
         - name: free_text_search
           in: query
-          description: Match against instance name, region and GPU type.
+          description: Match against instance name, instance id and host.
           schema:
             type: string
             maxLength: 255
@@ -159,7 +201,12 @@ paths:
               [NAME, GPU_TYPE, SIZE, REGION, HOURLY_RATE, CURRENT_COST, STATUS]
         - name: sort_direction
           in: query
-          description: Order direction. Defaults to `DESC`.
+          description: |
+            Order direction, applied to `sort_field`. Defaults to `ASC`.
+
+            It is **ignored unless `sort_field` is also set**: with no sort
+            field the result keeps its default order and this parameter has no
+            effect.
           schema:
             type: string
             enum: [ASC, DESC]
@@ -220,9 +267,10 @@ paths:
       tags: [Instances]
       summary: Read an instance's logs
       description: |
-        Returns recent console output from one of your instances, oldest line
-        first. The window reaches back at most 10 hours; older output is not
-        retrievable through this endpoint.
+        Returns recent console output from one of your instances, **newest
+        line first** (the same order as `kubectl logs --tail`). The window
+        reaches back at most 10 hours; older output is not retrievable through
+        this endpoint.
       parameters:
         - $ref: '#/components/parameters/InstanceId'
         - name: lines
@@ -243,6 +291,9 @@ paths:
                 properties:
                   entries:
                     type: array
+                    description: |
+                      Log lines, newest first. `entries[0]` is the most recent
+                      line, so do not read the last element as the latest.
                     items:
                       type: object
                       properties:
@@ -281,7 +332,9 @@ paths:
         poll `GET /instances/{id}` to observe the transition.
 
         Starting an already-running instance is accepted and changes nothing.
-        A terminated instance cannot be started.
+
+        Returns `409` when the instance is `TERMINATING` or `TERMINATED`. A
+        terminated instance can never be started again.
       parameters:
         - $ref: '#/components/parameters/InstanceId'
       requestBody:
@@ -305,10 +358,14 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/RateLimited'
         '500':
           $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/CapacityUnavailable'
 
   /instances/{id}/stop:
     post:
@@ -321,6 +378,9 @@ paths:
 
         Storage is retained and the instance can be started again. Billing for
         compute stops; storage may still be charged.
+
+        Stopping an already-stopped instance is accepted and changes nothing.
+        Returns `409` when the instance is `TERMINATING` or `TERMINATED`.
       parameters:
         - $ref: '#/components/parameters/InstanceId'
       requestBody:
@@ -344,6 +404,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/RateLimited'
         '500':
@@ -360,6 +422,18 @@ paths:
         **This cannot be undone.** The instance moves `TERMINATING → TERMINATED`
         and can never be started again. Use `POST /instances/{id}/stop` if you
         only want to pause billing.
+
+        Terminating one that is `STOPPING` is accepted; the stop does not have
+        to settle first.
+
+        Terminating one that is already `TERMINATING` is also accepted, and
+        re-issues the teardown. That is the way to recover a termination that
+        failed part-way. It is not a safe blind retry, though: once the
+        underlying resource is actually gone, a further call returns `500` until
+        the instance settles at `TERMINATED`. Poll `GET /instances/{id}` rather
+        than retrying on a timer.
+
+        Returns `409` only when the instance is already `TERMINATED`.
       parameters:
         - $ref: '#/components/parameters/InstanceId'
       requestBody:
@@ -383,81 +457,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimited'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /ssh-keys:
-    post:
-      operationId: createSshKey
-      tags: [SSH keys]
-      summary: Register an SSH public key
-      description: |
-        Registers a public key under your account so it can be injected into
-        instances you launch.
-
-        Send the **public** key only, in the usual OpenSSH one-line format
-        (`ssh-ed25519 AAAA... comment`). Never send a private key.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [content]
-              properties:
-                content:
-                  type: string
-                  description: The public key, in OpenSSH format.
-                  example: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIexample ada@example.com
-      responses:
-        '201':
-          description: The key was registered.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SshKey'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '429':
-          $ref: '#/components/responses/RateLimited'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /ssh-keys/{id}:
-    get:
-      operationId: getSshKey
-      tags: [SSH keys]
-      summary: Get an SSH key
-      description: |
-        Returns one of your registered public keys.
-
-        A key belonging to another account responds `404`, the same as a key
-        that does not exist.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The key's unique identifier.
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: The key.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SshKey'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/RateLimited'
         '500':
@@ -469,11 +470,13 @@ paths:
       tags: [Catalogue]
       summary: List regions
       description: |
-        Returns every region instances can be launched in. Use a region's
-        `name` as the `region` filter on `GET /presets` and `GET /instances`.
+        Returns the region codes used across the API. Use a region's `name`
+        as the `region` filter on `GET /presets` and `GET /instances`.
 
-        This list is short and changes rarely, so it is returned in full rather
-        than paginated.
+        The set is fixed — currently `UAE`, `FR` and `US` — and is returned in
+        full rather than paginated. It tells you which values the filters
+        accept, not which locations currently have capacity; use
+        `GET /presets` for what can actually be launched.
       responses:
         '200':
           description: The available regions.
@@ -486,8 +489,8 @@ paths:
                   properties:
                     name:
                       type: string
-                      description: The region identifier.
-                      example: eu-west
+                      description: The region code.
+                      example: FR
         '401':
           $ref: '#/components/responses/Unauthorized'
         '429':
@@ -512,9 +515,17 @@ paths:
         - $ref: '#/components/parameters/Size'
         - name: region
           in: query
-          description: Return only presets available in this region.
+          description: |
+            Return only presets available in this region. Use a `name` from
+            `GET /regions`.
+
+            Unlike the filter on `GET /instances`, this one also matches a raw
+            datacenter location name, but only for locations that have no region
+            mapping. Any other unrecognised value matches nothing and returns an
+            empty page rather than an error.
           schema:
             type: string
+            enum: [UAE, FR, US]
         - name: sku
           in: query
           description: Return only presets with this SKU name, e.g. `8x-RTX-4090`.
@@ -522,19 +533,26 @@ paths:
             type: string
         - name: free_text_search
           in: query
-          description: Match against SKU name, GPU model and region.
+          description: Match against SKU name, GPU model and datacenter location.
           schema:
             type: string
             maxLength: 255
         - name: sort_field
           in: query
-          description: Field to order by.
+          description: Field to order by. Omitted, presets come back in a stable
+            internal order, not by price.
           schema:
             type: string
-            enum: [REGION, LOCATION, GPU, CPU, MEMORY, STORAGE, HOURLY_PRICE]
+            enum:
+              [REGION, LOCATION, GPU, CPU, MEMORY, STORAGE, HOURLY_PRICE, ID]
         - name: sort_direction
           in: query
-          description: Order direction. Defaults to `DESC`.
+          description: |
+            Order direction, applied to `sort_field`. Defaults to `ASC`.
+
+            It is **ignored unless `sort_field` is also set**: with no sort
+            field the result keeps its default order and this parameter has no
+            effect.
           schema:
             type: string
             enum: [ASC, DESC]
@@ -641,16 +659,25 @@ components:
           description: Current lifecycle state.
         region:
           type: string
-          description: Region the instance runs in.
-          example: eu-west
+          description: |
+            The datacenter location the instance runs in, which is narrower
+            than a region: a region contains several locations.
+
+            **This value cannot be passed back as the `region` filter on
+            `GET /instances` or `GET /presets`** — those take a region code
+            from `GET /regions` (`FR`), not a location (`france-2`). Filtering
+            on a location returns an empty page rather than an error.
+          example: france-2
         gpu_type:
           type: string
           description: GPU model.
           example: RTX 4090
         size:
           type: string
-          description: SKU name of the preset the instance runs on.
-          example: 8x-RTX-4090
+          description: |
+            Headline shape of the instance, as a count and a unit rather than a
+            preset name. Use `GET /presets` to resolve the full hardware.
+          example: 8 x GPU
         cpu_count:
           type: integer
           description: Virtual CPUs allocated.
@@ -662,13 +689,16 @@ components:
           description: Allocated bandwidth, in Mbps.
         storage_used_gb:
           type: number
-          description: Storage currently in use, in GB.
+          description: Disk provisioned for the instance, in GB. Not a measure of use.
         hourly_rate:
           type: number
           description: Price charged per hour while running, in credits.
         current_cost:
           type: number
-          description: Cost accrued during the current run, in credits.
+          description: |
+            Total spend accrued over the instance's life, in credits. Currently
+            identical to `total_cost_incurred`; it is not scoped to the current
+            run.
         total_cost_incurred:
           type: number
           description: Total cost over the instance's whole life, in credits.
@@ -677,7 +707,10 @@ components:
           description: Total hours the instance has spent running.
         ttl_remaining_hours:
           type: number
-          description: Hours remaining before the instance is stopped automatically.
+          description: |
+            Credit runway in hours, computed across the whole organisation
+            rather than for this instance, so every instance in an org reports
+            the same figure.
         started_at:
           type: string
           format: date-time
@@ -710,25 +743,6 @@ components:
           description: Free-text note explaining why the action was taken.
           example: scaling down overnight
 
-    SshKey:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier.
-        content:
-          type: string
-          description: The public key, in OpenSSH format.
-        user_id:
-          type: string
-          format: uuid
-          description: Account the key belongs to.
-        created_at:
-          type: string
-          format: date-time
-          description: When the key was registered.
-
     Preset:
       type: object
       properties:
@@ -737,15 +751,23 @@ components:
           description: Unique identifier, used when launching an instance.
         region:
           type: string
-          description: Region this preset is offered in.
-          example: eu-west
+          description: |
+            Region this preset is offered in.
+
+            Usually a region code, but a preset on a datacenter location with no
+            region mapping reports that raw location name instead, so this is
+            not a closed set. The `region` filter on this endpoint accepts
+            either.
+          example: FR
         location:
           type: string
           description: Datacentre within the region.
         gpu:
           type: string
-          description: GPU model and count.
-          example: 8x RTX 4090
+          description: |
+            GPU count. The model is **not** part of this field — use the SKU
+            `name`, or `gpu_type` on an instance, to identify the hardware.
+          example: 8×
         cpu:
           type: string
           description: Virtual CPUs.
@@ -765,8 +787,11 @@ components:
         price_discounted:
           type: string
           description: |
-            Price actually charged per hour when non-zero, in credits. `0`
-            means no discount applies and `hourly_price` is charged.
+            Discounted price per hour, in credits, when a discount is active.
+
+            When none is active this is the **empty string**, not `0` and not
+            null. Test for a non-empty value rather than comparing to a number,
+            and fall back to `hourly_price`.
           example: '2.8000'
 
     Error:
@@ -782,6 +807,7 @@ components:
                 - FORBIDDEN
                 - NOT_FOUND
                 - VALIDATION_ERROR
+                - CONFLICT
                 - TOO_MANY_REQUESTS
                 - INTERNAL_ERROR
               description: Stable, machine-readable error code.
@@ -802,7 +828,7 @@ components:
           example:
             error:
               code: VALIDATION_ERROR
-              message: size must not be greater than 200
+              message: '[{"property":"size","constraints":["size must not be greater than 200"]}]'
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     Unauthorized:
       description: The API key is missing, malformed or not valid.
@@ -824,7 +850,7 @@ components:
           example:
             error:
               code: FORBIDDEN
-              message: instance does not belong to the caller
+              message: You do not have access to this resource.
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     NotFound:
       description: No such resource.
@@ -835,7 +861,45 @@ components:
           example:
             error:
               code: NOT_FOUND
-              message: Instance 7f3c8f22-1f4e-4a5e-9b7a-0c1d2e3f4a5b not found
+              message: Not found.
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    Conflict:
+      description: |
+        The action cannot be carried out right now. Two distinct causes share
+        this status:
+
+        - **The instance's state does not allow it** — starting or stopping one
+          that is terminating or terminated, or terminating one that is already
+          terminated. Poll `GET /instances/{id}` until `status` settles, then
+          retry; a terminated instance never becomes actionable again.
+        - **Insufficient credit** on `POST /instances/{id}/start`. Waiting will
+          not clear this one; top up first.
+
+        The message is fixed and does not distinguish them. Read `status` on the
+        instance, and your balance, to tell which applies.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: CONFLICT
+              message: The resource is not in a state that allows this action.
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    CapacityUnavailable:
+      description: |
+        No host currently has enough free capacity for this instance's preset.
+        This is a temporary condition, not a fault in the request: retry with
+        backoff, or pick a preset in another region. The body carries
+        `code: INTERNAL_ERROR` rather than a dedicated code.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: The service is temporarily unavailable. Try again later.
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     RateLimited:
       description: |
@@ -856,7 +920,13 @@ components:
               message: Too Many Requests
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     InternalError:
-      description: Something went wrong on our side. Retry, then contact support with the `request_id`.
+      description: |
+        Something went wrong on our side. Retry, then contact support with the
+        `request_id`.
+
+        The `message` is deliberately generic and carries no detail about the
+        cause. Quote the `request_id`, which identifies the underlying error in
+        our logs.
       content:
         application/json:
           schema:
@@ -864,5 +934,5 @@ components:
           example:
             error:
               code: INTERNAL_ERROR
-              message: Internal server error
+              message: An internal error occurred.
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
