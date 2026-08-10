@@ -5,54 +5,53 @@ description: "Send a read-only request to the Compute API and check that your to
 slug: "/public-api/first-request"
 ---
 
-Start with a read-only request before you try actions that change a resource.
+Start with a read-only request before you try actions that change an instance.
 
-This page uses [`GET /instances`](/public-api/endpoints/list-instances) because it’s a safe way to confirm that your API token works, your base URL is correct, and your client can read a JSON response.
-
-<Note>
-  This request lists Compute instances visible to your account. If the response is successful but the list is empty, your token may still be working. It may simply mean there are no instances available to that user or organization.
-</Note>
+This guide uses [`GET /instances`](/public-api/endpoints/list-instances) to confirm that your API key works, the base URL is correct, and your client can read a JSON response.
 
 ## Before you start
 
-Make sure you have:
+You’ll need:
 
 - A Compute with Hivenet account
-- An API token
-- A terminal or API client that can send HTTP requests
+- An API key issued for that account
+- A terminal or API client
 
-You’ll also need the public API base URL:
+Production base URL:
 
-`https://api.hivenet.com/v1`
+`https://api.hivecompute.ai/v1`
+
+Staging base URL:
+
+`https://staging-api.hivecompute.ai/v1`
+
+<Note>
+  Use the production URL for normal integrations. Use staging only when you specifically need to test against the staging API.
+</Note>
 
 ## Send a request
 
 <Steps>
-  <Step title="Prepare your API token">
-    Copy your API token from the place where your account or organization manages API access.
+  <Step title="Prepare your API key">
+    Store your key in an environment variable:
 
-    ```text
-    Keep the token private. You’ll use it in the `Authorization` header.
+    ```bash
+    export HIVENET_API_KEY="YOUR_API_KEY"
     ```
   </Step>
-  <Step title="Call the instances endpoint">
-    Send a `GET` request to [`/instances`](/public-api/endpoints/list-instances).
+  <Step title="List your instances">
+    Send a `GET` request to `/instances`:
 
-    Replace `YOUR_API_TOKEN` with your actual token before running the command.
-
-    ````text
     ```bash
     curl --request GET \
-      --url "https://api.hivenet.com/v1/instances?size=10" \
-      --header "Authorization: Bearer YOUR_API_TOKEN" \
+      --url "https://api.hivecompute.ai/v1/instances?size=10" \
+      --header "Authorization: Bearer $HIVENET_API_KEY" \
       --header "Accept: application/json"
     ```
-    ````
   </Step>
   <Step title="Check the response">
-    A successful request returns `200 OK` and a JSON response. The response includes a `data` array and pagination information. A shortened example looks like this:
+    A successful request returns `200 OK` and a JSON response with a `data` array and pagination information.
 
-    ````json
     ```json
     {
       "data": [
@@ -60,59 +59,46 @@ You’ll also need the public API base URL:
           "instance_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
           "name": "my-training-run",
           "status": "RUNNING",
-          "gpu_type": "NVIDIA_A100_80G",
-          "region": "us-east-1"
+          "gpu_type": "RTX 5090",
+          "region": "FR"
         }
       ],
       "pagination": {
-        "next": "eyJpZCI6ImExYjJjM2Q0In0",
+        "next": null,
         "size": 10
       }
     }
     ```
-    ````
   </Step>
 </Steps>
 
-## Understand the request
-
-The request uses three important pieces:
-
-| Part | What it does |
-| :-- | :-- |
-| `GET` | Reads data without changing anything. |
-| [`/instances`](/public-api/endpoints/list-instances) | Lists Compute instances visible to your account. |
-| `Authorization` | Sends your bearer token so the API can authenticate the request. |
-
-The query parameter `size=10` limits the response to 10 instances. You can remove it or change the number when you need a larger page.
+An empty `data` array can still mean authentication succeeded. It may simply mean the account has no matching instances.
 
 ## Read the response
 
-In the response, check these fields first:
-
 | Field | What it means |
 | :-- | :-- |
-| `data` | The list of instances returned by the request. |
-| `instance_id` | The unique ID of an instance. You’ll use this for instance-specific requests, such as [getting one instance](/public-api/endpoints/get-instance) or [fetching instance logs](/public-api/endpoints/get-instance-logs). |
-| `status` | The current lifecycle state of the instance. |
-| `pagination.next` | The cursor for the next page of results. If it’s `null`, there are no more pages. |
+| `data` | Instances returned by the request. |
+| `instance_id` | The ID used for instance-specific requests. |
+| `status` | The current lifecycle state. |
+| `pagination.next` | Cursor for the next page, or `null` when there are no more pages. |
 
 <Tip>
-  Save one `instance_id` from the response if you want to test instance-specific endpoints later, such as [`GET /instances/{id}`](/public-api/endpoints/get-instance) or [`GET /instances/{id}/logs`](/public-api/endpoints/get-instance-logs).
+  Save an `instance_id` if you want to test [`GET /instances/{id}`](/public-api/endpoints/get-instance) or [`GET /instances/{id}/logs`](/public-api/endpoints/get-instance-logs) next.
 </Tip>
 
 ## Common first errors
 
-| Status | What it usually means | What to do |
+| Status | Code | What to do |
 | :-- | :-- | :-- |
-| `400` | A query parameter is invalid. | Check parameter names, formats, and allowed values. |
-| `401` | The token is missing, invalid, or expired. | Check the `Authorization` header and make sure the token is correct. |
-| `429` | You’ve sent too many requests in a short time. | Wait before retrying. If the response includes `Retry-After`, use that value. |
+| `400` | `VALIDATION_ERROR` | Check query parameters and allowed values. |
+| `401` | `UNAUTHORIZED` | Check the `Authorization` header and API key. |
+| `429` | `TOO_MANY_REQUESTS` | Wait for the `Retry-After` value before retrying. |
 
 <Warning>
-  Don’t test the API for the first time with an action that changes a resource. Use read-only endpoints such as [`GET /instances`](/public-api/endpoints/list-instances) until you’re sure your token and client are working.
+  Test authentication with read-only requests before using start, stop, or terminate actions.
 </Warning>
 
 ## Next step
 
-Continue with [Authenticate API requests](/public-api/authenticate-api-requests) to learn how bearer tokens are sent, stored, and handled safely.
+Continue with [Authenticate API requests](/public-api/authenticate-api-requests) for key-handling guidance.

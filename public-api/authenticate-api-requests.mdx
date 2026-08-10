@@ -5,112 +5,70 @@ description: "Learn how to send bearer tokens with Compute API requests and hand
 slug: "/public-api/authentication"
 ---
 
-The Compute API uses bearer token authentication. Every request must include an API token in the `Authorization` header.
+The Compute API uses bearer-token authentication. Every request must include an API key in the `Authorization` header.
 
-Bearer tokens let the API identify who is making the request and which Compute resources that user or organization can access.
+<Warning>
+  Treat API keys like passwords. Anyone with a valid key can act with the permissions of the account it belongs to.
+</Warning>
 
-\<Warning\> Treat API tokens like passwords. Anyone with a valid token may be able to access or change Compute resources linked to that token. \</Warning\>
+## Get an API key
 
-## Send your token in the Authorization header
+API keys are currently issued manually. Contact [support@hivenet.com](mailto:support@hivenet.com) to request one.
 
-Add your token to each request like this:
+There is no public endpoint for creating, listing, rotating, or revoking API keys in this release. If a key needs to be replaced, contact Support.
 
-```text
-Authorization: Bearer <your-api-token>
-```
+## Send your key
 
-For example:
+Add the key to every request:
 
-```text
+```bash
 curl --request GET \
-  --url "https://api.hivenet.com/v1/instances" \
-  --header "Authorization: Bearer YOUR_API_TOKEN" \
+  --url "https://api.hivecompute.ai/v1/instances" \
+  --header "Authorization: Bearer YOUR_API_KEY" \
   --header "Accept: application/json"
 ```
 
-## Use an environment variable
+For local testing, you can store it in an environment variable:
 
-For local testing, you can store your token in an environment variable so you don’t paste it into every command.
-
-```text
-export HIVENET_API_TOKEN="YOUR_API_TOKEN"
+```bash
+export HIVENET_API_KEY="YOUR_API_KEY"
 ```
 
-Then use it in your request:
+Then reference it in requests:
 
-```text
+```bash
 curl --request GET \
-  --url "https://api.hivenet.com/v1/instances" \
-  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
+  --url "https://api.hivecompute.ai/v1/instances" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
   --header "Accept: application/json"
 ```
 
 <Tip>
-  Environment variables are useful for local testing, but they’re not a full secrets-management system. For production workflows, store API tokens in the secret manager used by your deployment environment.
+  Environment variables are convenient for local testing, but use your deployment environment's secret manager for production workloads.
 </Tip>
-
-## Check that your token works
-
-Use a read-only endpoint, such as [`GET /instances`](/public-api/endpoints/list-instances), to test authentication.
-
-```text
-curl --request GET \
-  --url "https://api.hivenet.com/v1/instances?size=1" \
-  --header "Authorization: Bearer $HIVENET_API_TOKEN" \
-  --header "Accept: application/json"
-```
-
-If the token is valid, the API returns `200 OK`.
-
-A successful response may still contain an empty `data` array. That usually means the token works, but there are no matching resources visible to the account or organization.
 
 ## Understand access
 
-A token can only access resources allowed by the user, organization, or access policy behind it.
+An API key is scoped to the account it belongs to. It can only see and act on that account's instances. Regions and presets are shared catalogue data.
 
-If a request succeeds for one resource but fails for another, the token may be valid but may not have access to that specific resource.
-
-For example:
-
-- [`GET /instances`](/public-api/endpoints/list-instances) may return only instances visible to your account.
-- [`GET /instances/{id}`](/public-api/endpoints/get-instance) may return `404` if the instance doesn’t exist or isn’t visible to your token.
-- Actions such as [starting an instance](/public-api/endpoints/start-instance) or [terminating an instance](/public-api/endpoints/terminate-instance) may require access to that instance.
+A successful [`GET /instances`](/public-api/endpoints/list-instances) response can contain an empty `data` array if the account has no matching instances.
 
 ## Common authentication errors
 
-| Status | What it means | What to check |
+| Status | Code | What to check |
 | :-- | :-- | :-- |
-| `401 Unauthorized` | The request is missing a valid token. | Check that the `Authorization` header exists and uses the `Bearer` format. |
-| `403 Forbidden` | The token is valid, but the request is not allowed. | Check whether the account, organization, or token has access to the resource. |
-| `404 Not Found` | The resource wasn’t found or isn’t visible to the token. | Check the resource ID, or list resources first with an endpoint such as [`GET /instances`](/public-api/endpoints/list-instances). |
-| `429 Too Many Requests` | Too many requests were sent in a short time. | Wait before retrying. Use `Retry-After` when the response includes it. |
+| `401 Unauthorized` | `UNAUTHORIZED` | Make sure the `Authorization` header exists and uses `Bearer <key>`. |
+| `403 Forbidden` | `FORBIDDEN` | The resource exists, but the key's account cannot access it. |
+| `404 Not Found` | `NOT_FOUND` | Check the resource ID. |
+| `429 Too Many Requests` | `TOO_MANY_REQUESTS` | Wait for the number of seconds in `Retry-After` before retrying. |
 
-## Keep tokens safe
+## Keep API keys safe
 
-Follow these basic rules when working with API tokens:
-
-- Don’t commit tokens to Git or other source control.
-- Don’t paste tokens into public issues, chat messages, or shared documents.
-- Don’t expose tokens in frontend code or mobile apps.
-- Don’t store tokens in plain text if your tool supports encrypted secrets.
-- Rotate tokens if they may have been exposed.
-- Revoke tokens you no longer use.
-
-Never put a Compute API token in client-side code. Anyone who can inspect the app or webpage may be able to copy the token.
-
-## Rotate or revoke tokens
-
-Rotate a token when you want to replace it with a new one. Revoke a token when it should stop working.
-
-You should revoke a token when:
-
-- A team member no longer needs access
-- A script or integration has been retired
-- A token was shared by mistake
-- A device or environment that stored the token may be compromised
-
-After revoking a token, update any scripts or integrations that still depend on it.
+- Don't commit API keys to source control.
+- Don't put them in URLs or client-side code.
+- Don't paste them into public issues, screenshots, or shared documents.
+- Replace a key through Support if it may have been exposed.
 
 ## Next step
 
-Continue with [Work with instances](/public-api/work-with-instances) to understand how instance lifecycle states behave when you use the API.
+Continue with [Work with instances](/public-api/work-with-instances) to understand instance lifecycle actions.

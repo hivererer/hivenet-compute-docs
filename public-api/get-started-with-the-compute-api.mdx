@@ -5,91 +5,88 @@ description: "Learn how the Compute API works, what you need before using it, an
 slug: "/public-api/get-started"
 ---
 
-The Compute with Hivenet API lets you manage Compute resources programmatically instead of working only through the web console.
+The Compute with Hivenet API lets you inspect and manage existing Compute resources programmatically instead of working only through the web console.
 
-You can use the API to automate repeatable workflows, connect internal tools, check the state of your resources, or build scripts around common Compute tasks. Use these guides to understand the main workflows, then use the API reference when you need exact endpoint details.
+Use these guides to understand the main workflows, then use the API reference for exact endpoint details.
 
 <Tip>
-  Use the guides when you want to understand how something works. Use the API reference when you need exact paths, parameters, request bodies, response schemas, and error formats.
+  Use the guides for workflow context. Use the API reference for paths, parameters, schemas, and response details.
 </Tip>
 
-## Base URL
+## Base URLs
 
-All public API requests use this base URL:
+Production:
 
-`https://api.hivenet.com/v1`
+`https://api.hivecompute.ai/v1`
 
-For example, the path `GET /instances` becomes:
+Staging:
 
-`https://api.hivenet.com/v1/instances`
+`https://staging-api.hivecompute.ai/v1`
+
+For example, `GET /instances` becomes:
+
+`https://api.hivecompute.ai/v1/instances`
 
 ## Authentication
 
-All API requests require a bearer token.
+Every request requires a bearer API key:
 
-Send your token in the `Authorization` header with every request:
+```text
+Authorization: Bearer <your-api-key>
+```
 
-`Authorization: Bearer <your-api-token>`
+API keys are currently issued manually. Contact [support@hivenet.com](mailto:support@hivenet.com) to request one.
 
 <Warning>
-  Keep API tokens private. Don’t paste them into public issues, shared documents, support tickets, screenshots, or client-side code.
+  Keep API keys private. Don't paste them into public issues, shared documents, screenshots, or client-side code.
 </Warning>
 
-## What you can do with the API
+## Current API surface
 
-The available endpoints are listed in the API reference. Depending on your account and access level, you can use the API to work with supported Compute resources such as instances, authentication tokens, SSH keys, regions, presets, users, and organizations.
+This release contains eight public endpoints:
 
-For instance workflows, you can use the API to:
+| Method | Endpoint | Use it to |
+| :-- | :-- | :-- |
+| `GET` | [`/instances`](/public-api/endpoints/list-instances) | List your instances. |
+| `GET` | [`/instances/{id}`](/public-api/endpoints/get-instance) | Get one instance. |
+| `GET` | [`/instances/{id}/logs`](/public-api/endpoints/get-instance-logs) | Read recent logs. |
+| `POST` | [`/instances/{id}/start`](/public-api/endpoints/start-instance) | Start a stopped instance. |
+| `POST` | [`/instances/{id}/stop`](/public-api/endpoints/stop-instance) | Stop a running instance. |
+| `POST` | [`/instances/{id}/terminate`](/public-api/endpoints/terminate-instance) | Permanently terminate an instance. |
+| `GET` | [`/regions`](/public-api/endpoints/list-regions) | List available regions. |
+| `GET` | [`/presets`](/public-api/endpoints/list-presets) | List hardware presets and pricing. |
 
-- [List instances](/public-api/endpoints/list-instances) visible to your account
-- [Filter instance results](/public-api/endpoints/list-instances) by status, GPU type, region, owner, organization, date range, or search text
-- [Get the current state of a single instance](/public-api/endpoints/get-instance)
-- [Start a stopped instance](/public-api/endpoints/start-instance)
-- [Stop a running instance](/public-api/endpoints/stop-instance)
-- [Terminate an instance](/public-api/endpoints/terminate-instance)
-- [Fetch recent container log output from an instance](/public-api/endpoints/get-instance-logs)
+SSH-key endpoints are not part of this release.
 
-For account and catalogue workflows, you can also:
+## Regions
 
-- [Register an SSH public key](/public-api/endpoints/create-ssh-key) to inject into instances you launch
-- [Get one of your registered SSH keys](/public-api/endpoints/get-ssh-key)
-- [List regions](/public-api/endpoints/list-regions) where instances can be launched
-- [List hardware presets](/public-api/endpoints/list-presets) with hourly pricing
+The API uses these region values:
 
-## How API actions work
+- `UAE`
+- `FR`
+- `US`
 
-Some API actions return immediately while the platform continues working in the background.
+Use the value returned by [`GET /regions`](/public-api/endpoints/list-regions) when filtering instances or presets.
 
-For example, when you [start a stopped instance](/public-api/endpoints/start-instance), the instance may move through `STARTING` before it reaches `RUNNING`. To check progress, call [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `status` field shows the state you expect.
+## How actions work
+
+Start, stop, and terminate actions are asynchronous. The API can return before the instance reaches its final state.
+
+Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `status` field shows the state you expect.
 
 <Danger>
-  Terminating an instance is permanent. A terminated instance can’t be restarted, and its data is deleted.
+  Terminating an instance is permanent. A terminated instance can't be restarted, and its data is deleted.
 </Danger>
 
 ## What you’ll need
 
-Before you make your first request, make sure you have:
-
 - A Compute with Hivenet account
-- An API token
+- An API key
 - A terminal, API client, or tool that can send HTTP requests
-- Access to the resource you want to read or manage
+- Access to the instance you want to inspect or manage
 
-You don’t need an SDK to get started. A simple `curl` request is enough for your first test.
+You don't need an SDK to get started. A `curl` request is enough.
 
 ## Where to go next
 
-Start with [Make your first API request](/public-api/make-your-first-api-request) to send a read-only request and confirm that your token works.
-
-Then use the endpoint reference whenever you need exact technical details:
-
-- [List instances](/public-api/endpoints/list-instances)
-- [Get instance](/public-api/endpoints/get-instance)
-- [Start instance](/public-api/endpoints/start-instance)
-- [Stop instance](/public-api/endpoints/stop-instance)
-- [Terminate instance](/public-api/endpoints/terminate-instance)
-- [Get instance logs](/public-api/endpoints/get-instance-logs)
-- [Register SSH key](/public-api/endpoints/create-ssh-key)
-- [Get SSH key](/public-api/endpoints/get-ssh-key)
-- [List regions](/public-api/endpoints/list-regions)
-- [List presets](/public-api/endpoints/list-presets)
+Start with [Make your first API request](/public-api/make-your-first-api-request), then use the endpoint reference for exact request and response details.
