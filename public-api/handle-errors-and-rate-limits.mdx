@@ -15,7 +15,7 @@ Errors use this structure:
 {
   "error": {
     "code": "NOT_FOUND",
-    "message": "Instance 7f3c... not found",
+    "message": "Not found.",
     "request_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
   }
 }
@@ -39,29 +39,36 @@ Errors use this structure:
 | `401 Unauthorized` | `UNAUTHORIZED` | The API key is missing or invalid. |
 | `403 Forbidden` | `FORBIDDEN` | The resource exists but the account cannot access it. |
 | `404 Not Found` | `NOT_FOUND` | The requested resource does not exist. |
-| `409 Conflict` | `CONFLICT` | The action conflicts with the instance's current lifecycle state. |
+| `409 Conflict` | `CONFLICT` | The action can't proceed in the current state, or a start request has insufficient credit. |
 | `429 Too Many Requests` | `TOO_MANY_REQUESTS` | The rate limit was exceeded. |
 | `500 Internal Server Error` | `INTERNAL_ERROR` | The server could not complete the request. |
+| `503 Service Unavailable` | `INTERNAL_ERROR` | No host currently has enough capacity for the requested start operation. |
 
 ## Handle 409 conflicts
 
-Start, stop, and terminate can return `409 Conflict` when the requested action conflicts with the instance's current state. For example, starting an instance that is still stopping returns `CONFLICT`.
+`409 Conflict` uses error code `CONFLICT`, but it can have more than one cause.
 
-When this happens:
+- **Start:** the instance is terminating or terminated, or the account does not have enough credit.
+- **Stop:** the instance is terminating or terminated.
+- **Terminate:** the instance is already terminated.
+
+The error message does not distinguish these cases. Fetch the current instance state first. If a start request conflicts even though the instance can be started, check the account balance before retrying.
 
 <Steps>
   <Step title="Fetch the current state">
     Call [`GET /instances/{id}`](/public-api/endpoints/get-instance).
   </Step>
-  <Step title="Wait for the transition to finish">
-    If the instance is still starting, stopping, or terminating, wait until it reaches a stable state.
+  <Step title="Check what blocked the action">
+    Use the instance state to identify lifecycle conflicts. For start requests, also check whether the account has enough credit.
   </Step>
-  <Step title="Retry only if the action still makes sense">
-    Send the action again after confirming the current state.
+  <Step title="Retry only when the cause is resolved">
+    Wait for a valid state transition or add credit as needed before sending the action again.
   </Step>
 </Steps>
 
 ## Handle rate limits
+
+Rate limits apply per source IP address rather than per API key. Clients that share an egress IP also share the same request budget.
 
 A `429 Too Many Requests` response includes a `Retry-After` header. Wait that many seconds before retrying.
 
@@ -89,6 +96,12 @@ The message is intentionally generic. Use `error.code` for program logic and kee
 
 For temporary server errors, retry after a short delay. If the problem continues, contact Support with the `request_id`.
 
+## Handle temporary capacity errors
+
+A start request can return `503 Service Unavailable` when no host currently has enough free capacity for the instance's preset. The body uses `INTERNAL_ERROR` rather than a separate capacity error code.
+
+Retry with backoff, or choose a compatible preset in another region. This is a temporary capacity condition rather than a problem with the request itself.
+
 ## Retry safely
 
 | Request type | Retry guidance |
@@ -96,9 +109,10 @@ For temporary server errors, retry after a short delay. If the problem continues
 | Read-only requests | Usually safe to retry after a short delay. |
 | `400` | Fix the request before retrying. |
 | `401` or `403` | Fix authentication or access before retrying. |
-| `409` | Fetch the latest instance state before retrying. |
+| `409` | Check the latest instance state and, for start requests, the account balance before retrying. |
 | `429` | Wait for `Retry-After`. |
 | `500` | Retry after a delay; contact Support if it persists. |
+| `503` | Retry with backoff or choose a preset in another region. |
 
 <Danger>
   Before retrying a destructive action such as terminate, fetch the instance state and confirm the action is still needed.

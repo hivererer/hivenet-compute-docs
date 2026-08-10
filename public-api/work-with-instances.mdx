@@ -49,7 +49,7 @@ The response includes a `data` array and pagination metadata.
       "name": "my-training-run",
       "status": "RUNNING",
       "gpu_type": "RTX 5090",
-      "region": "FR"
+      "region": "france-2"
     }
   ],
   "pagination": {
@@ -97,7 +97,9 @@ curl --request POST \
   --header "Content-Type: application/json"
 ```
 
-If the instance is still stopping, the API can return `409 Conflict` with error code `CONFLICT`. Fetch the latest instance state before retrying.
+The start endpoint can return `409 Conflict` with error code `CONFLICT` if the instance is terminating or terminated, or if the account does not have enough credit to start it. Check the latest instance state first. If the instance state allows starting, check the account balance before retrying.
+
+If no host currently has enough capacity for the instance's preset, start can return `503 Service Unavailable`. Retry with backoff or choose a preset in another region.
 
 ## Stop an instance
 
@@ -110,7 +112,7 @@ curl --request POST \
   --header "Content-Type: application/json"
 ```
 
-Poll the instance until it reaches `STOPPED`. If the requested action conflicts with the current lifecycle state, the API can return `409 Conflict` with code `CONFLICT`.
+Poll the instance until it reaches `STOPPED`. The stop endpoint returns `409 Conflict` with code `CONFLICT` if the instance is terminating or already terminated.
 
 ## Terminate an instance
 
@@ -127,7 +129,7 @@ curl --request POST \
   --header "Content-Type: application/json"
 ```
 
-The terminate endpoint can also return `409 Conflict` with code `CONFLICT` when the current instance state prevents the action.
+The terminate endpoint returns `409 Conflict` with code `CONFLICT` only when the instance is already `TERMINATED`. If it is `STOPPING` or `TERMINATING`, the request is accepted; poll the instance state instead of retrying blindly.
 
 ## Get instance logs
 

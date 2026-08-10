@@ -60,7 +60,7 @@ Staging base URL:
           "name": "my-training-run",
           "status": "RUNNING",
           "gpu_type": "RTX 5090",
-          "region": "FR"
+          "region": "france-2"
         }
       ],
       "pagination": {
@@ -73,6 +73,10 @@ Staging base URL:
 </Steps>
 
 An empty `data` array can still mean authentication succeeded. It may simply mean the account has no matching instances.
+
+<Note>
+  Region filters use codes such as `FR`, while the `region` field returned on an instance contains the datacenter location, such as `france-2`.
+</Note>
 
 ## Read the response
 

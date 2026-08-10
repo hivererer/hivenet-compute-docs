@@ -59,11 +59,11 @@ Keep using the latest `pagination.next` value until it becomes `null`.
 
 | Filter | What it does |
 | :-- | :-- |
-| `status` | Filters by lifecycle status. |
+| `status` | Filters by a lifecycle-status bucket. `running` also includes `CREATED`, `DEPLOYED`, and `STARTING`; `stopped` includes `STOPPING`; `terminated` includes `TERMINATING`; `errored` matches `ERRORED`. |
 | `gpu_type` | Filters by GPU model. |
 | `region` | Filters by region. |
-| `date_range_begin` | Returns instances created at or after a timestamp. |
-| `date_range_end` | Returns instances created at or before a timestamp. |
+| `date_range_begin` | Returns instances that started at or after a timestamp. |
+| `date_range_end` | Returns instances that started at or before a timestamp. |
 | `free_text_search` | Searches instance names and related searchable fields. |
 
 The accepted region values are:
@@ -82,6 +82,8 @@ curl --request GET \
 ```
 
 ## Filter by date range
+
+Date filters apply to `started_at`, not the time the instance record was created. An instance that has never started is excluded as soon as either date bound is used.
 
 Use ISO 8601 timestamps in UTC:
 
