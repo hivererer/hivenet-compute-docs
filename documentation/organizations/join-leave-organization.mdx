@@ -1,0 +1,116 @@
+---
+title: "Join or leave a Compute organization"
+sidebarTitle: "Join or leave an organization"
+description: "Accept or decline an organization invitation, prepare your account for the move, and leave an organization safely."
+icon: "right-left"
+---
+
+An organization invitation moves your Compute account into the invited organization, with its people, resources, roles, and balance. Review the effects before you accept, especially if you already have credits or instances.
+
+<Info>
+  Your Compute account can belong to one organization at a time. Joining another organization changes where your future resources are created and billed.
+</Info>
+
+## Before you accept an invitation
+
+The invitation shows:
+
+- The organization you were invited to join
+- Its current Admins
+- Whether you will join as an **Admin** or **Member**
+- The changes that will apply to your account
+
+Before accepting, check the following:
+
+- **Instances:** Terminate any running or stopped instances in your current organization.
+- **Important data:** Download anything you need before terminating an instance.
+- **Credits:** Any remaining credits will be transferred to the organization you join.
+- **Ownership:** If you own your current organization, transfer ownership before trying to join another one.
+
+<Warning>
+  Terminating an instance permanently deletes its local data. Back up important files before continuing.
+</Warning>
+
+## Accept an invitation
+
+1. Open the invitation link from the email you received.
+2. Sign in to Compute with the invited email address. Create an account first if you do not already have one.
+3. Review the organization, your new role, and the changes listed in the invitation dialog.
+4. Select each confirmation checkbox when they appear.
+5. Select **Accept invite**.
+
+After you join:
+
+- You can use the new organization's resources according to your role.
+- Instances you create are charged to the new organization balance.
+- Your remaining credits are added to that balance.
+- You lose access to your previous personal transaction history in the Compute console.
+
+If you join as an Admin, you can manage people and organization settings and view billing details. If you join as a Member, you can use organization resources but cannot manage people, settings, or billing.
+
+## Accept an invitation later
+
+Select **Not now** to close the invitation without accepting or declining it. You can return while the invitation remains valid.
+
+Select **Decline** when you do not want to join. The organization Owner or an Admin will need to send another invitation if you change your mind later.
+
+## Why you may be unable to accept
+
+### You still have instances
+
+Compute blocks the invitation while you have running or stopped instances in your current organization.
+
+1. Select **Go to instances**.
+2. Download any data you need.
+3. Terminate every running and stopped instance.
+4. Return to the invitation and accept it again.
+
+### You own another organization
+
+An Owner cannot join another organization directly.
+
+1. Select **Go to organization**.
+2. Transfer ownership to an Admin.
+3. Leave the organization after the transfer is complete.
+4. Return to the invitation and accept it.
+
+If the person you want to make Owner is a Member, change them to an Admin first.
+
+### The invitation expired or was canceled
+
+An expired or canceled invitation cannot be accepted. Ask an Owner or Admin of the organization to send you a new one.
+
+## Leave an organization
+
+Admins and Members can leave an organization. The Owner must transfer ownership before leaving.
+
+Before you leave:
+
+- Download any data you want to keep.
+- Terminate your running and stopped instances in the organization.
+- Make sure you no longer need access to its shared resources, settings, or billing information.
+
+To leave:
+
+1. Open **Organization** from the menu next to your account.
+2. Find your own name on the organization page.
+3. Open the menu next to your name.
+4. Select **Leave organization**.
+5. Review and confirm each consequence shown in the dialog.
+6. Select **Leave organization** again.
+
+After leaving:
+
+- You lose access to the organization's resources.
+- Your role and organization permissions end.
+- You need a new invitation to rejoin.
+
+<Warning>
+  If Compute reports that you still have instances, go to **Instances**, terminate them, and try leaving again.
+</Warning>
+
+## If you are the Owner
+
+The Owner cannot leave while they still control the organization. Transfer ownership to an Admin first, then leave as an Admin.
+
+See [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization) for the full process.

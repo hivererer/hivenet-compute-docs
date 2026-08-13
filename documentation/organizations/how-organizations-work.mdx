@@ -10,7 +10,7 @@ Every Compute account operates within an organization. The organization defines 
 Your account can belong to one organization at a time. If you used Compute before organizations were introduced, your account, existing resources, and credits were moved into an organization automatically.
 
 <Info>
-  An organization can contain one **Owner**, one or more **Admins**, and one or more **Members**. The Owner controls billing and ownership. Admins help manage the organization. Members use its resources.
+  An organization has one **Owner** and can also contain **Admins** and **Members**. The Owner controls billing and ownership. Admins help manage the organization. Members use its resources.
 </Info>
 
 ## What an organization controls
@@ -33,7 +33,7 @@ To open its organization page, use either of these paths:
 1. Select the organization name in the upper-left corner, then choose **Organization options**.
 2. Open the menu next to your account at the bottom of the sidebar, then select **Organization**.
 
-The organization page shows its Owner, Admins, Members, and pending invitations. The actions available on the page depend on your role.
+The organization page shows its Owner, Admins, and Members. Owners and Admins can also manage pending invitations. The actions available on the page depend on your role.
 
 ## Understand organization roles
 
@@ -100,7 +100,7 @@ Billing access depends on role:
 - **Members** cannot view or manage organization billing.
 
 <Note>
-  When a person accepts an invitation to another organization, any remaining credits associated with their current individual account are transferred to the organization they join. Future resources are billed to the new organization balance.
+  When a person accepts an invitation to another organization, their remaining credits are transferred to the organization they join. Future resources are billed to the new organization balance.
 </Note>
 
 ## Instance visibility
@@ -118,7 +118,7 @@ Before accepting an invitation, a person should understand that:
 - Their account will move to the invited organization.
 - Their remaining credits will be added to the new organization balance.
 - New resources will use the new organization's credits.
-- They may need to terminate running or stopped instances before they can join.
+- They must terminate any running or stopped instances in their current organization before they can join.
 - An Owner must transfer ownership of their current organization before joining another one.
 
 <Warning>
@@ -127,7 +127,7 @@ Before accepting an invitation, a person should understand that:
 
 ## Leaving an organization
 
-Admins and Members can leave an organization from the organization page. Before leaving, terminate any running or stopped instances you created if Compute asks you to do so.
+Admins and Members can leave an organization from the organization page. Before leaving, save any important data and terminate the running or stopped instances you created. If Compute detects instances that prevent the move, it directs you to the **Instances** page.
 
 After leaving:
 
@@ -135,7 +135,7 @@ After leaving:
 - You no longer have the permissions associated with your role.
 - You need a new invitation to rejoin.
 
-The Owner cannot leave directly. They must transfer ownership to another Admin or Member first.
+The Owner cannot leave directly. They must transfer ownership to an Admin first. If the intended new Owner is a Member, change them to an Admin before starting the transfer.
 
 ## Renaming or deleting an organization
 
@@ -146,3 +146,9 @@ Only the Owner can delete an organization. Deletion permanently removes the orga
 <Danger>
   Organization deletion cannot be undone. Download important data and confirm that you no longer need the remaining credits before deleting the organization.
 </Danger>
+
+## Next steps
+
+- [Invite people and manage organization roles](/documentation/organizations/invite-people-manage-roles)
+- [Join or leave a Compute organization](/documentation/organizations/join-leave-organization)
+- [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization)

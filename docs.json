@@ -83,7 +83,9 @@
             "icon": "users",
             "pages": [
               "documentation/organizations/how-organizations-work",
-              "documentation/organizations/invite-people-manage-roles"
+              "documentation/organizations/invite-people-manage-roles",
+              "documentation/organizations/join-leave-organization",
+              "documentation/organizations/transfer-ownership-delete-organization"
             ]
           },
           {
