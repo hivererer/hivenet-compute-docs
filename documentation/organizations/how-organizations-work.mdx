@@ -1,0 +1,148 @@
+---
+title: "How organizations work in Compute"
+sidebarTitle: "How organizations work"
+description: "Learn how Compute organizations handle people, roles, shared credits, instances, and billing."
+icon: "building"
+---
+
+Every Compute account operates within an organization. The organization defines who can use its resources, what each person can manage, and which balance pays for their usage.
+
+Your account can belong to one organization at a time. If you used Compute before organizations were introduced, your account, existing resources, and credits were moved into an organization automatically.
+
+<Info>
+  An organization can contain one **Owner**, one or more **Admins**, and one or more **Members**. The Owner controls billing and ownership. Admins help manage the organization. Members use its resources.
+</Info>
+
+## What an organization controls
+
+An organization brings several parts of Compute together:
+
+- **People and roles:** Who belongs to the organization and what they can manage.
+- **Resources:** The instances and other Compute resources created within the organization.
+- **Credits:** A shared organization balance that pays for usage.
+- **Billing:** Spending, payment methods, auto top-up, and transaction history.
+
+Instances you create while using an organization are charged to that organization's balance. Your role determines which instances and billing information you can see.
+
+## Find your organization
+
+The organization currently in use appears in the upper-left corner of the Compute console.
+
+To open its organization page, use either of these paths:
+
+1. Select the organization name in the upper-left corner, then choose **Organization options**.
+2. Open the menu next to your account at the bottom of the sidebar, then select **Organization**.
+
+The organization page shows its Owner, Admins, Members, and pending invitations. The actions available on the page depend on your role.
+
+## Understand organization roles
+
+| Capability | Owner | Admin | Member |
+| :-- | :-: | :-: | :-: |
+| Use organization resources | Yes | Yes | Yes |
+| Create instances | Yes | Yes | Yes |
+| View all organization instances | Yes | Yes | No |
+| View instances they created | Yes | Yes | Yes |
+| Invite people | Yes | Yes | No |
+| Change roles | Yes | Yes | No |
+| Remove people | Yes | Yes | No |
+| Rename the organization | Yes | Yes | No |
+| View organization billing details | Yes | Yes | No |
+| Add credits | Yes | No | No |
+| Manage payment methods and auto top-up | Yes | No | No |
+| Transfer ownership | Yes | No | No |
+| Delete the organization | Yes | No | No |
+| Leave the organization | After transferring ownership | Yes | Yes |
+
+### Owner
+
+Every organization has one Owner. The Owner has full control over the organization, including:
+
+- People and role management
+- Organization settings and name
+- Credits, payment methods, and auto top-up
+- Ownership transfer
+- Organization deletion
+
+The Owner can also see all instances created within the organization.
+
+<Warning>
+  Ownership includes control of the organization's credits and payment settings. Transfer ownership only to someone you trust to manage both access and billing.
+</Warning>
+
+### Admin
+
+Admins help operate the organization. They can:
+
+- Invite people as Admins or Members
+- Change people between the Admin and Member roles
+- Remove Admins and Members
+- Rename the organization
+- See all organization instances
+- View billing details and transaction history
+
+Admins cannot add credits, manage payment methods, configure auto top-up, transfer ownership, or delete the organization.
+
+### Member
+
+Members can create and use organization resources. They see the instances they created, rather than every instance in the organization.
+
+Members cannot manage people, organization settings, or billing. Instances they create are still charged to the shared organization balance.
+
+## How the organization balance works
+
+The organization balance is shared across the people using that organization. Usage from their running resources contributes to the organization's spend rate.
+
+Billing access depends on role:
+
+- The **Owner** can add credits, manage payment methods, and configure auto top-up.
+- **Admins** can view billing and spending information, but cannot change billing controls.
+- **Members** cannot view or manage organization billing.
+
+<Note>
+  When a person accepts an invitation to another organization, any remaining credits associated with their current individual account are transferred to the organization they join. Future resources are billed to the new organization balance.
+</Note>
+
+## Instance visibility
+
+Owners and Admins can see all instances created within the organization. This helps them understand active usage and identify who created a stopped instance.
+
+Members see only the instances they created. They can continue to create and use resources, but they do not see other people's instances or organization-wide billing information.
+
+## Invitations and membership changes
+
+Owners and Admins can invite people by email and choose whether each person joins as an Admin or Member. Pending invitations can be resent or canceled from the organization page.
+
+Before accepting an invitation, a person should understand that:
+
+- Their account will move to the invited organization.
+- Their remaining credits will be added to the new organization balance.
+- New resources will use the new organization's credits.
+- They may need to terminate running or stopped instances before they can join.
+- An Owner must transfer ownership of their current organization before joining another one.
+
+<Warning>
+  Back up any data you need before terminating an instance. Termination permanently deletes the instance and its local data.
+</Warning>
+
+## Leaving an organization
+
+Admins and Members can leave an organization from the organization page. Before leaving, terminate any running or stopped instances you created if Compute asks you to do so.
+
+After leaving:
+
+- You lose access to the organization's resources and settings.
+- You no longer have the permissions associated with your role.
+- You need a new invitation to rejoin.
+
+The Owner cannot leave directly. They must transfer ownership to another Admin or Member first.
+
+## Renaming or deleting an organization
+
+The Owner and Admins can rename the organization. Renaming it does not change people's roles or access.
+
+Only the Owner can delete an organization. Deletion permanently removes the organization, its instances and data, remaining credits, and pending invitations.
+
+<Danger>
+  Organization deletion cannot be undone. Download important data and confirm that you no longer need the remaining credits before deleting the organization.
+</Danger>
