@@ -1,0 +1,97 @@
+---
+title: "Transfer ownership or delete an organization"
+sidebarTitle: "Transfer or delete an organization"
+description: "Transfer control of a Compute organization safely or permanently delete the organization and its resources."
+icon: "crown"
+---
+
+Only the organization Owner can transfer ownership or delete the organization. Both actions affect access and billing, so review the consequences carefully before continuing.
+
+## Transfer ownership
+
+Transferring ownership gives another Admin full control of the organization and changes the current Owner to an Admin.
+
+<Warning>
+  The new Owner controls organization credits, payment methods, auto top-up, people, settings, future ownership transfers, and organization deletion.
+</Warning>
+
+### Before you transfer ownership
+
+Make sure that:
+
+- The person is already an **Admin** in the organization.
+- They understand that they will control billing and access.
+- You are prepared to lose Owner-only permissions.
+- You have discussed any payment method or auto top-up changes with them.
+
+If the person is currently a Member, [change them to an Admin first](/documentation/organizations/invite-people-manage-roles#change-a-member-to-an-admin).
+
+### Transfer ownership to an Admin
+
+1. Open the organization page.
+2. Find the Admin who will become the new Owner.
+3. Open the menu next to their name.
+4. Select **Transfer ownership**.
+5. Review each consequence in the confirmation dialog.
+6. Select every checkbox to confirm that you understand.
+7. Select **Transfer ownership** again.
+
+After the transfer:
+
+- The selected Admin becomes the **Owner**.
+- You become an **Admin**.
+- The new Owner gains full control of billing and organization management.
+- You can still view billing and usage details, but cannot add credits or manage payment methods.
+- The organization's existing auto top-up configuration is turned off.
+- The new Owner can configure auto top-up again.
+
+<Danger>
+  You cannot reverse the transfer yourself. Ownership can be transferred back only with the new Owner's cooperation.
+</Danger>
+
+## Leave after transferring ownership
+
+Once the transfer is complete, you can leave the organization as an Admin.
+
+Before leaving, save any important data and terminate the running or stopped instances you created. Then open the menu next to your own name and select **Leave organization**.
+
+See [Join or leave a Compute organization](/documentation/organizations/join-leave-organization#leave-an-organization) for the full process.
+
+## Delete an organization
+
+Deleting an organization permanently removes the organization and ends access for everyone in it.
+
+When an organization is deleted:
+
+- The Owner, Admins, and Members lose access.
+- Organization instances and their data are deleted.
+- Remaining organization credits are lost and cannot be refunded.
+- Pending invitations are canceled.
+- The action cannot be undone.
+
+<Warning>
+  Download any data you need before deleting the organization. Local instance data cannot be recovered afterward.
+</Warning>
+
+### Delete the organization
+
+1. Open the organization page.
+2. Open the organization menu next to **Invite people**.
+3. Select **Delete organization**.
+4. Review every consequence in the confirmation dialog.
+5. Select each checkbox to confirm that you understand.
+6. Select **Delete organization** again.
+
+<Danger>
+  Deletion is permanent. Do not continue unless you are prepared to lose the organization's resources, data, credits, and pending invitations.
+</Danger>
+
+## Rename instead of deleting
+
+If you only need to change the organization name, do not delete it.
+
+1. Open the organization menu next to **Invite people**.
+2. Select **Rename organization**.
+3. Enter the new name and confirm the change.
+
+Renaming does not change roles, resources, billing, or access.

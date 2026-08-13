@@ -1,73 +1,111 @@
 ---
 title: "Welcome to Hivenet Docs"
-description: "Your guide to running GPU, CPU, and AI workloads on Hivenet's distributed cloud. Create your first instance, connect over SSH, then tune settings as you go."
+description: "Practical guides for using Compute with Hivenet, from organizations and billing to instances, connectivity, and APIs."
 sidebarTitle: "Introduction"
 ---
 
 <Frame>
-  ![Compute Hero](/images/compute-hero.png)
+  ![Compute with Hivenet](/images/compute-hero.png)
 </Frame>
 
-## Setting up
+Use these docs to create and manage GPU and CPU workloads in Compute with Hivenet. You can follow the quick path to a running instance, or go directly to the organization, billing, connectivity, and API guides you need.
 
-If you’re new to Hivenet, begin here and get to a running GPU fast.
+<Info>
+  Every Compute account operates within an **organization**. The organization controls its people, roles, resources, and shared credit balance. Your role determines which instances and billing controls you can access.
+</Info>
+
+## Start here
 
 <CardGroup cols={2}>
-  <Card title="Create your first instance" icon="server" href="/quickstart">
-    Launch an on-demand GPU with just a few clicks.
+  <Card title="Compute quickstart" icon="rocket" href="/quickstart">
+    Create a container or virtual machine, connect to it, and understand when charging begins.
   </Card>
 
-  <Card title="Connect to your instance" icon="computer" href="/documentation/essentials/create-instance.mdx">
-    Learn how to SSH or use Jupyter to start working right away.
+  <Card title="How organizations work" icon="users" href="/documentation/organizations/how-organizations-work">
+    Understand the Owner, Admin, and Member roles, shared credits, and instance visibility.
+  </Card>
+
+  <Card title="Launch your first instance" icon="server" href="/documentation/essentials/create-instance">
+    Work through each creation setting, review the price, and connect securely.
+  </Card>
+
+  <Card title="Choose an instance type" icon="computer" href="/documentation/essentials/choosing-between-a-virtual-machine-and-a-container">
+    Decide whether a container or virtual machine fits your workload.
   </Card>
 </CardGroup>
 
-Prefer a single page? See [Quickstart](/quickstart).
-
-## Core tasks
-
-Compute isn’t one-size-fits-all. Customize your setup, scale your workload, and shape your environment.
+## Manage your Compute environment
 
 <CardGroup cols={2}>
-  <Card title="Use custom templates" icon="palette" href="/documentation/essentials/custom-templates">
-    Save time by reusing your preferred configurations.
+  <Card title="Billing and credits" icon="credit-card" href="/documentation/account-billing/billing-info">
+    Learn how the organization balance, billing roles, payments, and auto top-up work.
   </Card>
 
-  <Card title="How billing works" icon="code" href="/documentation/account-billing/billing-info">
-    How usage is measured and where to see costs in real time.
+  <Card title="Track organization spending" icon="chart-line" href="/documentation/account-billing/track-costs-real-time">
+    Check the live spend rate and identify which resources are contributing to it.
   </Card>
 
-  <Card title="Stop or terminate an instance" icon="screwdriver-wrench" href="/documentation/essentials/stop-terminate-instance">
-    Stop, start, or terminate your GPUs as projects evolve.
+  <Card title="Start, stop, or terminate instances" icon="power-off" href="/documentation/essentials/stop-terminate-instance">
+    Pause an instance safely or remove it permanently when the work is complete.
   </Card>
 
-  <Card title="Settings" icon="stars" href="/documentation/essentials/general-settings">
-    Manage credentials, keys, regions, and default preferences.
+  <Card title="Connect to an instance" icon="terminal" href="/documentation/essentials/create-instance#connect-over-ssh">
+    Find the connection details and use SSH, Jupyter, or an enabled public endpoint.
+  </Card>
+
+  <Card title="Custom templates" icon="layer-group" href="/documentation/essentials/custom-templates">
+    Create reusable container configurations for repeated workloads.
+  </Card>
+
+  <Card title="Settings" icon="gear" href="/documentation/essentials/general-settings">
+    Manage your SSH key, interface preferences, organization access, and account options.
   </Card>
 </CardGroup>
 
-## Reference
-
-Detailed, factual material you can rely on while building.
+## Build with the Compute API
 
 <CardGroup cols={2}>
-  <Card title="Benchmarks & comparisons" icon="sparkles" href="https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100">
-    See how RTX 4090s and 5090s perform against industry standards.
+  <Card title="Get started with the Compute API" icon="brackets-curly" href="/public-api/get-started">
+    Authenticate requests and manage existing instances programmatically.
+  </Card>
+
+  <Card title="API reference" icon="book-code" href="/public-api/api-reference/list-instances">
+    Browse the available instance, region, and preset endpoints.
   </Card>
 </CardGroup>
 
-## Support
+## Reference and troubleshooting
+
+<CardGroup cols={2}>
+  <Card title="GPU types" icon="microchip" href="/documentation/reference/gpu-types">
+    Compare the GPU configurations currently documented for Compute.
+  </Card>
+
+  <Card title="CPU types" icon="cpu" href="/documentation/reference/cpu-types">
+    Review CPU-only configurations and available sizes.
+  </Card>
+
+  <Card title="Frequently asked questions" icon="circle-question" href="/documentation/reference/faq">
+    Find answers about billing, instances, networking, security, and usage.
+  </Card>
+
+  <Card title="Troubleshooting" icon="screwdriver-wrench" href="/documentation/troubleshooting/get-instance-id">
+    Start with instance identification, SSH issues, certificates, and gateway errors.
+  </Card>
+</CardGroup>
+
+## Get help
 
 <CardGroup cols={3}>
-  <Card title="Contact" icon="headphones" iconType="regular" href="https://www.hivenet.com/support">
-    Submit a new request using our contact page.
+  <Card title="Contact Support" icon="headphones" href="https://www.hivenet.com/support">
+    Send Hivenet Support the details of an account, billing, or technical issue.
   </Card>
 
-  <Card title="Status page" icon="signal-bars" href="https://status-vkl3ksx5u3.hivenet.com/status/hivenet">
-    Check the status of Hivenet services.
+  <Card title="Service status" icon="signal-bars" href="https://status-vkl3ksx5u3.hivenet.com/status/hivenet">
+    Check whether a known Hivenet service incident is in progress.
   </Card>
 
-  <Card title="Discord" icon="discord" href="https://discord.com/invite/p2CwYSKsQU">
-    Join the Hivenet community on Discord.
+  <Card title="Discord community" icon="discord" href="https://discord.com/invite/p2CwYSKsQU">
+    Ask questions and talk with other people using Hivenet.
   </Card>
 </CardGroup>

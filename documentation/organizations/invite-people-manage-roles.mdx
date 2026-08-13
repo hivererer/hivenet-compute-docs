@@ -1,0 +1,117 @@
+---
+title: "Invite people and manage organization roles"
+sidebarTitle: "Invite people and manage roles"
+description: "Invite people to your Compute organization, manage pending invitations, change roles, and remove access."
+icon: "user-plus"
+---
+
+Organization Owners and Admins can invite people to the organization, choose their roles, and manage their access from the organization page.
+
+<Info>
+  People can join as an **Admin** or **Member**. Only the current Owner can transfer ownership to someone else.
+</Info>
+
+## What you’ll need
+
+- An **Owner** or **Admin** role in the organization
+- The email addresses of the people you want to invite
+- A role for each group of invitees: **Admin** or **Member**
+
+## Invite people
+
+1. Open the organization page:
+   - Select the organization name in the upper-left corner, then choose **Organization options**; or
+   - Open the menu next to your account and select **Organization**.
+2. Select **Invite people**.
+3. Choose whether the people you are inviting will join as **Admins** or **Members**.
+4. Enter their email addresses, separated by commas.
+5. Select **Send invites**.
+
+You can enter up to 20 email addresses for the selected role at a time. To invite people with a different role, return to the role-selection step and send a separate set of invitations.
+
+<Note>
+  Invitations are tied to the email addresses you enter. The invited person should sign in or create their Compute account with the same email address.
+</Note>
+
+## Choose the right role
+
+### Invite an Admin
+
+Admins can use organization resources and help manage the organization. They can:
+
+- Invite people
+- Change people between the Admin and Member roles
+- Remove Admins and Members
+- Rename the organization
+- See all organization instances
+- View billing and usage details
+
+Admins cannot add credits, manage payment methods, configure auto top-up, transfer ownership, or delete the organization.
+
+### Invite a Member
+
+Members can create and use organization resources. Instances they create use the shared organization balance.
+
+Members cannot manage people, organization settings, or billing. They see the instances they created rather than every instance in the organization.
+
+## Manage pending invitations
+
+People who have not accepted their invitations appear as pending on the organization page.
+
+Owners and Admins can use the menu next to a pending invitation to:
+
+- **Resend invite** if the person still needs access
+- **Cancel invite** if they should no longer be able to join
+
+Canceling an invitation makes its existing invitation link invalid. Send a new invitation if the person needs access later.
+
+## Change an Admin to a Member
+
+1. Open the organization page.
+2. Find the person under **Admins**.
+3. Open the menu next to their name.
+4. Select **Change to member**.
+5. Review the change, then select **Change to member** again.
+
+The person stays in the organization but loses Admin permissions. They can continue using organization resources as a Member.
+
+## Change a Member to an Admin
+
+1. Open the organization page.
+2. Find the person under **Members**.
+3. Open the menu next to their name.
+4. Select **Change to admin**.
+5. Review the permissions they will receive, then select **Change to admin** again.
+
+The person can then manage people and organization settings, see all organization instances, and view billing and usage details.
+
+<Warning>
+  Admins can manage people and see organization-wide instances, billing, and usage information. Assign the role only to people who need those responsibilities.
+</Warning>
+
+## Remove someone from the organization
+
+Owners and Admins can remove other Admins and Members.
+
+1. Open the organization page.
+2. Find the person you want to remove.
+3. Open the menu next to their name.
+4. Select **Remove member**.
+5. Confirm that you understand the consequences shown in the dialog.
+6. Select **Remove member** again.
+
+Removing someone has an immediate effect:
+
+- They lose access to the organization.
+- Their running and stopped instances in the organization are terminated.
+- They need a new invitation to rejoin.
+
+<Danger>
+  Terminating an instance permanently deletes its local data. Make sure the person has saved anything important before you remove them.
+</Danger>
+
+## Manage the Owner role
+
+The Owner cannot be demoted or removed like an Admin or Member. To change the Owner, transfer ownership to an Admin.
+
+If the person you want to make Owner is currently a Member, change them to an Admin first. Then follow the [ownership transfer instructions](/documentation/organizations/transfer-ownership-delete-organization).

@@ -79,6 +79,16 @@
             ]
           },
           {
+            "group": "Organizations",
+            "icon": "users",
+            "pages": [
+              "documentation/organizations/how-organizations-work",
+              "documentation/organizations/invite-people-manage-roles",
+              "documentation/organizations/join-leave-organization",
+              "documentation/organizations/transfer-ownership-delete-organization"
+            ]
+          },
+          {
             "group": "Connectivity",
             "pages": [
               "documentation/connectivity/connect-instance-macos",
@@ -108,7 +118,7 @@
             ]
           },
           {
-            "group": "Account and Billing",
+            "group": "Account and billing",
             "pages": [
               "documentation/account-billing/billing-info",
               "documentation/account-billing/track-costs-real-time",
