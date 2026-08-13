@@ -1,60 +1,108 @@
 ---
-title: "How can I delete my Compute account?"
-description: "Permanently delete your Compute with Hivenet account, including all instances, disks, snapshots, backups, and remaining credits, and know what happens next."
+title: "Delete your Compute account"
+description: "Prepare your organization membership and instances, then permanently delete your personal Compute account."
 sidebarTitle: "Delete your account"
 ---
 
-## Why think twice?
+Deleting your Compute account removes your personal access to Compute. It is different from deleting an organization, which removes shared resources, credits, and access for everyone in that organization.
 
-- All running **and** stopped instances will be terminated.
-- Every disk, snapshot, and backup tied to Compute will be wiped.
-- Any remaining credits vanish when the account does.
-- You’ll be logged out the moment deletion completes.
+<Danger>
+  Account deletion is permanent and cannot be undone. Save important data and resolve your organization membership before continuing.
+</Danger>
+
+## Before you delete your account
+
+Complete these checks first:
+
+- Download any data you want to keep from instances you created.
+- Terminate your running instances.
+- Review stopped instances and save any data you still need.
+- Leave the organization you currently belong to.
+- If you are the Owner, transfer ownership or delete the organization first.
+
+Compute prevents account deletion while you still own an organization or have running instances.
 
 <Warning>
-  This action is immediate and cannot be undone.
+  Terminating an instance permanently deletes its local data. Back up anything important before you stop using the account.
 </Warning>
 
-If you just need a breather, you can [pause or shut down instances instead](/documentation/essentials/stop-terminate-instance). Feel free to [contact Support](mailto:support@hivenet.com) to explore alternatives.
+## Resolve your organization role
 
-## What you’ll need
+### If you are the Owner
 
-- Access to the Hivenet account you want to delete.
-- Any data you care about **already downloaded** to a safe place.
-- A quick check that you’ve used (or are willing to lose) any Compute credits.
+An Owner cannot delete their personal account while they still control an organization.
 
-## Steps to delete your Compute account
+Choose one of these paths:
 
-1. Sign in to Compute and select **Account → Settings**.
-2. Scroll down to **Delete account**.
-3. Click **Request to delete account**.
-4. In the confirmation window, tick every box to confirm you understand the impact.
-5. Select **Delete account**.
+- **Keep the organization:** Transfer ownership to an Admin, then leave the organization.
+- **Remove the organization:** Delete the organization after confirming that its resources, data, remaining credits, and pending invitations are no longer needed.
 
-![Deletecompute Gi](/images/deletecompute.gif)
+If the person who should become Owner is currently a Member, change them to an Admin first.
 
-That’s it. Your Compute account and data are gone for good. We’ll log you out right away and send a confirmation email.
+See [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization).
 
-## What happens next?
+### If you are an Admin or Member
 
-- Your Compute resources are scrubbed from our network within minutes.
-- Any pending deployment or billing processes tied to Compute are canceled.
-- Your Hivenet **Store** files and other services stay untouched. (Want to delete those too? [Here is how](https://help.hivenet.com/en/articles/164662-how-can-i-delete-my-hivenet-account).)
-- You can reopen Compute any time by signing in and creating a new workspace—just note that previous data and credits are not recoverable.
+Leave the organization before deleting your account:
+
+1. Open **Organization** from the account menu.
+2. Find your name and open its menu.
+3. Select **Leave organization**.
+4. Review the consequences and confirm the action.
+
+If Compute reports that you still have instances, open **Instances**, save any necessary data, terminate the instances, and try again.
+
+See [Join or leave a Compute organization](/documentation/organizations/join-leave-organization#leave-an-organization).
+
+## Understand what happens to organization resources
+
+The effect depends on what you do before deleting your account:
+
+- If you transfer ownership and leave, the organization and its resources remain under the new Owner’s control.
+- If you delete the organization, its instances and data are deleted, remaining credits are lost, and pending invitations are canceled.
+- Leaving or losing access to an organization does not give you continued access to its billing history or shared resources.
 
 <Note>
-  For now, your Compute account is separate from your main Hivenet account. Deleting Compute won’t affect your access to cloud storage, file transfer, or other services unless requested separately.
+  Credits belong to the organization. Discuss the remaining balance with the Owner before leaving a shared organization.
 </Note>
 
-## Need another option?
+## Delete your account
 
-If high costs or unused capacity are the issue, consider:
+After resolving the organization and instance requirements:
 
-- Stopping or deleting individual instances instead of the whole account.
-- Downgrading instance sizes.
+1. Sign in to Compute.
+2. Open the menu next to your account at the bottom of the sidebar.
+3. Select **Settings**.
+4. Find **Delete account**.
+5. Select **Request to delete account**.
+6. Review and complete the confirmations shown in the dialog.
+7. Select **Delete account** to confirm.
 
-Our Support team is always happy to talk through the best path forward.
+You will lose access to the deleted Compute account when the deletion completes.
 
----
+## What account deletion does not affect
 
-Still have questions? Join us on [Discord](https://discord.gg/cTmPDPrMG2) or chat with the team.
+Compute currently uses an account separate from Hivenet Store, Send, and other Hivenet services. Deleting your Compute account does not delete files or access associated with those services.
+
+To delete your general Hivenet account as well, follow the instructions in the [Hivenet Help Center](https://help.hivenet.com/en/articles/164662-how-can-i-delete-my-hivenet-account).
+
+## If you cannot delete the account
+
+Check the most common blockers:
+
+- **You still own an organization:** Transfer ownership or delete the organization.
+- **You still have a running instance:** Terminate it and try again.
+- **You still belong to an organization:** Leave it before returning to Settings.
+- **You need help preserving access for other people:** Contact Support before changing ownership or deleting anything.
+
+## Alternatives to account deletion
+
+Depending on what you are trying to solve, you may be able to:
+
+- Stop or terminate individual instances.
+- Leave a shared organization.
+- Transfer organization ownership.
+- Turn off auto top-up.
+- Ask the Owner to change your role or remove your access.
+
+Contact Support through the Compute console if you are unsure which option preserves the resources you need.

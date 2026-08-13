@@ -1,62 +1,92 @@
 ---
 title: "Settings"
-description: "Manage themes, languages, SSH keys, notifications, and account deletion from the Settings page in the Compute with Hivenet dashboard."
+description: "Manage your personal Compute preferences, SSH key, organization access, and account deletion options."
 icon: "gear"
 sidebarTitle: "Settings"
 ---
 
-The **Settings** menu lets you adjust your preferences, manage SSH keys, and request account deletion. Here’s what you can do.
+The account menu at the bottom of the Compute sidebar gives you access to personal settings, organization management, appearance, language, and sign-out controls.
 
-## Accessing settings
+## Open the account menu
 
-Click on the hamburger menu next to your avatar (**⋮**). From here, you can manage the following options:
+Select the menu next to your account at the bottom of the left sidebar. Depending on your account and role, it contains:
 
 - **Settings**
-  - **SSH**: Add or update your SSH key.
-  - **Delete account**: Submit a request to delete your account.
-- **Theme**: Switch between **System**, **Light**, and **Dark** modes.
-- **Language**: Choose between available interface languages.
+- **Organization**
+- **Theme**
+- **Language**
+- **Sign out**
+
+Personal settings apply to your own Compute account. Organization actions and billing permissions depend on whether you are an Owner, Admin, or Member.
+
+## Organization
+
+Select **Organization** to open the organization page. You can also select the organization name in the upper-left corner, then choose **Organization options**.
+
+The organization page shows its Owner, Admins, Members, and pending invitations. The actions available to you depend on your role.
+
+- **Owners** can manage people, billing, ownership, and organization deletion.
+- **Admins** can manage people and organization settings and view billing details.
+- **Members** can view the people in the organization and use its resources, but cannot manage the organization.
+
+See [How organizations work in Compute](/documentation/organizations/how-organizations-work) for the full role comparison.
 
 ## Theme
 
-You can choose how the interface looks:
+Choose how the Compute console looks:
 
-- **System**: Matches your operating system’s theme.
-- **Light**: Bright background with dark text.
-- **Dark**: Dark background with light text.
+- **System:** Matches the theme used by your operating system or browser.
+- **Light:** Uses a light background and dark text.
+- **Dark:** Uses a dark background and light text.
 
-This setting affects only the appearance of the Compute interface.
+This changes only the appearance of the Compute console for your account.
 
 ## Language
 
-You can switch the interface language at any time. Currently supported:
+Use **Language** to change the language of the Compute interface.
 
-- **English**
-- **French**
+The available languages currently include:
 
-<Note>
-  Language choice affects the UI only. It doesn’t change your account details or technical settings.
-</Note>
+- English
+- French
+
+Changing the interface language does not affect your organization, resources, or technical configuration.
 
 ## SSH key
 
-Your SSH key is used to securely access every new instance you deploy.
+Your SSH public key is used to authorize access to new instances you create.
 
-- To update your key, paste a new value into the SSH field and click **Modify**.
-- The key will automatically apply to all future instances.
+To replace it:
+
+1. Open **Settings**.
+2. Find the SSH key field.
+3. Paste the new public key.
+4. Select **Modify** to save it.
+
+The new key applies to instances you create afterward.
 
 <Warning>
-  Replacing your SSH key will not affect existing running instances. Update keys manually on those servers if needed.
+  Replacing the SSH key in Settings does not update instances that already exist. Add or remove keys manually on those instances when needed.
 </Warning>
+
+For operating-system-specific instructions, see:
+
+- [Add an SSH key on Linux](/documentation/connectivity/ssh-key-linux)
+- [Add an SSH key on macOS](/documentation/connectivity/ssh-key-macos)
+- [Add an SSH key on Windows](/documentation/connectivity/ssh-key-windows)
 
 ## Delete account
 
-You can request to [permanently delete](/documentation/account-billing/delete-account) your Compute account.
+Select **Request to delete account** only when you are ready to permanently remove your personal Compute account.
 
-- Click **Request to delete account** to submit your request.
-- Account deletion is **irreversible**.
-- Any unused credits will be lost.
+Before deletion, you must resolve anything that still ties the account to active Compute resources:
+
+- Terminate running instances.
+- Leave your current organization.
+- Transfer ownership or delete the organization if you are its Owner.
 
 <Danger>
-  Deleted accounts cannot be recovered. Make sure you’ve withdrawn any important data and used up your credits before submitting your request.
+  Account deletion is irreversible. Download important data before terminating instances or deleting an organization.
 </Danger>
+
+Follow [Delete your Compute account](/documentation/account-billing/delete-account) for the complete preparation and deletion process.

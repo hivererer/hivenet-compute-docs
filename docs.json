@@ -118,7 +118,7 @@
             ]
           },
           {
-            "group": "Account and Billing",
+            "group": "Account and billing",
             "pages": [
               "documentation/account-billing/billing-info",
               "documentation/account-billing/track-costs-real-time",

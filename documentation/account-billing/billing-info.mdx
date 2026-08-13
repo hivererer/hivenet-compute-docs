@@ -1,80 +1,137 @@
 ---
 title: "Billing information"
-description: "Understand how Compute with Hivenet prepaid credits, per-second charges, add funds, and auto top-up work so you can budget instance usage."
+description: "Learn how organization credits, billing roles, payments, auto top-up, and transaction history work in Compute."
 sidebarTitle: "Billing information"
 ---
 
-Compute with Hivenet uses prepaid credits. You add funds first, then we deduct usage in real time while your instances run. You can see your **balance** and your **current spend rate (EUR/h)** at any time in **Billing** .
+Compute uses prepaid credits held in an **organization balance**. Charges are deducted in real time while the organization runs Compute resources.
+
+Your role determines which billing information you can see and whether you can change payment settings.
 
 <Note>
-  Charges apply only while an instance is running. Stopping or terminating an instance stops compute charges.
+  Only the organization **Owner** can add credits, manage payment methods, or configure auto top-up. **Admins** have read-only access to organization billing. **Members** cannot view or manage billing.
 </Note>
 
-## Find billing in the app
+## Billing access by role
 
-From the left sidebar, select **Billing**. You’ll see:
+| Billing action | Owner | Admin | Member |
+| :-- | :-: | :-: | :-: |
+| View the organization balance | Yes | Yes | No |
+| View the current spend rate | Yes | Yes | No |
+| View billing details | Yes | Yes | No |
+| View transaction history | Yes | Yes | No |
+| Add credits | Yes | No | No |
+| Manage payment methods | Yes | No | No |
+| Configure auto top-up | Yes | No | No |
 
-- **Balance** (EUR)
-- **Current spend rate** (EUR/h)
-- **Add funds** cards
-- **Auto top-up** controls
-- **Billing details** _(opens Stripe — coming soon in-app)_
-- **Transaction history** _(coming soon)_
+Members can still create and use organization resources. Their usage is charged to the shared organization balance, even though they cannot see its billing details.
 
-## Add funds
+## Find billing in the console
 
-1. Go to **Billing → Add funds**.
-2. Enter a custom amount or choose one of the presets (e.g., **€20**, **€50**, **€100**, **€500**).
-3. Click **Complete payment** and finish checkout in Stripe.
-4. Your **Balance** updates as soon as the payment clears.
+Select **Billing** from the left sidebar.
 
-<Tip>
-  If a prepaid card fails repeatedly, try a single larger top-up rather than several small ones.
-</Tip>
+What appears depends on your role:
 
-## Turn on auto top-up
+- The **Owner** sees the balance, current spend rate, credit controls, auto top-up, billing details, and transaction history.
+- **Admins** can review spending, billing details, auto top-up status, and transaction history, but cannot change them.
+- **Members** see a notice that billing is managed by the organization Owner.
 
-Auto top-up helps you avoid interruptions.
+For an explanation of the role model, see [How organizations work in Compute](/documentation/organizations/how-organizations-work).
 
-1. After your first successful top-up, go to **Billing → Auto top-up**.
-2. Toggle **Enable auto top-up**.
-3. Set a **balance threshold** and a **reload amount**. We’ll add credits automatically when your balance drops below the threshold.
+## How the organization balance works
 
-<Note>
-  Auto top-up appears only after you’ve added credits at least once.
-</Note>
+The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference API workloads draws from the same balance.
+
+The console shows:
+
+- **Balance:** Credits currently available to the organization, shown in EUR.
+- **Current spend rate:** The combined hourly rate of resources running at that moment.
+- **Time remaining:** An estimate based on the current balance and spend rate. It changes when resources start or stop.
+
+<Info>
+  The spend rate is shown per hour to make active costs easier to understand. Compute charges eligible usage per second, without an hourly minimum.
+</Info>
+
+## Add credits
+
+Only the Owner can add credits.
+
+1. Open **Billing**.
+2. Under **Add credits**, enter an amount or choose one of the available credit packs.
+3. Select **Complete payment**.
+4. Complete the payment through Stripe.
+5. Return to Compute and confirm that the organization balance has updated.
+
+Other Admins and Members cannot charge a payment method or add credits to the organization.
+
+## Configure auto top-up
+
+Auto top-up adds credits when the balance falls below a threshold. Only the Owner can configure it.
+
+1. Open **Billing**.
+2. Find **Auto top-up**.
+3. Enable auto top-up.
+4. Choose the balance threshold.
+5. Choose how many credits to add when the threshold is reached.
+6. Save the configuration.
+
+<Warning>
+  Transferring organization ownership turns off the existing auto top-up configuration. The new Owner must review the payment details and configure auto top-up again.
+</Warning>
+
+## Review billing details and transaction history
+
+Owners and Admins can review the organization’s billing details and transaction history.
+
+Transaction history records changes to the organization balance, including:
+
+- Credit purchases
+- Credits transferred when someone joins the organization
+- Other recorded credit transfers
+
+Billing details and payment methods are managed through Stripe. Only the Owner can make changes, but Admins can view the information shown in Compute.
 
 ## How charging works
 
-- **Granularity:** per-second billing; no hourly minimums.
-- [**Start/stop**](/documentation/essentials/start-stop-instances)**:** charging starts when an instance is **Running** and stops when it’s **Stopped** or **Terminated**.
-- **Low/zero balance:** Instances won’t start without enough credit. If your balance gets too low while an instance is running, Compute may terminate it to prevent negative charges (usually with a short pre-emptive window). Add credits and start again.
+- Charges begin when an instance reaches **Running** and stop when it is **Stopped** or **Terminated**.
+- Hivenet Inference API usage also contributes to the organization’s live spend rate.
+- Stopping an instance pauses compute charges while preserving it for a later start.
+- Terminating an instance permanently deletes it and its local data.
 
 <Info>
-  **Example**\
-  If an instance runs for 12 minutes 20 seconds, you’re billed for **740 seconds** at that GPU’s active price.
+  If an instance runs for 12 minutes and 20 seconds, Compute charges for 740 seconds at that instance’s active price.
 </Info>
 
-## Payment methods, receipts, and taxes
+## What happens when credits run low
 
-- **Payment methods:** Major credit/debit cards via Stripe (availability varies by country).
-- **Receipts:** Stripe emails a receipt for every successful top-up.
-- **Taxes/VAT:** Applied where required based on your billing details in Stripe.
-- **Currency:** Balances and prices are shown in **EUR**. You can pay in your local currency through Stripe, which handles the conversion automatically.
+Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Hivenet Inference API deployments stop automatically when the organization reaches zero credit.
 
-<Note>
-  **Billing details** and **Transaction history** are labeled _Coming soon_ in the Billing page. Until then, use Stripe receipts for your records. If you need a consolidated statement, contact Support.
-</Note>
-
-## Troubleshooting payments
-
-- **Card declined:** Check funds, complete any 3-D Secure prompt, or try another card.
-- **Prepaid cards blocked:** Your bank may block online/international payments by default. A single larger top-up often works better.
-- **Charged but not credited:** Refresh the page after a minute. If it’s still missing, contact Support with the date, amount, and the last four digits of your card.
+The Owner can add credits or enable auto top-up to reduce the risk of an interruption.
 
 <Warning>
-  **Compute credits are NOT refundable.**\
-  Credits are final once purchased. They are added to your account and used automatically as you run workloads. Refunds aren’t available, even if you stop using Compute or still have unused credits.
-
-  If a payment issue or a clear technical fault led to an incorrect charge, our support team can review the case and help where possible.
+  Stopped and terminated workloads behave differently. Stopping preserves an instance temporarily; termination deletes its local data. Back up important files before the balance runs out.
 </Warning>
+
+## Payments, receipts, and taxes
+
+- **Payment methods:** Available credit and debit cards are processed through Stripe.
+- **Receipts:** Stripe sends a receipt after a successful credit purchase.
+- **Currency:** Compute balances and prices are shown in EUR. Stripe may handle currency conversion for cards billed in another currency.
+- **Taxes and VAT:** Applied where required using the billing information supplied through Stripe.
+
+## Troubleshoot a payment
+
+- **Card declined:** Check the available funds, complete any required 3-D Secure prompt, or use another card.
+- **Payment completed but credits are missing:** Refresh Billing after a short wait. If the balance still has not changed, contact Support with the date, amount, and last four digits of the card.
+- **Billing information is incorrect:** Ask the organization Owner to update the details through Stripe.
+- **You cannot add credits:** Confirm that you are the organization Owner. Admins and Members cannot add credits.
+
+<Warning>
+  Purchased Compute credits are non-refundable. If a payment error or confirmed technical fault caused an incorrect charge, contact Support so the case can be reviewed.
+</Warning>
+
+## See also
+
+- [Track organization spending in real time](/documentation/account-billing/track-costs-real-time)
+- [How organizations work in Compute](/documentation/organizations/how-organizations-work)
+- [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization)
