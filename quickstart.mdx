@@ -1,97 +1,123 @@
 ---
 title: "Compute quickstart"
-description: "Launch your first Compute with Hivenet GPU or CPU instance, or spin up a vLLM inference server, in minutes with this end-to-end quickstart."
+description: "Create your first Compute container or virtual machine, connect securely, and understand how organization billing applies."
 sidebarTitle: "Quickstart"
 ---
 
-Get from zero to a running environment fast. This guide covers account setup, creating an instance, connecting over SSH, and launching a vLLM inference server.
+This guide takes you from sign-in to a running Compute instance. You’ll confirm the organization you’re using, choose the resources and connection options, review the estimated cost, and connect when the instance is ready.
 
-> **You’ll need**
->
-> - A **Compute** account (separate from a general Hivenet account)
-> - Prepaid **credits** in your balance
-> - An SSH client (macOS/Linux terminal or Windows Terminal)
+<Info>
+  ## What you’ll need
+
+  - A Compute account
+  - Access to a Compute organization
+  - Enough credits in the organization balance
+  - An SSH public key if you plan to connect over SSH
+
+  Only the organization **Owner** can add credits. Admins and Members should ask the Owner if the balance is too low to create an instance.
+</Info>
 
 <Steps>
-  <Step title="Sign in to Compute">
-    1. Go to **compute.hivenet.com** and select **Sign in**.
-    2. Use Google, Apple, GitHub, or email/password.
+  <Step title="Sign in and confirm your organization">
+    1. Open the [Compute console](https://console.hivecompute.ai/).
+    2. Sign in to your Compute account.
+    3. Check the organization shown in the upper-left corner.
 
-    After sign-in you’ll land on the **Console**.
+    Instances you create use that organization’s balance and permissions. If you belong to a shared organization, your role also determines which instances and billing information you can see.
 
     <Tip>
-      Add credits first to avoid interruptions. You can enable **auto top-up** later in Billing.
+      Read [How organizations work in Compute](/documentation/organizations/how-organizations-work) if you’re unsure what the Owner, Admin, and Member roles can do.
     </Tip>
   </Step>
-  <Step title="Create a GPU or CPU instance">
-    1. From the left sidebar, select **Create** (or **Create** from the Console card).
-    2. Choose what you want to create: \*\*Container \*\*or **Virtual machine**.
-    3. **Choose a location.** Pick what’s closest to your users or data.
-    4. **Choose your setup.** Select **GPU** or **vCPU only**.
-    5. **Pick a template or OS.** Examples include **Ubuntu 24.04 LTS**, **PyTorch 2.5**, or **Vulkan**. Templates and OSes come pre-installed, so you can start faster.
-    6. **Connectivity.**
-       - **SSH:** Paste your **public key**.
-         - Need one?
-           ```bash
-           ssh-keygen -t ed25519 -C "you@example.com"
-           ```
-           Then paste the contents of `~/.ssh/id_ed25519.pub`.
-       - **HTTPS / TCP / UDP:** Keep defaults unless your app needs open ports.
-    7. Review the summary and select \*\*\*\*Create instance \*\*\*\*or **Create virtual machine.**
-    8. Wait for **Status: Running** on the **Instances** page.
-  </Step>
-  <Step title="Connect over SSH">
-    From **Instances**, copy the SSH command shown for your instance, then connect:
+  <Step title="Choose what to create">
+    1. Select **Create** from the left sidebar.
+    2. Choose a **Container** or **Virtual machine**.
 
-    ```bash
-    ssh -i /path/to/private_key username@INSTANCE_IP
-    ```
+    Containers are suited to prepared images and application workloads. Virtual machines provide a full operating system when you need more control.
 
-    <Note>
-      \_username \_depends on the template. For Ubuntu images, it’s usually `ubuntu`.
-    </Note>
+    See [Choosing between a virtual machine and a container](/documentation/essentials/choosing-between-a-virtual-machine-and-a-container) for a fuller comparison.
   </Step>
-  <Step title="Launch a vLLM inference server (optional)">
-    If you want a ready inference endpoint:
+  <Step title="Choose a location and setup">
+    1. Select an available location.
+    2. Choose **GPU** or **vCPU only**.
+    3. Select the resource profile and size that fit your workload.
 
-    1. In the sidebar, select **Launch inference**.
-    2. **Choose a model** to run (pre-trained options are listed in the UI).
-    3. (Optional) **vLLM configuration.** Leave defaults for your first run. You can tune things later (e.g., context length, concurrency, sampling parameters).
-    4. **Choose a location** and **setup** (GPU).
-    5. Confirm **Connectivity** (SSH is required; HTTPS is available by default for the endpoint when applicable).
-    6. Select **Run inference** and wait for **Running**.
+    The console shows the hardware, memory, disk, bandwidth, and active price for each available option. Sold-out configurations cannot be selected.
   </Step>
-  <Step title="Manage and clean up">
-    - **Stop/Start:** You can stop and later start an instance from **Instances**.
-    - **Terminate:** When you’re done, terminate the instance to stop billing.
-    - **Billing:** Track spend and balance in **Billing**.
+  <Step title="Choose your software environment">
+    For a container, select an available template or create a custom one. For a virtual machine, select the operating-system image you want to use.
+
+    Templates can include an operating system, drivers, libraries, and application tooling. Review the software details before continuing.
+  </Step>
+  <Step title="Set up your connection">
+    Choose how you’ll reach the instance:
+
+    - **SSH:** Use the public key saved to your Compute account, or edit it before creation.
+    - **HTTPS:** Enable secure browser or API access when your workload needs a public HTTPS endpoint.
+    - **TCP or UDP:** Enable the protocol when your application requires it.
+    - **Jupyter Notebook:** Enable it when the option is available and you want browser-based notebook access.
 
     <Warning>
-      Billing is **per second while an instance is running**.
+      Review connection options carefully. Some settings cannot be changed after the instance is created.
+    </Warning>
+  </Step>
+  <Step title="Name and review the instance">
+    1. Enter a name using the characters allowed by the console.
+    2. Review the location, hardware, template or OS, connection settings, and estimated cost.
+    3. Confirm that the organization balance can cover the instance.
 
-      **Data on the instance is deleted after termination.** Back up anything important before you terminate.
+    If the console reports that more credits are needed, the Owner must add them before creation can continue.
+  </Step>
+  <Step title="Create and wait for Running">
+    Select the creation button shown for your resource type. The new instance appears under **Instances** while Compute prepares it.
+
+    Charging begins when the instance reaches **Running**. The preparation stage can take a few minutes.
+  </Step>
+  <Step title="Connect to the instance">
+    Open the running instance and find its connection details.
+
+    For SSH, copy the command shown by the console and run it in your terminal. A typical command looks like this:
+
+    ```bash
+    ssh -i /path/to/private_key username@host
+    ```
+
+    Use the private key that matches the public key supplied during creation. If you enabled Jupyter Notebook or a public endpoint, use the link shown in the instance’s connectivity details.
+  </Step>
+  <Step title="Stop or terminate when you’re done">
+    - **Stop** the instance when you want to pause compute usage and continue later.
+    - **Terminate** it when you no longer need the instance or its local data.
+
+    <Warning>
+      Termination permanently deletes the instance and its local data. Download anything important first.
     </Warning>
   </Step>
 </Steps>
 
 ## Troubleshooting
 
-- **“Permission denied (publickey)”** when SSHing<br />Ensure you added the **public key** during creation, and you’re using the matching **private key** with correct file permissions (`chmod 600`).
-- **Can’t reach the service**<br />Check that the required **port** is enabled under **Connectivity** and that any firewall rules are correct.
-- **Instance won’t start or pauses**<br />Verify you have **enough credits**. Top up in **Billing**.
+### The creation button is unavailable
+
+Check the warning in the review section. The organization may need more credits, or a required configuration may be incomplete. Only the Owner can add credits.
+
+### SSH returns `Permission denied (publickey)`
+
+Make sure that:
+
+- The instance was created with the correct public key.
+- Your SSH command uses the matching private key.
+- The private-key file has restricted permissions where required.
+- You are using the username shown for the selected template or OS.
+
+See the SSH-key guides for [Linux](/documentation/connectivity/ssh-key-linux), [macOS](/documentation/connectivity/ssh-key-macos), or [Windows](/documentation/connectivity/ssh-key-windows).
+
+### You cannot reach an application or notebook
+
+Confirm that the relevant HTTPS, TCP, UDP, or Jupyter option was enabled during creation. Then check the instance’s connectivity details and any firewall rules used by your application.
 
 ## Next steps
 
-Now that you’ve launched your first instance, you’re ready to explore more:
-
-- Create [custom templates](/documentation/essentials/custom-templates) tailored to your own workflows.
-- Dive into [vLLM configuration](/documentation/essentials/how-to-vllm) to adjust context length, concurrency, and other parameters.
-- Check [benchmark results](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100) for RTX 4090 and RTX 5090 GPUs.
-- Review [billing and credits](/documentation/account-billing/billing-info) to understand how per-second pricing works.
-- Explore our [security overview](/documentation/reference/faq) for details on encryption and data handling.
-
-## Need help?
-
-- Join the Hivenet community on [Discord](https://discord.com/cTmPDPrMG2).
-- Submit a request through our chatbot (you can find it on our [website](https://compute.hivenet.com)).
-- Contact us anytime at [support@hivenet.com](mailto:support@hivenet.com).
+- Follow the detailed [first-instance guide](/documentation/essentials/create-instance).
+- Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
+- Review how to [start and stop an instance](/documentation/essentials/start-stop-instances).
+- Create [custom templates](/documentation/essentials/custom-templates) for repeatable environments.

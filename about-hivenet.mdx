@@ -1,56 +1,108 @@
 ---
 title: "Welcome to Compute with Hivenet"
-description: "Learn what Compute with Hivenet is, why it runs on a distributed device network instead of central data centers, and how it fits GPU and CPU workloads."
+description: "Understand how Compute uses organizations, prepaid credits, containers, virtual machines, and distributed GPU and CPU infrastructure."
 sidebarTitle: "What is Hivenet?"
 ---
 
-You need a GPU at 2 a.m. Not tomorrow. Not after a quota request. Now. You open a tab, bounce between providers, and hit the usual walls: long waitlists, unclear pricing, or hardware that’s available everywhere except where you are.
+Compute with Hivenet provides on-demand GPU and CPU resources for AI, software development, rendering, data processing, and other workloads that need more capacity than a local machine can provide.
 
-Hivenet grew out of that frustration. We asked a simple question: what if the cloud didn’t have to live in giant data centers at all? What if we could use the idle power already sitting in people’s machines and micro data-centers around the world—and make it safe, fair, and practical for real work?
+You choose an available location, hardware configuration, software environment, and connection method. Compute prepares the resource and charges for eligible usage while it runs.
 
-Compute with Hivenet is the answer. It’s our compute platform for running GPU and CPU workloads on demand, built on a distributed network of real, underutilized devices instead of centralized facilities. You request resources; the network assigns them; you get to work.
+## How Compute is organized
 
-## What compute is (and what it isn’t)
+Every Compute account operates within an **organization**. The organization is the shared boundary for:
 
-Compute with Hivenet lets you create and run instances for things like training models, serving inference (including vLLM servers), rendering, or just getting a reliable Linux box with GPU acceleration. Billing is per-second through prepaid credits. You can stop, start, or terminate instances when you’re done.
+- People and their roles
+- Instances and other Compute resources
+- Prepaid credits
+- Billing and transaction history
 
-It isn’t a black box. You see what you’re running, what it costs, and where to change it. No lock-in tricks. No maze of proprietary services you don’t need.
+An organization has one **Owner** and can also include **Admins** and **Members**.
 
-## How it works at a glance
+- The Owner controls credits, payment methods, auto top-up, people, and ownership.
+- Admins help manage people and organization settings and can view organization billing.
+- Members can create and use organization resources but cannot manage people or billing.
 
-1. Create a **Compute** account (separate from a general Hivenet account).
-2. [Pick a template or OS](/documentation/essentials/custom-templates) (ready images or your custom template) and choose hardware (e.g., RTX 4090/5090 GPUs, AMD EPYC CPUs).
-3. Launch your instance and connect over SSH or via your chosen stack (e.g., vLLM).
+See [How organizations work in Compute](/documentation/organizations/how-organizations-work) for the complete role comparison.
 
-Pause work with [**stop/start**](/documentation/essentials/start-stop-instances) or [**terminate**](/documentation/essentials/stop-terminate-instance) when finished. You only pay for what runs.
+## What you can create
+
+Compute supports two main instance types.
+
+### Containers
+
+Containers provide prepared software environments for application, development, AI, and inference workloads. You can use an available template or create a custom template for repeated configurations.
+
+### Virtual machines
+
+Virtual machines provide a full operating system for workloads that need broader system-level control.
+
+Both types can use GPU or CPU-only configurations when those resources are available in the selected location.
+
+## How instance creation works
+
+The creation flow guides you through the main choices:
+
+1. Confirm the organization you are using.
+2. Choose a container or virtual machine.
+3. Select an available location.
+4. Choose GPU or vCPU-only resources and a suitable size.
+5. Select a template or operating system.
+6. Configure SSH, HTTPS, TCP, UDP, or Jupyter access as needed.
+7. Name the instance and review the estimated cost.
+8. Create it and wait for the status to reach **Running**.
+
+Charging begins after the instance is running. See [Launch and connect to your first Compute instance](/documentation/essentials/create-instance) for detailed instructions.
+
+## How billing works
+
+Compute uses prepaid credits held in the organization balance. Running resources draw from that shared balance, and eligible Compute usage is charged per second.
+
+Only the organization Owner can add credits, manage payment methods, or configure auto top-up. Admins can review organization spending, while Members cannot see organization-wide billing.
 
 <Note>
-  You’ll need credits in your balance before launching. You can enable auto top-up if you want to avoid interruptions.
+  If an Admin or Member reaches the creation review with insufficient credits, the organization Owner must add more before the instance can be launched.
 </Note>
 
-## Why a distributed cloud
+See [Billing information](/documentation/account-billing/billing-info) for payment, role, and transaction-history details.
 
-The cloud doesn’t have to mean new buildings and endless racks. Hivenet reuses existing hardware, which can reduce waste and avoid the queueing problems that happen when a few regions get congested. It also spreads workloads across a broader, community-powered network, rather than concentrating them in a single place.
+## How you access a workload
 
-In practical terms, that means:
+Connection options depend on what you enable during creation:
 
-- **Access without the red tape.** Get capacity when you need it, run it for as long as you need, and shut it down.
-- **Straightforward costs.** Per-second billing via credits, visible in your dashboard and invoices.
-- **A network that gives back.** Contributors can share resources and earn. Users get flexible compute. Everyone benefits from the same pool.
+- **SSH** for terminal access
+- **HTTPS** for secure browser or API access
+- **TCP or UDP** for applications that require those protocols
+- **Jupyter Notebook** for browser-based notebook workflows when available
 
-## What we value
+Some connection settings cannot be changed after creation, so review them before launching.
 
-Hivenet is opinionated about a few things:
+## Stop, start, and terminate
 
-- **Sovereignty and control.** Your workloads and data stay under your control. We avoid vendor lock-in patterns.
-- **Efficiency.** Use existing hardware where possible, bill only what you actually run, and avoid idle spend.
-- **Clarity.** Plain English docs, transparent billing, and settings you can understand.
-- **Community.** People power the network. That should be visible and not hidden behind vague abstractions.
+Use the instance lifecycle controls according to what you need next:
 
-## Before you dive in
+- **Stop** pauses compute charges and preserves the instance temporarily for a later start.
+- **Start** returns a stopped instance to service when suitable capacity is available.
+- **Terminate** permanently deletes the instance and its local data.
 
-- **Accounts.** Compute requires its own account, which is separate from the Hivenet account you might have for [cloud storage](https://www.hivenet.com/store-with-hivenet-cloud-storage).
-- **Credits.** Add credits before launching; per-second billing applies while instances are running.
-- **Basics.** You’ll interact with Linux, SSH, and (optionally) common AI tooling. If you’re new to any of that, our [quickstart](/quickstart) and [templates](/documentation/essentials/custom-templates) are there to help.
+<Warning>
+  Save important data before terminating an instance. Terminated data cannot be recovered from the instance.
+</Warning>
 
-You came here to get work done, not to learn a provider’s quirks. Compute with Hivenet keeps the mental overhead low: pick your resources, launch, run your job, terminate, and move on. The rest of the docs stay strictly practical from here.
+## Distributed infrastructure
+
+Hivenet runs Compute across distributed infrastructure rather than relying on one central facility. Available locations and configurations depend on the capacity connected to the platform.
+
+You choose from the resources currently offered in the console. The creation screen shows availability, technical specifications, and active pricing before you launch.
+
+## Before you start
+
+You’ll need:
+
+- A Compute account
+- Access to an organization
+- Enough organization credits for the selected resource
+- An SSH public key when you want terminal access
+- A plan for saving any data you cannot afford to lose
+
+Continue with the [Compute quickstart](/quickstart) when you’re ready to create your first instance.

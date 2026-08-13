@@ -1,100 +1,205 @@
 ---
 title: "Launch and connect to your first Compute instance"
-description: "Create a Compute with Hivenet account, add credits, deploy your first GPU or CPU instance, and connect to it over SSH in a few guided steps."
+description: "Choose an organization, configure a container or virtual machine, review its cost, and connect after it reaches Running."
 icon: "code"
-sidebarTitle: "Your first compute instance"
+sidebarTitle: "Your first Compute instance"
 ---
 
-This article will walk you through the basics of Compute, Hivenet's GPU-powered cloud service built for AI, ML, and other high-performance workloads.
-
-You'll learn how to create an account, launch your first instance, connect to it, and manage your usage.
+This guide explains each part of creating a Compute instance. It covers the organization context, resource and software choices, connection settings, price review, and the first connection after launch.
 
 <Info>
-  ## **What you’ll need**
+  ## What you’ll need
 
-  - A Compute account
-  - An SSH key (public) to connect to your instance
-  - Optional: a payment method to add credits later
+  - A Compute account with access to an organization
+  - Enough credits in the organization balance
+  - An SSH public key if you want terminal access
+  - A general idea of the hardware, software, and network access your workload needs
 </Info>
 
-## **Create your account**
+## Before you create the instance
 
-To get started:
+Check the organization shown in the upper-left corner of the console. The instance will use that organization’s balance and access rules.
 
-1. [Sign up for Compute](https://auth.compute.hivenet.com/u/login?state=hKFo2SA2TU1QNHZhNk9kM3lTX2FCMi1yMW5OaWJZZlFpUDZvOaFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIHM5QjI1Uk1ZQTdPSlBEbm9kZEVTcUtWR3ZyMTRIQV8to2NpZNkgYnhOQ09YRXJ4R2VDNTJMSXdxQ25pSllQQWdSd3lyc3U).
-2. Log in to access your dashboard.
-
-Your dashboard is where you'll manage your projects, launch instances, and track usage.
-
-![Dashboard](/images/dashboard)
+- **Owners** can add credits and manage organization billing.
+- **Admins** can create instances and view all organization instances, but cannot add credits.
+- **Members** can create instances using the shared balance and see the instances they created.
 
 <Note>
-  Compute uses a separate account from the one you may already have for Hivenet storage and other services. We know that’s not ideal, and we’re actively working on unifying accounts across the platform.
+  If the organization does not have enough credits, ask its Owner to add more. Admins and Members cannot add credits themselves.
 </Note>
 
-## **Launch an instance**
+## Choose between a container and virtual machine
 
-Once you’re in the dashboard:
+Select **Create** from the left sidebar, then choose the resource type you want to launch.
 
-- Click on **Create**.
-- Choose what you want to launch, a \*\*Container \*\*or a **Virtual machine**.
+### Container
 
-![Chooseinstanceselector](/images/Chooseinstanceselector.gif)
+Choose a container when you want a prepared application environment and do not need control of the full operating system. Templates can provide an operating system, drivers, libraries, and development tools.
 
-- **Choose a** **location**.
-- Under **Choose your setup**, select your instance type (GPU or vCPU).
-- Choose a **Size** (Small, Medium, Large).
-- **Pick a template** (container) or **Pick an OS** (virtual machine).
-- Go through the **Connectivity** options and upload your **SSH key**.
-- Click on **Create container** or **Create virtual machine**.
+### Virtual machine
 
-Your instance will now appear on the **Instances** page with its current status.
+Choose a virtual machine when your workload needs a full operating system or broader system-level control.
 
-<Note>
-  Root access is disabled on containers. Use a Custom Template for system packages.
-</Note>
+See [Choosing between a virtual machine and a container](/documentation/essentials/choosing-between-a-virtual-machine-and-a-container) for help deciding.
 
-## **Connect to your instance via SSH**
+## Configure the instance
 
-After launching, here’s how to connect:
+<Steps>
+  <Step title="Choose a location">
+    Select an available location for the instance.
 
-- On the **Instances** page, find your running instance.
-- Click **Connectivity options**.
-- Copy the provided SSH command.
-- Paste it into your terminal to connect.
+    Consider where your users, services, and data are located. A nearby location can reduce network latency. Configurations marked as sold out cannot be selected until capacity becomes available.
+  </Step>
+  <Step title="Choose your setup">
+    Select **GPU** or **vCPU only**, then choose the available resource profile and size.
+
+    The console shows the main specifications for each option, including:
+
+    - GPU count and model, when applicable
+    - vCPU allocation
+    - GPU memory and system memory
+    - Disk space
+    - Network bandwidth
+    - Active price
+
+    Use the smallest configuration that meets the workload’s memory and performance needs. You can create another instance later if you need a different setup.
+  </Step>
+  <Step title="Pick a template or operating system">
+    For a container, choose one of the available templates or select the option to create a new custom template.
+
+    For a virtual machine, choose the operating-system image you want to install.
+
+    Review the image details before continuing. A template may already include drivers, libraries, notebook software, or workload-specific tools.
+  </Step>
+  <Step title="Set up connection options">
+    Choose how you’ll access the instance.
+
+    **SSH**
+
+    Compute uses a public SSH key to authorize terminal access. The key saved to your account may appear automatically. Select **Edit** if you need to replace it before creating the instance.
+
+    **HTTPS**
+
+    Enable HTTPS when the workload needs a secure browser-accessible or API endpoint.
+
+    **TCP and UDP**
+
+    Enable the protocol required by your service. Leave these options off when the workload does not need inbound access over them.
+
+    **Jupyter Notebook**
+
+    Enable Jupyter Notebook when the option is available and you want notebook access in a browser. The access link appears in the instance’s connectivity details after launch.
+
+    <Warning>
+      Some connection settings are permanent after creation. Confirm the protocols and access methods you need before continuing.
+    </Warning>
+  </Step>
+  <Step title="Name the instance">
+    Enter a name that follows the rules shown in the console. Instance names generally use letters, numbers, and dashes without spaces or special characters.
+
+    A descriptive name makes the instance easier to identify later, especially when several people are creating resources in the same organization.
+  </Step>
+  <Step title="Review the setup and estimated cost">
+    The review section summarizes:
+
+    - Location
+    - Resource type and size
+    - Template or operating system
+    - Memory, disk, and bandwidth
+    - Connection options
+    - Estimated hourly, daily, and weekly cost
+
+    Review the active price and make sure the selected organization has enough credits.
+
+    <Info>
+      The hourly, daily, and weekly values help you estimate spending. Eligible Compute usage is charged per second after the instance reaches **Running**.
+    </Info>
+  </Step>
+  <Step title="Create the instance">
+    Select the button to create the container or virtual machine.
+
+    The instance appears on the **Instances** page while Compute prepares it. Wait until its status changes to **Running** before trying to connect.
+
+    <Note>
+      Preparation usually takes a few minutes. Charging begins when the instance is running, rather than while the creation form is open.
+    </Note>
+  </Step>
+</Steps>
+
+## Connect over SSH
+
+After the instance reaches **Running**:
+
+1. Open **Instances**.
+2. Select the running instance.
+3. Open its connectivity details.
+4. Copy the SSH command shown by the console.
+5. Run the command in your terminal.
+
+A typical command looks like this:
+
+```bash
+ssh -i /path/to/private_key username@host
+```
+
+The exact username and address depend on the selected template or operating system. Use the private key that matches the public key supplied during creation.
 
 <Tip>
-  You can configure your `~/.ssh/config` file for faster access later.
+  After a successful connection, you can add the host and identity file to `~/.ssh/config` to make later connections shorter.
 </Tip>
 
-## **Stop or terminate an instance**
+For platform-specific instructions, see:
 
-To avoid using up credits, stop any instances you’re not actively using.
+- [Connect from macOS](/documentation/connectivity/connect-instance-macos)
+- [Connect from Windows](/documentation/connectivity/connect-instance-windows)
+- [Add an SSH key on Linux](/documentation/connectivity/ssh-key-linux)
 
-- **Stop**: Pauses your instance (you can restart it later).
-- **Terminate**: Permanently deletes your instance and all data on it.
+## Connect through Jupyter or a public endpoint
+
+When you enabled Jupyter Notebook, HTTPS, TCP, or UDP during creation, open the instance’s connectivity details to find the available address or access link.
+
+If a service is not reachable:
+
+- Confirm that the required connection option was enabled.
+- Check that the application is listening on the expected interface and port.
+- Review any firewall rules inside the container or virtual machine.
+- Make sure the instance is still running.
+
+## Understand who can see the instance
+
+The person who creates an instance can see it in their instance list.
+
+- Owners and Admins can see all instances created within the organization.
+- Members see the instances they created.
+- Usage is charged to the organization balance, regardless of who created the instance.
+
+See [How organizations work in Compute](/documentation/organizations/how-organizations-work) for the full role comparison.
+
+## Stop or terminate the instance
+
+When you finish working:
+
+- **Stop** the instance to pause compute charges and preserve it temporarily for a later start.
+- **Terminate** the instance when you no longer need it or its local data.
 
 <Warning>
-  Terminating an instance will erase everything on it. Be sure to back up any important files first.
+  Termination permanently deletes the instance and its local data. Download important files before you terminate it.
 </Warning>
 
-## **Add credits to your balance (optional)**
+See [How to stop or terminate a Compute instance](/documentation/essentials/stop-terminate-instance) for the lifecycle details.
 
-To add credits to your account, follow these steps:
+## If creation is blocked by the balance
 
-- Open the **Billing** page from the left-hand menu.
-- Click **Add credits**.
-- Choose an amount and complete the Stripe checkout flow.
+The review section tells you when the organization needs more credits.
 
-![Billing Gif Gi](/images/billing-gif.gif)
+- If you are the **Owner**, open **Billing** and add credits.
+- If you are an **Admin** or **Member**, ask the organization Owner to add credits.
 
-Need more help? Check our [Pricing](https://compute.hivenet.com/#pricing) or visit the [FAQ](/documentation/reference/faq).
-
-## **What’s next?**
-
-Now that you’re set up, you can start running AI models, experimenting with machine learning, or deploying custom workloads—**on demand and on your terms.**
+After the balance updates, return to the creation form and review the configuration again before launching.
 
 ## See also
 
-- [Choosing between GPU and vCPU instances](/tutorials/more-guides/choosing-between-cpu-gpu)
-- [Using vCPUs in Compute with Hivenet](/documentation/essentials/how-to-vcpu)
+- [Compute quickstart](/quickstart)
+- [Billing information](/documentation/account-billing/billing-info)
+- [Understand and choose your Compute instance](/documentation/essentials/understand-choose-instance)
+- [How to use custom templates](/documentation/essentials/custom-templates)
