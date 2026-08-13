@@ -4,6 +4,88 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="August 2026" description="v1.34">
+  > ## Public API access, organizations and teams, the production launch of Hivenet Inference API, and major reliability improvements across Compute.
+
+  #### Public Compute API v1
+
+  The first public Compute API is now available.
+
+  You can use eight documented endpoints to:
+
+  - List and inspect instances
+  - Read recent instance logs
+  - Start, stop, and terminate instances
+  - List available regions
+  - Browse available hardware presets
+
+  The API includes a published OpenAPI specification, consistent error responses, request IDs, and rate limiting. API tokens are tied to your user identity.
+
+  See the [getting-started guide](https://docs.hivenet.com/public-api/get-started-with-the-compute-api) to start using the API, or check the API changelog for endpoint-specific changes.
+
+  #### Organizations and teams
+
+  Organizations are now available to all Compute users, making it possible to manage instances, teammates, and credits together.
+
+  You can now:
+
+  - Create an organization
+  - Invite teammates by email
+  - Preview, resend, and manage pending invitations
+  - Assign roles to organization members
+  - Use a shared organization credit balance
+
+  Organization owners and admins can see all instances belonging to their organization.
+
+  Billing and transaction history now stay associated with the correct organization when members join, leave, or are removed. Credit transfers between accounts and organizations also appear in billing history.
+
+  Existing individual accounts have been migrated automatically to a personal organization.
+
+  Additional safeguards prevent accounts from being deleted while they still own an organization or have running instances.
+
+  #### Hivenet Inference API
+
+  The Hivenet Inference API is now available in production, with OpenAI-compatible endpoints running on NVIDIA RTX 5090 hardware.
+
+  Five models are available at launch:
+
+  - Qwen 3.6 27B
+  - Qwen 3.6 35B
+  - Gemma 4 31B
+  - Gemma 4 26B
+  - GPT-OSS 20B
+
+  Chat and asynchronous workloads support up to a 16K context window, while agentic workloads support up to 128K.
+
+  Inference usage is integrated with Compute billing and credits. Your inference workloads contribute to your live spend rate and stop automatically when your organization runs out of credit.
+
+  Inference reliability has also improved:
+
+  - Failed replicas restart faster.
+  - Model weights are loaded from a local cache at each location, reducing dependency on external downloads during startup.
+  - API keys associated with an organization are removed when that organization is deleted.
+
+  #### Shared dedicated servers
+
+  Private Compute locations can now be shared across multiple organizations.
+
+  This allows several organizations, including separate teams belonging to the same customer, to use infrastructure reserved on the same dedicated server without requiring a separate location for each organization.
+
+  #### Instance reliability
+
+  A broad set of improvements makes core instance management and networking more reliable, including fixes across instance lifecycle, recovery, and networking behavior.
+
+  #### Faster support for instance issues
+
+  Hivenet Support can now perform additional recovery actions directly when troubleshooting an instance, including rebuilding an instance or changing its instance type.
+
+  This reduces the need to escalate some recovery cases to the Compute engineering team and can help get affected instances working again sooner.
+
+  #### Platform reliability
+
+  This release also includes infrastructure changes that improve monitoring, incident detection, deployment reliability, and how Compute manages regions as the platform expands.
+</Update>
+
 <Update label="August 2026" description="Public Compute API">
   > ## Manage existing Compute instances through the Hivenet API.
 
