@@ -1,48 +1,70 @@
 ---
 title: "Choose a Compute configuration for image generation"
-description: "Pick the right Compute GPU, vRAM, and disk size for Stable Diffusion, Flux, and other image-generation workloads based on model size and batch settings."
+description: "Choose a Compute GPU configuration for Stable Diffusion, Flux, ComfyUI, Fooocus, and similar image-generation workloads based on VRAM and parallelism needs."
 sidebarTitle: "Config for image gen"
 ---
 
-## **What are you trying to run?**
+Image-generation workloads usually depend more on **VRAM** than raw GPU count. Start with enough GPU memory for the model and workflow, then add GPUs only when your software can use them or you want to run jobs in parallel.
 
-Here are some common tools and the GPU specs they usually need:
+Compute currently uses NVIDIA RTX 5090 GPUs with 32 GB of VRAM per GPU.
 
-| Tool                     | Recommended GPU       | Notes                               |
-| :----------------------- | :-------------------- | :---------------------------------- |
-| Fooocus                  | 1x RTX 4090           | Smoothest experience with 24GB VRAM |
-| Stable Diffusion         | 1x RTX 3090 or better | Needs ~16GB VRAM+ for full models   |
-| InvokeAI / AUTOMATIC1111 | 2x RTX 4090           | For faster batch processing         |
-| ComfyUI                  | 1x RTX 4090 or higher | Works well with large workflows     |
+## A practical starting point
+
+| Workload | Suggested starting point | Why |
+| :-- | :-- | :-- |
+| Fooocus | 1 × RTX 5090 | One 32 GB GPU is enough for typical interactive generation workflows. |
+| Stable Diffusion | 1 × RTX 5090 | Leaves room for larger models, higher resolutions, and extensions. |
+| AUTOMATIC1111 or InvokeAI | 1 × RTX 5090 | Start with one GPU unless you have a workflow that explicitly supports multi-GPU execution. |
+| ComfyUI | 1 × RTX 5090 | A strong default for larger graphs and image-generation pipelines that fit within 32 GB of VRAM. |
+| Multiple independent jobs | 2 or more GPUs | Separate jobs can run on different GPUs when your setup assigns them explicitly. |
+| Training or fine-tuning | Depends on the model | Memory requirements vary significantly. Check the training framework and model requirements before choosing a preset. |
 
 <Tip>
-  Choose the lowest configuration that runs your model comfortably. You can always scale up later.
+  Start with one GPU when the workload fits. A second GPU does not automatically make a single Stable Diffusion or ComfyUI job twice as fast.
 </Tip>
 
-## What if you don’t know what to pick?
+## Check VRAM before adding GPUs
 
-Start small and test.
+After starting the workload, monitor GPU memory with:
 
-- Use 1x RTX 4090 to get going
-- Monitor VRAM usage using `nvidia-smi`
-- If you hit limits or run into crashes, consider upgrading to 2x
+```bash
+nvidia-smi
+```
 
-## How to change configuration later
+If the job approaches the 32 GB VRAM limit, first check whether you can reduce memory use through the application itself. Depending on the tool, useful options can include a smaller model, lower resolution, smaller batch size, tiled processing, or memory-efficient attention.
 
-You can’t resize an instance directly, but you can:
+If the workload genuinely needs more than one GPU, confirm that the application or framework supports distributing work across several cards.
 
-1. Stop or terminate the current instance
-2. Spin up a new one with a higher configuration
-3. Reinstall your app or transfer your data if needed
+<Note>
+  Multiple GPUs have separate VRAM. Their memory is not automatically combined into one larger pool.
+</Note>
 
-<Info>
-  Save your model/data files before terminating an instance!
-</Info>
+## When multiple GPUs help
 
-## Want to go faster?
+Consider a multi-GPU instance when you:
 
-More GPUs = more parallelism. Use 2x configs if you:
+- Run several image-generation jobs at the same time and can assign them to different GPUs.
+- Use a training or fine-tuning framework with explicit distributed or multi-GPU support.
+- Use rendering or compute software designed to scale across several GPUs.
+- Have tested one GPU and know the workload can benefit from additional cards.
 
-- Run large prompts or batch generations
-- Train or fine-tune models
-- Need lower latency for interactive work
+For ordinary interactive image generation, one RTX 5090 is usually the simpler place to start.
+
+## Change configuration later
+
+Compute does not resize an existing instance in place. To move to another GPU configuration:
+
+1. Save any models, outputs, configuration files, or other data you need.
+2. Stop or terminate the current instance as appropriate.
+3. Create a new instance with the GPU preset you need.
+4. Restore your files or reuse a custom template to rebuild the environment.
+
+<Warning>
+  Terminating an instance permanently deletes its local data. Copy anything important somewhere safe before you terminate it.
+</Warning>
+
+## Check current availability
+
+GPU presets depend on location and current capacity. The Compute creation screen shows the GPU count, vCPU, RAM, disk, bandwidth, availability, and active price for the presets you can launch now.
+
+See [GPU types and sizes](/documentation/reference/gpu-types) for current fleet guidance.

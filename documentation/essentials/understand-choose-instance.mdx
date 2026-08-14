@@ -11,14 +11,14 @@ A Compute instance is a unit of compute resources you run on Hivenet. Depending 
 
 When you create an instance, you choose a combination of hardware, runtime type, and configuration that determines how it behaves and what level of control you have.
 
-### **Container-based instances**
+### Container-based instances
 
 Containers are designed for most common workloads, such as running scripts, applications, and models.
 
 - Root access is disabled. Commands that require sudo won’t work.
 - System-level packages are managed through templates rather than manual installation.
 
-### **Virtual machine instances**
+### Virtual machine instances
 
 Virtual machines are intended for workloads that need full operating system control.
 
@@ -29,35 +29,34 @@ Virtual machines are intended for workloads that need full operating system cont
 
 Regardless of the instance type, you’ll configure the following:
 
-- **GPU(s)**\
-  Choose the number and type of GPUs for your workload. NVIDIA RTX 4090 GPUs are available, with up to 8 GPUs per instance, suitable for training, inference, rendering, and other GPU-heavy tasks.
-- **vCPUs and RAM**\
-  CPU and memory resources are matched to your GPU selection to ensure balanced performance without manual tuning.
-- **Storage**\
-  Instances include fast local SSD storage. Storage behavior depends on the instance type and lifecycle. See the instance lifecycle documentation for details.
-- **Region**\
-  Select where your instance runs. Currently supported regions include France and the UAE. Region choice affects latency and data residency.
-- **Billing type**\
-  Instances use on-demand billing. You pay only while the instance is running.
+- **GPU(s)**<br />Choose from the GPU presets currently available in your selected location. Compute currently uses NVIDIA RTX 5090 GPUs, with 32 GB of VRAM per GPU and multi-GPU configurations available when capacity allows.
+- **vCPUs and RAM**<br />Review the CPU and system-memory resources attached to each preset. These support the runtime, data loading, preprocessing, and CPU-side parts of your workload.
+- **Storage**<br />Instances include fast local SSD storage. Storage behavior depends on the instance type and lifecycle. See the instance lifecycle documentation for details.
+- **Region**<br />Select where your instance runs. Region choice affects latency, capacity, and data residency.
+- **Billing type**<br />Instances use on-demand billing. Eligible usage is charged per second while the instance is running.
 
-### How to choose the right instance
+<Info>
+  Preset specifications and availability can change as capacity changes. Use the creation screen as the source of truth for the hardware, memory, disk, bandwidth, and price you can launch now.
+</Info>
+
+## How to choose the right instance
 
 The right choice depends on what you’re building.
 
-- Running scripts, apps, or model inference?\
-  A container-based instance is usually the simplest and fastest option.
-- Training large models or running GPU-heavy workloads?\
-  Choose the number of GPUs based on your model size and VRAM needs. Each RTX 4090 provides 24 GB of VRAM.
-- Need full OS control, custom system packages, or kernel access?\
-  Use a virtual machine instance.
+- Running scripts, apps, or model inference?<br />A container-based instance is usually the simplest option when a prepared image already includes what you need.
+- Running a GPU workload?<br />Start with the model or application’s VRAM requirement. One RTX 5090 provides 32 GB of VRAM. Add GPUs only when the software supports multi-GPU execution or when you want to run work in parallel.
+- Need full OS control, custom system packages, or kernel access?<br />Use a virtual machine instance.
+- Unsure whether you need GPU or CPU resources?<br />See [Choosing between GPU and vCPU instances](/tutorials/more-guides/choosing-between-cpu-gpu).
 
-If you’re unsure, that’s normal. You can reach out through the in-app chatbot or [join the community on Discord](https://discord.gg/invite/f5aBCn5HZK) for guidance.
+<Note>
+  Multiple GPUs do not automatically behave like one GPU with combined VRAM. Frameworks and models need explicit support for approaches such as tensor parallelism or distributed training.
+</Note>
 
 ## Managing your instance from the dashboard
 
 Once your instance is running, you can manage it from the Compute dashboard:
 
-- Start or stop the instance at any time
+- Start or stop the instance
 - Monitor usage, uptime, and cost
 - Terminate the instance when you’re finished
 
@@ -65,16 +64,14 @@ Instances are billed per second. When an instance is stopped or terminated, comp
 
 ## How to connect to your instance
 
-When your instance is ready, you’ll have access to:
+When your instance is ready, its connectivity details show the access methods you enabled during creation, such as SSH, HTTPS, TCP, UDP, or Jupyter Notebook.
 
-- A public IP address
-- SSH access details
-- GPU information for verification and diagnostics
+For SSH, use the command provided by the console with the private key that matches the public key saved to your account.
 
-You can connect using a standard SSH command:
+See [Launch and connect to your first Compute instance](/documentation/essentials/create-instance) for the complete creation and connection flow.
 
-```
-ssh [your-username]@[your-instance-ip]
-```
+## See also
 
-You can use a terminal or a graphical SSH client, depending on your workflow.
+- [GPU types and sizes](/documentation/reference/gpu-types)
+- [Choosing between a virtual machine and a container](/documentation/essentials/choosing-between-a-virtual-machine-and-a-container)
+- [Billing information](/documentation/account-billing/billing-info)
