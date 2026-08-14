@@ -104,6 +104,20 @@ sidebarTitle: "Product updates"
   See the [API changelog](/public-api/api-changelog) for endpoint additions and changes that may affect your integration.
 </Update>
 
+<Update label="August 2026" description="RTX 4090 fleet retirement">
+  > ## The RTX 4090 fleet has been retired from Compute with Hivenet.
+
+  On August 8, 2026, Hivenet completed the retirement of its RTX 4090 Compute fleet as part of the transition to newer GPU hardware.
+
+  RTX 4090 instances are no longer available for new workloads. Current GPU workloads should use the presets available in the Compute console, including NVIDIA RTX 5090 configurations.
+
+  Existing RTX 4090 instances and their local data were removed when the retired nodes were decommissioned.
+
+  Older tutorials, benchmark articles, and changelog entries may still mention RTX 4090 hardware when it is relevant to the configuration tested or available at the time. These references are historical and do not indicate current availability.
+
+  See [GPU types and sizes](/documentation/reference/gpu-types) for current fleet guidance.
+</Update>
+
 <Update label="May 2026" description="v1.32">
   > ## More accurate instance availability, Falcon-OCR inference, and more predictable networking.
 
@@ -214,10 +228,12 @@ sidebarTitle: "Product updates"
 <Update label="October 2025" description="v1.25">
   > ## Lower GPU pricing, faster startup, and smoother custom networking.
 
-  **Pricing update:**
+  **Pricing at the time of this release:**
 
   - RTX 4090: **0.20 EUR/hour**
-  - RTX 5090: **0.40 EUR/hour**<br />Hivenet now offers the most affordable high-quality GPU compute available.
+  - RTX 5090: **0.40 EUR/hour**
+
+  These prices and GPU options are historical. See the current Compute console for available hardware and pricing.
 
   **Enhanced networking:**
 

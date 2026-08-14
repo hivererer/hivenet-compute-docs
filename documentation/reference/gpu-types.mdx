@@ -1,31 +1,54 @@
 ---
 title: "GPU types and sizes"
-description: "Reference for Compute with Hivenet GPU instances, including RTX 4090 and RTX 5090 options with fixed vCPU, RAM, disk, and bandwidth per size."
+description: "Reference for the current Compute with Hivenet GPU fleet, including RTX 5090 memory, available multi-GPU sizes, and where to check live preset details."
 sidebarTitle: "GPU types"
 ---
 
-Hivenet GPU instances pair NVIDIA cards with a fixed amount of vCPU, ECC RAM, and disk so you can launch fast without tuning every knob.
+Compute with Hivenet currently offers NVIDIA RTX 5090 GPU instances. Availability and the exact CPU, RAM, disk, bandwidth, and price attached to a GPU preset can vary by location and capacity.
 
-### Available GPU families
+## Current GPU family
 
-- **NVIDIA RTX 4090** — 24 GB of GDDR6X memory per GPU
-- **NVIDIA RTX 5090** — 32 GB of GDDR7 per GPU
+- **NVIDIA RTX 5090** — 32 GB of GDDR7 VRAM per GPU
+
+The RTX 4090 fleet has been retired and is no longer available for new Compute workloads.
+
+<Info>
+  The Compute console is the source of truth for the presets you can launch at that moment. It shows the GPU count, vCPU, system RAM, disk, bandwidth, location, availability, and active price before you create an instance.
+</Info>
+
+## Multi-GPU instances
+
+Compute can offer RTX 5090 configurations with multiple GPUs, up to 8 GPUs per instance when capacity is available.
+
+Choose the GPU count based on the workload rather than assuming that more GPUs always make a single job faster.
+
+- **1 GPU:** A good starting point for inference, image generation, development, and workloads that fit within 32 GB of VRAM.
+- **Multiple GPUs:** Useful for workloads that explicitly support tensor parallelism, distributed training, multi-GPU rendering, or several jobs running in parallel.
 
 <Note>
-  “RAM” in the tables refers to system memory (ECC).
+  VRAM is attached to each GPU. Applications do not automatically treat multiple GPUs as one larger shared memory pool. Your framework or model must support multi-GPU execution to use them together effectively.
 </Note>
 
-### Sizes and specs
+## VRAM and system RAM
 
-| Size | GPUs | vCPU | RAM (ECC) | Disk space | Bandwidth |
-| --- | --- | --- | --- | --- | --- |
-| X-Small | 1 × RTX 4090 / 5090 | 8 | 48 GB | 250 GB | 1 Gb/s |
-| Small | 2 × RTX 4090 / 5090 | 16 | 96 GB | 500 GB | 1 Gb/s |
-| Medium | 4 × RTX 4090 / 5090 | 32 | 192 GB | 1 TB | 1 Gb/s |
-| Large | 8 × RTX 4090 / 5090 | 64 | 384 GB | 2 TB | 1 Gb/s |
+**VRAM** is memory on the GPU. It determines whether model weights, activations, image-generation pipelines, and other GPU data fit on a card.
 
-### Quick tips
+**System RAM** is separate memory used by the operating system, runtime, data loaders, preprocessing steps, and CPU-side parts of your workload.
 
-- **VRAM vs RAM:** VRAM affects maximum model size per GPU; system RAM supports your runtime and dataset loaders.
-- **Throughput:** Scale from 1 → 8 GPUs for higher parallelism.
-- **CPU host:** Nodes use **AMD EPYC 7713** processors.
+For example, one RTX 5090 provides 32 GB of VRAM. A four-GPU instance provides four GPUs with 32 GB each, but whether a workload can use all four depends on the software and how it distributes work.
+
+## Choose a current preset
+
+When you create an instance:
+
+1. Select a location.
+2. Choose **GPU** under the setup options.
+3. Compare the presets currently available.
+4. Check the GPU count, VRAM, vCPU, RAM, disk, bandwidth, and price shown in the console.
+5. Choose the smallest configuration that comfortably fits the workload.
+
+<Tip>
+  Start with the VRAM requirement. If the workload fits on one GPU, a larger GPU count may not help unless the software can use multiple GPUs or you want to run jobs in parallel.
+</Tip>
+
+For broader guidance, see [Understand and choose your Compute instance](/documentation/essentials/understand-choose-instance).

@@ -47,8 +47,7 @@ You can choose. Compute instances are not limited to a single runtime type. Depe
 Yes. You can [**stop an instance and start it again**](/documentation/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact. Stopping releases the underlying capacity back to the pool. When you start again, availability depends on demand, and you may be placed on different hardware.
 
 <Warning>
-  **Important:** Stopped instances are not kept indefinitely.\
-  If an instance remains stopped for more than 5 days, it is automatically terminated. Once terminated, the instance and its data cannot be recovered.
+  **Important:** Stopped instances are not kept indefinitely.<br />If an instance remains stopped for more than 5 days, it is automatically terminated. Once terminated, the instance and its data cannot be recovered.
 </Warning>
 
 <Note>
@@ -171,8 +170,9 @@ Click on **Chat with us** in your dashboard or email [**support@hivenet.com**](m
     - Enable **auto top‑up** to prevent balance‑related termination during critical runs.
     - On teardown, **revoke tokens/keys** and remove any temporary credentials.
   </Accordion>
+
   <Accordion title="For legal & compliance reviewers" icon="book">
-    - Read **Security at Hivenet** (architecture, provider standards, isolation): https://compute.hivenet.com/security-page
+    - Read **Security at Hivenet** (architecture, provider standards, isolation): [https://compute.hivenet.com/security-page](https://compute.hivenet.com/security-page)
     - Request current **Terms of Service**, **SLA/uptime**, and any available **security attestations/DPAs** via [**support@hivenet.com**](mailto:support@hivenet.com).
     - Document chosen **region(s)** and provider tier (Certified vs cost‑focused) in your data map.
     - We can provide clarifications on **data flow**, **incident response**, and **regional residency** upon request.
@@ -183,11 +183,17 @@ Click on **Chat with us** in your dashboard or email [**support@hivenet.com**](m
 
 ### Which GPUs can I rent?
 
-Availability varies by region, but [**RTX 4090**](https://compute.hivenet.com/nvidia-rtx-4090) and [**RTX 5090**](https://compute.hivenet.com/nvidia-rtx-5090) tiers are commonly offered for AI and HPC workloads.
+Compute currently offers **NVIDIA RTX 5090** GPU instances. Each RTX 5090 provides 32 GB of GDDR7 VRAM. Multi-GPU configurations are available when capacity allows.
 
-### How do 4090/5090 compare to A100 for inference?
+The RTX 4090 fleet has been retired and is no longer available for new Compute workloads.
 
-For small and medium LLM inference, 4090/5090 often deliver **lower latency and strong throughput** at a better cost profile. Check our [benchmarks](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100) for details.
+Availability and preset specifications can vary by location, so check the creation screen for the GPU count, vCPU, RAM, disk, bandwidth, and price you can launch now. See [GPU types and sizes](/documentation/reference/gpu-types) for more guidance.
+
+### Where can I find GPU performance comparisons?
+
+Our older benchmark articles include results from hardware that was available when the tests were run, including RTX 4090 systems. Keep the publication date and tested configuration in mind when using those results to compare performance.
+
+For current workload planning, use the hardware and pricing shown in the Compute console.
 
 ## Support
 
@@ -215,7 +221,6 @@ Verify the **public key** on the instance, confirm the **public IP/endpoint**, e
 - [Create and reuse custom templates](/documentation/essentials/custom-templates)
 - [Stop/Start instances: how it works](/documentation/essentials/start-stop-instances)
 - [Pricing and billing](/documentation/account-billing/billing-info)
-- [Benchmarks: RTX 4090/5090 vs A100](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100)
+- [Historical benchmark: RTX 4090/5090 vs A100](https://compute.hivenet.com/post/rtx-4090-and-5090s---up-to-2-3x-faster-than-an-a100)
 
-> **Feedback**\
-> Did we miss something? Use the **Suggest edits** button in the docs or ping us on Discord. We review FAQ suggestions regularly.
+> **Feedback**<br />Did we miss something? Use the **Suggest edits** button in the docs or ping us on Discord. We review FAQ suggestions regularly.
