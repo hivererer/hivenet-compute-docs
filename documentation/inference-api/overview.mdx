@@ -5,49 +5,43 @@ description: "Understand how Hivenet Inference API deploys and serves open-weigh
 icon: "sparkles"
 ---
 
-Hivenet Inference API lets you deploy open-weight models as managed API endpoints without setting up and operating the inference serving stack yourself.
+Hivenet Inference API lets you serve supported open-weight models through managed, dedicated API endpoints without setting up and operating the inference stack yourself.
 
-You choose a location, model, model variant, replica count, and endpoint name in the Compute console. Hivenet provisions the serving infrastructure and gives you an endpoint that works with OpenAI-compatible clients such as the OpenAI SDK and `curl`.
+You choose the location, model, serving variant, replica count, and endpoint name in the Compute console. Hivenet provisions the serving infrastructure and gives you an endpoint you can call with OpenAI-compatible clients such as the OpenAI SDK and `curl`.
 
 <Info>
-  Hivenet Inference API is part of the Compute console. Endpoints and API keys belong to the active organization and use the same organization credit balance as Compute resources.
+  Hivenet Inference API is part of the Compute console. Endpoints and API keys belong to the active organization and use the same prepaid organization credit balance as Compute resources.
 </Info>
 
-## How an endpoint is configured
+## How it works
 
-The production deployment flow brings together five choices:
+The deployment flow has five main choices:
 
-- **Location:** Where the endpoint runs and where requests are processed. The selected location applies to the endpoint you are creating.
-- **Model:** The open-weight model you want to serve.
-- **Variant:** A preconfigured serving setup that can define GPU configuration, quantization, context window, performance characteristics, and price.
-- **Replicas:** The number of serving replicas you want to keep running.
-- **Endpoint name:** The label you use to find and manage the endpoint in the console.
+1. **Location:** Choose where your Inference API models run. In the current product, the selected location applies across your Inference API models; per-model location selection is not available yet. Choosing **Global** lets Hivenet assign an available location, and the endpoint details show where it was placed.
+2. **Model:** Choose a supported model from the catalog. The available catalog depends on the selected location.
+3. **Variant:** Choose a preconfigured serving setup for that model. A variant can define the GPU configuration, quantization, context window, performance characteristics, and price.
+4. **Replicas:** Choose the fixed number of serving replicas to run. More replicas provide more request capacity and increase hourly cost.
+5. **Endpoint name:** Keep the suggested name or enter a label you can recognize in the console.
 
-Choosing a location comes first. The console then shows the models and variants available for that location.
-
-## Fixed replica capacity
-
-A **replica** is one serving copy of the selected model variant. More replicas provide more request capacity and increase the endpoint's hourly cost.
-
-The current production version uses a fixed replica count. You choose how many replicas to run and can change that number later when capacity is available.
+The console lists these resources under **Deployments**. Each deployment creates one callable endpoint.
 
 <Note>
-  Autoscaling is not available in the current production version. Use the replica control to choose the fixed number of replicas you want to run.
+  Autoscaling is not available yet. You choose a fixed replica count and can change it later when capacity is available.
 </Note>
 
 ## Inference API, Compute, and Hivenet Router
 
-These products solve different parts of the inference stack.
+These products cover different parts of the inference stack.
 
 | Product | Use it when | You manage |
 | --- | --- | --- |
-| **Hivenet Inference API** | You want a managed model endpoint for an application or service. | Your model choice, location, replicas, API keys, and client code. |
+| **Hivenet Inference API** | You want a managed model endpoint for an application or service. | Model choice, replicas, API keys, and client code. |
 | **Compute with Hivenet** | You want direct GPU or CPU infrastructure and control over the serving environment. | The instance, runtime, model server, configuration, and operations. |
 | **Hivenet Router** | You want to run Hivenet's open-source model-routing software on infrastructure you control. | The router deployment, model backends, infrastructure, and operations. |
 
-If you need an API endpoint and do not want to operate vLLM or another serving runtime yourself, Hivenet Inference API is the managed path.
+If you need an endpoint but do not want to operate vLLM or another serving runtime yourself, Hivenet Inference API is the managed option.
 
-## Endpoint states
+## Endpoint lifecycle
 
 The Inference API page shows the current state of each endpoint.
 
@@ -55,81 +49,39 @@ The Inference API page shows the current state of each endpoint.
 | --- | --- |
 | **Starting** | Hivenet is preparing the endpoint. It is not ready to serve requests yet. |
 | **Running** | The endpoint is serving requests. |
-| **Partially running** | Some requested replicas are running while others are unavailable or recovering. |
-| **Stopped** | The endpoint is offline but can be started again when capacity and credits allow. |
+| **Partially running** | Some requested replicas are serving while others are unavailable or recovering. |
+| **Stopped** | The endpoint is offline but its configuration is kept. You can start it again when capacity and credits allow. |
 | **Error** | The endpoint is not currently serving. A **Retry** action can appear when recovery is possible. |
 | **Terminated** | The endpoint has been permanently shut down and cannot be started again. |
 
-Starting a model takes about 90 seconds in the current production flow. Charges begin once it is running.
+The console says starting a model takes about 90 seconds. Charges begin once it is running.
 
 <Warning>
-  **Stop** is reversible. **Terminate** permanently shuts down the endpoint, makes its URL unusable, and cannot be undone.
+  **Stop** is reversible. **Terminate** permanently shuts down the endpoint and makes its URL unusable. After termination, **Clear** only removes the terminated entry from the Deployments list.
 </Warning>
 
-## Endpoint details and metrics
+## Endpoint details
 
-Open an endpoint's details to see its serving information. Depending on its state, the view can include:
+Open **Details** to see the endpoint URL, model and serving configuration, replica count, region, cost information, available usage metrics, and quick-start snippets for Python, JavaScript, and `curl`.
 
-- Endpoint URL
-- Model
-- GPU and quantization
-- Context window
-- License
-- Region
-- Cost so far and current hourly rate
-- Replica count
-- Requests per hour
-- Inter-token latency
-- Tokens in and out over 24 hours
-- Output speed
-- Quick-start snippets for Python, JavaScript, and `curl`
+The endpoint URL already includes the API version path, such as `/v1`. The generated snippet also contains the exact model value expected by that endpoint.
 
-The endpoint URL can also be copied directly from the deployment list.
+See [Call your endpoint](/documentation/inference-api/call-your-endpoint) for request examples and [Manage endpoints](/documentation/inference-api/manage-deployments) for lifecycle controls.
 
-## API keys
+## API keys and billing
 
-Inference API keys are scoped to the organization rather than to a single endpoint. One active key can authenticate requests to the organization's inference endpoints.
+Inference API keys are scoped to the organization rather than to one endpoint. The full secret is shown once when you create a key, so save it before closing the dialog. Disabling or revoking a key stops requests made with that key but does not stop running endpoints.
 
-When you create a key, the full secret is shown once. Save it before closing the dialog. You won't be able to view that full secret again.
+Inference API is billed by the fixed model-serving capacity you run. Before deployment, the console shows estimated hourly, 24-hour, and weekly cost. Stopping an endpoint pauses serving charges; terminating it ends them once termination is complete.
 
-You can:
+- [Create and manage API keys](/documentation/inference-api/api-keys)
+- [Understand Inference API billing](/documentation/inference-api/billing)
 
-- **Disable** a key temporarily and re-enable it later.
-- **Revoke** a key permanently.
+## Location and data handling
 
-Disabling or revoking a key stops requests made with that key. It does not stop running endpoints or their charges.
+The location selector can mark a location **Sold out** when capacity is unavailable. It also shows the data-handling notice that applies to the selected location.
 
-## Billing
-
-Inference API draws from the same prepaid organization credit balance as Compute.
-
-Before deployment, the review section shows the current estimated hourly, 24-hour, and weekly cost for the selected model, location, and replica count.
-
-Each running replica contributes to the endpoint's hourly cost. Stopping or terminating an endpoint stops its serving charges once its replicas have shut down.
-
-See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing model.
-
-## Location, capacity, and data handling
-
-Location is selected before the model in the current production flow. The console can mark a location **Sold out** when it cannot accept another endpoint.
-
-The location screen also explains how prompts and responses are handled for the location you select. For example, when France is selected, the production UI states that prompts and responses are processed and stored in France, with EU data residency, and are not used by Hivenet to train models.
-
-<Info>
-  Read the location notice shown in the console before deploying. The notice is the source of truth for the data-handling statement associated with that location.
-</Info>
-
-Capacity can also limit how many replicas you can run for a selected model variant. The console is the source of truth for what can be provisioned now.
-
-## OpenAI-compatible requests
-
-Each endpoint publishes an endpoint URL and an exact served model name. Use both values from the endpoint's **Quick-start snippets**.
-
-<Warning>
-  Copy the endpoint URL exactly as the console shows it. The URL already includes its API version path, such as `/v1`. Do not append another `/v1`.
-</Warning>
-
-The served model name can differ from the catalog title or your endpoint name. Copy the `model` value from the generated snippet rather than typing it from memory.
+Read that notice before deploying. It is the source of truth in the console for where prompts and responses are processed or stored and for the other data-handling statements associated with that location.
 
 ## Next steps
 
