@@ -5,15 +5,15 @@ description: "Deploy an open-weight model, create an Inference API key, and send
 icon: "rocket"
 ---
 
-This guide takes you from the Compute console to a working inference request. You’ll choose a location, model, and variant, set a fixed replica count, name the endpoint, create an API key, and use the generated quick-start snippet to call it.
+This guide takes you from the Compute console to a working inference request. You’ll choose where your models run, select a model and serving variant, set replica capacity, deploy the endpoint, and call it with an Inference API key.
 
 <Info>
   ## What you’ll need
 
   - A Compute account
   - Access to a Compute organization
-  - Enough credits in the organization balance for the endpoint you choose
-  - Python, Node.js, or a terminal with `curl` if you want to test the endpoint locally
+  - Enough credits in the organization balance for the endpoint you want to run
+  - Python, Node.js, or `curl` if you want to test the endpoint locally
 
   Inference API uses the same organization balance as your Compute resources.
 </Info>
@@ -28,58 +28,58 @@ This guide takes you from the Compute console to a working inference request. Yo
     The endpoint and any API keys you create belong to the active organization.
   </Step>
   <Step title="Choose a location">
-    Choose where you want the endpoint to run.
+    Select where your Inference API models should run.
 
-    The current production flow asks for location first. The console can show available options such as France, UAE, or Global, and can mark locations **Sold out** when capacity is unavailable.
+    The location selector shows the currently available regions and marks unavailable ones **Sold out**.
 
-    The location notice also explains how prompts and responses are handled for the selected region. Read it before continuing.
+    <Warning>
+      The location you choose currently applies across your Inference API models. Per-model location selection is not available yet.
+    </Warning>
+
+    If you choose **Global**, Hivenet assigns an available region. After deployment, open the endpoint details to see where it was placed.
+
+    Read the data-handling notice shown for the selected location before continuing.
   </Step>
-  <Step title="Choose a model">
-    Select one of the models available for that location.
+  <Step title="Choose a model and variant">
+    Select a model from the catalog. Use **All models** if you want to browse beyond the initial set shown on the page.
 
-    Each model card can show:
+    Model cards can include a short description, use-case tags, and a starting hourly price. After selecting a model, choose one of its available variants.
 
-    - A short description
-    - Capability tags
-    - A starting hourly price
+    A variant can show:
 
-    Select **All models** to browse beyond the initial set shown on the page.
-  </Step>
-  <Step title="Choose a model variant">
-    After selecting a model, choose one of its available variants.
-
-    A variant fixes the serving configuration for that endpoint. Depending on the model, the console can show details such as:
-
-    - GPU type and count
-    - Quantization
+    - GPU and quantization
     - Context window
+    - Approximate request capacity
     - Time to first token
     - Inter-token latency
     - Output speed
     - License
+    - Current price
 
     <Info>
-      The live console is the source of truth for the variant details and price you are actually deploying.
+      The live variant card is the source of truth for the serving configuration and price you are about to deploy.
     </Info>
   </Step>
-  <Step title="Choose the number of replicas">
-    Set how many replicas you want to run.
+  <Step title="Choose the replica count">
+    Choose how many replicas you want to keep running.
 
-    Each replica is a parallel copy of the model endpoint. More replicas can increase request capacity, but each replica increases the hourly cost.
+    A replica is one serving copy of the selected model variant. More replicas provide more request capacity and increase hourly cost.
+
+    The current production flow supports a fixed replica count of up to four, subject to available capacity.
 
     <Note>
-      Autoscaling is not available in the current production version. Choose the fixed number of replicas you want to run.
+      Autoscaling is not available yet. You can change the replica count later when capacity is available.
     </Note>
   </Step>
   <Step title="Name your endpoint">
-    Keep the suggested endpoint name or enter your own.
+    Keep the suggested name or enter your own using lowercase letters, numbers, and hyphens.
 
-    Use lowercase letters, numbers, and hyphens. The endpoint name is the label you use to manage it in the console. It is not the model name you pass in API requests.
+    The endpoint name helps you identify the resource in the console. It is not necessarily the model value your application sends in API requests.
   </Step>
-  <Step title="Review the cost and deploy">
-    Review the selected model, location, replicas, and estimated cost.
+  <Step title="Review and deploy">
+    In **Review your setup**, check the selected model, location, replicas, and estimated cost.
 
-    The review section shows the current:
+    The console shows:
 
     - Total cost per hour
     - Estimated cost per 24 hours
@@ -87,46 +87,28 @@ This guide takes you from the Compute console to a working inference request. Yo
 
     Select **Deploy model** when you’re ready.
 
-    The endpoint moves to **Starting** while Hivenet prepares it. The production UI says this takes about 90 seconds. Charges begin once the endpoint is **Running**.
+    The endpoint enters **Starting** while Hivenet prepares it. The console says this takes about 90 seconds. Charges begin once the endpoint is **Running**.
   </Step>
   <Step title="Create an API key">
-    Create a key if the organization does not already have one you want to use.
+    You need an active Inference API key to call the endpoint.
 
-    1. In **API keys**, select **New key**.
-    2. Enter a unique label using lowercase letters, numbers, and hyphens.
-    3. Select **Create**.
-    4. Copy the full API key and store it securely.
-    5. Select **Copy and close** only after you have saved the key.
+    If your organization does not already have one you want to use, select **Create API key** from the endpoint flow when it is offered, or select **New key** in the **API keys** section.
+
+    1. Enter a unique key label using lowercase letters, numbers, and hyphens.
+    2. Select **Create**.
+    3. Copy the full key and store it securely.
+    4. Select **Copy and close** only after you have saved it.
 
     <Warning>
       The full API key is shown once. You won’t be able to view it again after closing the dialog.
     </Warning>
   </Step>
-  <Step title="Open the endpoint details">
-    When the endpoint reaches **Running**, open its details from the **Deployments** list.
-
-    The details view can include:
-
-    - Endpoint URL
-    - Model
-    - GPU and quantization
-    - Context window
-    - License
-    - Region
-    - Cost so far and current hourly rate
-    - Replica count
-    - Requests per hour
-    - Inter-token latency
-    - Tokens in and out over 24 hours
-    - Output speed
-    - Quick-start snippets for Python, JavaScript, and `curl`
+  <Step title="Send your first request">
+    Open the endpoint details once its status is **Running**. The **Quick-start snippets** contain the endpoint URL and the exact model value expected by that endpoint.
 
     <Warning>
-      Copy the endpoint URL exactly as shown. It already contains the API version path, such as `/v1`. Do not add another `/v1`.
+      Copy the endpoint URL exactly as shown. It already includes the API version path, such as `/v1`.
     </Warning>
-  </Step>
-  <Step title="Send your first request">
-    The safest way to call an endpoint is to copy the generated snippet from its details view. The snippet contains the exact endpoint URL and served model name.
 
     For Python, install the OpenAI SDK:
 
@@ -134,7 +116,7 @@ This guide takes you from the Compute console to a working inference request. Yo
     pip install openai
     ```
 
-    Then use the values from your endpoint:
+    Then use the values shown in your endpoint details:
 
     ```python
     from openai import OpenAI
@@ -154,66 +136,37 @@ This guide takes you from the Compute console to a working inference request. Yo
     print(response.choices[0].message.content)
     ```
 
-    Or use `curl`:
-
-    ```bash
-    curl YOUR_ENDPOINT_URL/chat/completions \
-      -H "Authorization: Bearer YOUR_INFERENCE_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "model": "YOUR_SERVED_MODEL_NAME",
-        "messages": [{"role": "user", "content": "Hello!"}]
-      }'
-    ```
-
     <Tip>
-      Do not substitute your endpoint name or the catalog title for `YOUR_SERVED_MODEL_NAME`. Copy the exact `model` value generated by the console.
+      Copy the exact `model` value from the generated snippet. Do not substitute your endpoint name or assume the catalog title is identical.
     </Tip>
+
+    For JavaScript and `curl` examples, see [Call your Inference API endpoint](/documentation/inference-api/call-your-endpoint).
   </Step>
 </Steps>
 
-## What happens after deployment
+## When you’re done testing
 
-Your endpoint stays online and continues using organization credits while it is running.
+A running endpoint continues using organization credits even when you are not sending requests.
 
-From the deployment menu or details view, you can later:
+- **Stop** it if you want to pause serving and start the same endpoint again later.
+- **Terminate** it only when you no longer need the endpoint. Termination is permanent.
+- **Clear** removes an already-terminated entry from the Deployments list; it does not terminate a running endpoint.
 
-- Change the fixed replica count when capacity allows
-- Stop the endpoint and start it again later
-- Retry failed replicas when the action is available
-- Permanently terminate the endpoint
-- Clear a terminated endpoint from the list
+See [Manage an Inference API endpoint](/documentation/inference-api/manage-deployments) for the full lifecycle.
 
-Stopping is reversible. Termination is permanent. **Clear** only removes the already-terminated entry from the list.
+## If something goes wrong
 
-## Troubleshooting
+- **Location is Sold out:** Choose another available location or try again later.
+- **Endpoint remains Starting:** Give provisioning about 90 seconds before treating it as a problem.
+- **Authentication fails:** Confirm you are using an active Inference API key from the same organization as the endpoint.
+- **Model is not found:** Copy the exact `model` value from the endpoint’s generated quick-start snippet.
+- **Not enough credits:** Ask the organization Owner to add credits if you cannot add them yourself.
 
-### A location is sold out
-
-That location does not currently have enough free capacity for another endpoint. Choose another available location or try again later.
-
-### Fewer replicas are available than you expected
-
-Current regional capacity can limit how many replicas you can run. Use the maximum offered by the console or check again later.
-
-### The endpoint is still Starting
-
-The production UI says endpoint creation takes about 90 seconds. Wait for **Running** before sending requests.
-
-### The API request returns an authentication error
-
-Check that you are using an **Inference API key**, not a Compute public API token or your console session credentials. Also confirm that the key is still **Active**.
-
-### The API request cannot find the model
-
-Use the exact `model` value from the endpoint’s generated quick-start snippet. The served model name can differ from the catalog title and endpoint name.
-
-### The organization does not have enough credits
-
-Add credits before deploying or restarting the endpoint. If you cannot manage the organization balance yourself, ask the organization Owner to add credits.
+For more cases, see [Troubleshoot Hivenet Inference API](/documentation/inference-api/troubleshooting).
 
 ## Next steps
 
-- Read the [Inference API overview](/documentation/inference-api/overview).
-- Learn how to [manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
-- Review [Billing information](/documentation/account-billing/billing-info) for credits, payment methods, and invoices.
+- [Choose a model and variant](/documentation/inference-api/models-and-variants).
+- [Call your endpoint](/documentation/inference-api/call-your-endpoint).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Understand Inference API billing](/documentation/inference-api/billing).
