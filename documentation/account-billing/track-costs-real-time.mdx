@@ -81,16 +81,16 @@ Use it as a warning signal rather than a guarantee of runtime.
 
 ## Reduce active spending
 
-When you no longer need an instance:
+When you no longer need a running resource:
 
-- **Stop** it if you expect to continue later and want to preserve its environment temporarily.
-- **Terminate** it when the work is finished and you no longer need its local data.
+- **Compute instance:** Stop it if you expect to continue later, or terminate it when the work is finished and you no longer need its local data.
+- **Inference API deployment:** Stop it if you want to keep the deployment configuration for later, or terminate it when you no longer need the endpoint.
 
 <Warning>
-  Termination permanently deletes the instance and its local data. Save anything important first.
+  Terminating a Compute instance permanently deletes the instance and its local data. Terminating an Inference API deployment permanently shuts down that deployment and makes its endpoint unusable.
 </Warning>
 
-For the full lifecycle explanation, see [How to stop or terminate a Compute instance](/documentation/essentials/stop-terminate-instance).
+For the full lifecycle explanations, see [How to stop or terminate a Compute instance](/documentation/essentials/stop-terminate-instance) and [Manage an Inference API deployment](/documentation/inference-api/manage-deployments).
 
 ## Investigate an unexpected charge
 

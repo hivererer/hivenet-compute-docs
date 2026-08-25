@@ -68,12 +68,21 @@ Availability can change throughout the day as other deployments start or stop.
 
 ## V2 benchmark coverage
 
-Hivenet's current V2 benchmark work covers serving configurations for several open-weight model families, including Gemma, GPT-OSS, and Qwen models.
+Hivenet's current V2 benchmark work includes serving campaigns for:
 
-The benchmark program measures serving capacity and latency for defined request shapes. It does **not** measure whether one model is better than another for your application.
+- Gemma 4 26B-A4B IT
+- Gemma 4 31B IT
+- GPT-OSS 20B
+- Qwen3.6 27B
+- Qwen3.6 35B-A3B
+- Qwen3.8 27B
+
+The benchmark program measures serving capacity and latency for defined request shapes. It does **not** measure whether one model produces better answers than another for your application.
+
+The benchmark repository can also contain configurations that are being characterized before, or separately from, the variants currently offered through the self-service product. For that reason, these docs do not turn benchmark configuration values into catalog promises.
 
 <Warning>
-  A model appearing in Hivenet's benchmark work does not guarantee that it is currently deployable in every location. Check the console for live availability before planning around a specific model or replica count.
+  Check the console for the GPU configuration, quantization, context window, price, and availability of the variant you are actually deploying. Those live variant details are the source of truth for the self-service product.
 </Warning>
 
 ## Existing deployments keep their configuration
