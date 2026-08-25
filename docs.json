@@ -79,6 +79,13 @@
             ]
           },
           {
+            "group": "Inference API",
+            "icon": "sparkles",
+            "pages": [
+              "documentation/inference-api/overview"
+            ]
+          },
+          {
             "group": "Organizations",
             "icon": "users",
             "pages": [

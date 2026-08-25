@@ -1,0 +1,104 @@
+---
+title: "Hivenet Inference API overview"
+sidebarTitle: "Overview"
+description: "Understand how Hivenet Inference API deploys and serves open-weight models through managed, OpenAI-compatible endpoints, with regional placement, replicas, API keys, and shared Compute billing."
+icon: "sparkles"
+---
+
+Hivenet Inference API lets you deploy open-weight models as managed API endpoints without setting up and operating the inference serving stack yourself.
+
+You choose a location, model, model variant, and replica count in the Compute console. Hivenet provisions the deployment and gives you an endpoint URL that works with OpenAI-compatible clients such as the OpenAI SDK and `curl`.
+
+<Info>
+  Hivenet Inference API is part of the Compute console. It uses the same organization and credit balance as your Compute instances.
+</Info>
+
+## How it works
+
+A deployment brings together four things:
+
+- **Model:** The open-weight model you want to serve.
+- **Variant:** A preconfigured combination of model settings and infrastructure, including GPU configuration, quantization, and context window.
+- **Location:** Where the deployment runs and where requests are processed. Available models and variants depend on regional capacity.
+- **Replicas:** Parallel copies of the serving endpoint. More replicas can handle more requests, but they also increase hourly cost.
+
+When the deployment reaches **Running**, the console shows its endpoint URL and quick-start snippets for Python, JavaScript, and `curl`.
+
+## Inference API, Compute, and Hivenet Router
+
+These products solve different parts of the inference stack.
+
+| Product | Use it when | You manage |
+| --- | --- | --- |
+| **Hivenet Inference API** | You want a managed model endpoint for an application or service. | Your model choice, location, replicas, API keys, and client code. |
+| **Compute with Hivenet** | You want direct GPU or CPU infrastructure and control over the serving environment. | The instance, runtime, model server, configuration, and operations. |
+| **Hivenet Router** | You want to run Hivenet's open-source model-routing software on infrastructure you control. | The router deployment, model backends, infrastructure, and operations. |
+
+If you only need an API endpoint and do not want to operate vLLM or another serving runtime yourself, Hivenet Inference API is the simpler path.
+
+## Deployment lifecycle
+
+A deployment can move through these customer-visible states:
+
+- **Starting:** Hivenet is preparing the deployment. This can take up to 10 minutes. Charges have not started yet.
+- **Running:** The deployment is serving requests. Hourly charges apply.
+- **Partially Running:** Some replicas are serving while others are unavailable or recovering. Requests may take longer while fewer replicas are available.
+- **Stopping:** Hivenet is tearing down the replicas.
+- **Stopped:** The deployment is offline but its configuration is kept. You can start it again later if capacity is available.
+- **Terminating:** Permanent shutdown is in progress.
+- **Terminated:** The deployment can no longer be started and its endpoint is no longer usable.
+- **Error:** All replicas have failed. You can retry failed replicas after the underlying issue has been resolved.
+
+<Warning>
+  Terminating a deployment is permanent. Stopping it is the reversible option when you expect to use the same deployment again.
+</Warning>
+
+## API keys
+
+Inference API keys belong to your organization rather than to a single deployment. A key can authenticate requests to the organization's inference deployments.
+
+When you create a key, the full secret is shown once. After you close the dialog, the console keeps only a masked preview.
+
+You can:
+
+- **Disable** a key temporarily and re-enable it later.
+- **Revoke** a key permanently.
+
+Disabling or revoking a key does not stop running deployments. Their hourly charges continue until you stop or terminate them.
+
+## Billing
+
+Inference API uses the same prepaid organization credit balance as Compute.
+
+Your cost depends on the selected variant and number of replicas. The review screen shows the current estimated hourly, 24-hour, and weekly cost before you deploy.
+
+Charging starts when the deployment reaches **Running**. When you stop a deployment, hourly charges stop once its replicas have been torn down. When you start it again, charging resumes when it is running.
+
+See [Billing information](/documentation/account-billing/billing-info) for how organization credits and payment methods work.
+
+## Capacity and availability
+
+Inference capacity is live rather than guaranteed by the catalog alone. The console checks which locations, models, variants, and replica counts can currently be provisioned.
+
+You may see:
+
+- **Sold out** on a location, model, or variant when no capacity is currently available.
+- **Only X available** when a variant can be deployed with fewer replicas than the normal maximum.
+
+Availability can change as capacity is allocated or released. A model documented by Hivenet may not be deployable in every location at every moment.
+
+## OpenAI-compatible requests
+
+Each deployment publishes an endpoint URL and an exact served model name. Use both values from the deployment's **Quick-start snippets**.
+
+<Warning>
+  Copy the endpoint URL exactly as the console shows it. The URL already includes its API version path, such as `/v1`. Do not append another `/v1`.
+</Warning>
+
+The served model name can differ from the catalog title or your deployment name. Copy the `model` value from the generated snippet rather than typing it from memory.
+
+## Next steps
+
+- [Deploy a model and make your first request](/documentation/inference-api/get-started).
+- Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
+- If you want to operate your own model server instead, see [How to use vLLM](/documentation/essentials/how-to-vllm).
