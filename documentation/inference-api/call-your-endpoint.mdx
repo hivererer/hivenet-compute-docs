@@ -1,0 +1,156 @@
+---
+title: "Call your Inference API endpoint"
+sidebarTitle: "Call your endpoint"
+description: "Use the endpoint URL, served model name, and Inference API key from your deployment to send OpenAI-compatible requests with Python, JavaScript, or curl."
+icon: "terminal"
+---
+
+Each running Inference API deployment gives you the values you need to make requests:
+
+- An **endpoint URL**
+- A **served model name**
+- An **Inference API key** from your organization
+
+The deployment details view generates working quick-start snippets for Python, JavaScript, and `curl`.
+
+<Info>
+  Copy the generated values from the deployment you are calling. Do not infer the model name from the deployment label or catalog title.
+</Info>
+
+## Endpoint URL
+
+Use the endpoint URL exactly as the console shows it.
+
+A typical URL already ends with an API version path such as `/v1`:
+
+```text
+https://YOUR_DEPLOYMENT_HOST/v1
+```
+
+<Warning>
+  Do not add another `/v1`. The API version is part of the deployment endpoint and can change independently of the console.
+</Warning>
+
+For SDK clients, use the endpoint URL as the base URL. For a direct chat-completions request with `curl`, add `/chat/completions` after it.
+
+## Served model name
+
+OpenAI-compatible requests include a `model` field. Use the exact value in the deployment's generated quick-start snippet.
+
+This value can differ from:
+
+- The name you gave the deployment
+- The shorter model title shown in the catalog
+- An older deployment's model identifier
+
+Hivenet stores the served model name with the deployment so the generated snippet uses the value expected by that endpoint.
+
+## Python
+
+Install the OpenAI SDK:
+
+```bash
+pip install openai
+```
+
+Then create a client with your deployment URL and key:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="YOUR_ENDPOINT_URL",
+    api_key="YOUR_INFERENCE_API_KEY",
+)
+
+response = client.chat.completions.create(
+    model="YOUR_SERVED_MODEL_NAME",
+    messages=[
+        {"role": "user", "content": "Hello!"}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+## JavaScript
+
+Install the OpenAI package:
+
+```bash
+npm install openai
+```
+
+Then configure the client:
+
+```javascript
+import OpenAI from 'openai'
+
+const client = new OpenAI({
+  baseURL: 'YOUR_ENDPOINT_URL',
+  apiKey: 'YOUR_INFERENCE_API_KEY',
+})
+
+const response = await client.chat.completions.create({
+  model: 'YOUR_SERVED_MODEL_NAME',
+  messages: [{ role: 'user', content: 'Hello!' }],
+})
+
+console.log(response.choices[0].message.content)
+```
+
+## curl
+
+Send the API key as a bearer token:
+
+```bash
+curl YOUR_ENDPOINT_URL/chat/completions \
+  -H "Authorization: Bearer YOUR_INFERENCE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "YOUR_SERVED_MODEL_NAME",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+## Use secrets rather than hard-coding keys
+
+For local testing, environment variables keep the key out of your source file.
+
+```bash
+export HIVENET_INFERENCE_API_KEY="YOUR_INFERENCE_API_KEY"
+```
+
+Then read that value from your application instead of committing a credential to source control.
+
+<Warning>
+  Treat Inference API keys as secrets. If a key is exposed, create a replacement, update your application, and revoke the exposed key.
+</Warning>
+
+## When requests fail
+
+### 401 or authentication errors
+
+Check that:
+
+- You are using an Inference API key rather than a Compute public API token.
+- The key is still **Active**.
+- The full secret was copied correctly.
+
+### Model not found
+
+Copy the `model` value from the deployment's quick-start snippet. Do not use the deployment name as the model identifier.
+
+### Endpoint cannot be reached
+
+Confirm the deployment is **Running** or **Partially Running**. A stopped or terminated deployment does not serve requests.
+
+### Requests are slower than expected
+
+Open the deployment details and check the replica count and state. If some requested replicas are not active, the deployment may have less serving capacity until they recover.
+
+## Next steps
+
+- [Create and manage API keys](/documentation/inference-api/api-keys).
+- [Manage a deployment](/documentation/inference-api/manage-deployments).
+- [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).
