@@ -1,0 +1,97 @@
+---
+title: "Manage replicas and Inference API capacity"
+sidebarTitle: "Replicas and capacity"
+description: "Understand what replicas do, how live regional capacity limits scaling, and how to change replica count for an Inference API deployment."
+icon: "layer-group"
+---
+
+Replicas are parallel copies of your model endpoint. They let a deployment handle more work at the same time, but each replica adds to the hourly cost.
+
+You choose the initial replica count during deployment and can change it later while the deployment is in a scalable state.
+
+## How replica count affects a deployment
+
+A deployment tracks two related values:
+
+- **Requested replicas:** The number you asked Hivenet to run.
+- **Active replicas:** The number currently registered and serving traffic.
+
+When both values match, all requested capacity is available. If fewer replicas are active, the deployment can become **Partially Running** and serve with reduced capacity.
+
+## Choose the initial replica count
+
+After selecting a model variant, choose how many replicas to deploy.
+
+The selector starts at one replica and is capped by current capacity for that variant in the selected location.
+
+The normal product ceiling is four replicas, but you may be offered fewer when capacity is limited.
+
+<Info>
+  The console checks live capacity. A variant can be deployable with one or two replicas even when there is not enough room for the full four-replica range.
+</Info>
+
+## Increase or reduce replicas
+
+For a **Running**, **Partially Running**, or **Starting** deployment:
+
+1. Open the deployment details.
+2. Find **Replicas**.
+3. Select **Edit**.
+4. Choose the new count allowed by the console.
+5. Select **Save**.
+
+The hourly estimate updates with the replica count.
+
+If additional replicas are not available, the console limits the maximum value and tells you how many can currently be added.
+
+## Capacity can change between selection and save
+
+Regional capacity is shared and can change while you are configuring a deployment or editing replicas.
+
+If capacity disappears before the request is accepted, the console refreshes availability and asks you to choose a configuration that can still be provisioned.
+
+This is why a model or replica count that was selectable a moment earlier can become unavailable.
+
+## Partially Running
+
+If some requested replicas are unavailable or responding more slowly than expected, the deployment may show **Partially Running**.
+
+The endpoint remains usable, but fewer replicas are available to serve traffic. You may see slower responses or lower throughput until capacity recovers.
+
+Depending on your workload, you can:
+
+- Keep the requested count and wait for recovery
+- Reduce the requested replica count
+- Stop the deployment and start it later
+
+## No autoscaling
+
+Inference API does not currently change replica count automatically in response to traffic.
+
+You manage the count manually. If you want to take the deployment fully offline, use **Stop** instead of trying to set the replica count to zero.
+
+## Replica count and billing
+
+Your current hourly deployment cost is based on the selected variant and requested replica count.
+
+Increasing replicas raises the hourly cost. Reducing replicas lowers it after the change takes effect.
+
+Stopping the deployment tears down its replicas and stops hourly charges once the deployment reaches **Stopped**.
+
+See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing lifecycle.
+
+## Capacity figures and benchmarks
+
+A model's raw context limit or GPU configuration does not by itself tell you how many requests a replica can serve.
+
+Hivenet's V2 benchmark process tests defined workload envelopes with different input lengths, output lengths, concurrency, and modalities. Any published capacity figure should be read together with the workload shape it was measured against.
+
+<Warning>
+  Do not treat one requests-per-minute figure as a universal limit for every prompt. Long-context, multimodal, and agentic workloads can have very different serving costs from short chat requests.
+</Warning>
+
+## Next steps
+
+- [Choose a model and variant](/documentation/inference-api/models-and-variants).
+- [Manage a deployment](/documentation/inference-api/manage-deployments).
+- [Understand Inference API billing](/documentation/inference-api/billing).
