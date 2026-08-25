@@ -1,0 +1,221 @@
+---
+title: "Get started with Hivenet Inference API"
+sidebarTitle: "Get started"
+description: "Deploy an open-weight model, create an Inference API key, and send your first OpenAI-compatible request from the Hivenet Compute console."
+icon: "rocket"
+---
+
+This guide takes you from the Compute console to a working inference request. You’ll choose a location and model, configure the deployment, create an API key, and use the generated quick-start snippet to call the endpoint.
+
+<Info>
+  ## What you’ll need
+
+  - A Compute account
+  - Access to a Compute organization
+  - Enough credits in the organization balance for the deployment you choose
+  - Python, Node.js, or a terminal with `curl` if you want to test the endpoint locally
+
+  Inference API uses the same organization balance as your Compute instances.
+</Info>
+
+<Steps>
+  <Step title="Open Inference API">
+    1. Sign in to the [Compute console](https://console.hivecompute.ai/).
+    2. Confirm the organization shown in the upper-left corner.
+    3. Open **Inference API** from the left sidebar.
+    4. Select **New deployment** or **Deploy model**.
+
+    The deployment and any API keys you create belong to the active organization.
+  </Step>
+  <Step title="Choose a location">
+    Select an available location.
+
+    Location affects:
+
+    - Which models and variants are currently available
+    - How much capacity is available for replicas
+    - Where your inference requests are processed
+
+    A location marked **Sold out** cannot accept a new Inference API deployment at that moment.
+
+    <Tip>
+      Capacity changes as deployments start and stop. If your preferred location is sold out, you can try another available location or check again later.
+    </Tip>
+  </Step>
+  <Step title="Choose a model">
+    Select one of the models available in that location.
+
+    Each model card can show:
+
+    - A short description
+    - Capability tags
+    - A starting hourly price
+    - Whether the model is currently sold out in the selected location
+
+    The console initially shows a curated subset. Select **All models** to browse the full current catalog.
+  </Step>
+  <Step title="Choose a model variant">
+    After selecting a model, choose one of its available variants.
+
+    A variant fixes the serving configuration for that deployment. Depending on the model, the console can show details such as:
+
+    - GPU type and count
+    - Quantization
+    - Context window
+
+    Some variants may be marked **Sold out** or **Only X available** when regional capacity is limited.
+
+    <Info>
+      Model availability is dynamic. The live console is the source of truth for which variants can currently be deployed in a location.
+    </Info>
+  </Step>
+  <Step title="Choose the number of replicas">
+    Set how many replicas you want to run.
+
+    Each replica is a parallel copy of the model endpoint. Adding replicas can increase the number of requests your deployment can handle, but each replica adds to the hourly cost.
+
+    The console limits the selector to the capacity available for the selected variant and location.
+
+    <Note>
+      Auto-scaling is not available. You choose the replica count manually and can change it later when capacity is available.
+    </Note>
+  </Step>
+  <Step title="Name the deployment">
+    Keep the suggested name or enter your own.
+
+    Use letters, numbers, and hyphens. The deployment name is a label for managing the deployment in the console. It is not the model name you pass in API requests.
+  </Step>
+  <Step title="Review the cost and deploy">
+    Review the selected model, location, replicas, and estimated cost.
+
+    The review section shows the current:
+
+    - Total cost per hour
+    - Estimated cost per 24 hours
+    - Estimated cost per week
+
+    Select **Deploy model** when you’re ready.
+
+    The deployment moves to **Starting** while Hivenet prepares it. This can take up to 10 minutes. Charges begin only once it reaches **Running**.
+  </Step>
+  <Step title="Create an API key">
+    Once you are on the Inference API page, create a key if the organization does not already have one you want to use.
+
+    1. In **Keys**, select **New key**.
+    2. Enter a label using lowercase letters, numbers, and hyphens.
+    3. Select **Create**.
+    4. Copy the full API key and store it securely.
+    5. Close the dialog only after you have saved the key.
+
+    <Warning>
+      The full API key is shown once. If you lose it, create a new key and update your application.
+    </Warning>
+  </Step>
+  <Step title="Open the deployment details">
+    When the deployment reaches **Running**, open it from the **Deployments** list.
+
+    The details view includes:
+
+    - Endpoint URL
+    - Served model details
+    - Region
+    - Replica count
+    - Current cost information
+    - Request and token metrics when data is available
+    - Quick-start snippets for Python, JavaScript, and `curl`
+
+    <Warning>
+      Copy the endpoint URL exactly as shown. It already contains the API version path, such as `/v1`. Do not add another `/v1`.
+    </Warning>
+  </Step>
+  <Step title="Send your first request">
+    The safest way to call a deployment is to copy the generated snippet from its details view. The snippet contains the exact endpoint URL and served model name for that deployment.
+
+    For Python, install the OpenAI SDK:
+
+    ```bash
+    pip install openai
+    ```
+
+    Then use the values from your deployment:
+
+    ```python
+    from openai import OpenAI
+    
+    client = OpenAI(
+        base_url="YOUR_ENDPOINT_URL",
+        api_key="YOUR_INFERENCE_API_KEY",
+    )
+    
+    response = client.chat.completions.create(
+        model="YOUR_SERVED_MODEL_NAME",
+        messages=[
+            {"role": "user", "content": "Hello!"}
+        ],
+    )
+    
+    print(response.choices[0].message.content)
+    ```
+
+    Or use `curl`:
+
+    ```bash
+    curl YOUR_ENDPOINT_URL/chat/completions \
+      -H "Authorization: Bearer YOUR_INFERENCE_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "YOUR_SERVED_MODEL_NAME",
+        "messages": [{"role": "user", "content": "Hello!"}]
+      }'
+    ```
+
+    <Tip>
+      Do not substitute your deployment name or the catalog title for `YOUR_SERVED_MODEL_NAME`. Copy the exact `model` value generated by the console.
+    </Tip>
+  </Step>
+</Steps>
+
+## What happens after deployment
+
+Your deployment stays online and continues using organization credits while it is running.
+
+From the deployment menu or details view, you can later:
+
+- Change the replica count when capacity allows
+- Stop the deployment and start it again later
+- Retry failed replicas after an underlying problem is resolved
+- Permanently terminate the deployment
+
+Stopping is reversible. Termination is permanent.
+
+## Troubleshooting
+
+### The location or model is sold out
+
+The selected location does not currently have enough free capacity for that model or variant. Choose another available option or try again later.
+
+### Fewer replicas are available than you expected
+
+The console adjusts the maximum replica count to current regional capacity. You can deploy with the available count and try to increase it later.
+
+### The deployment is still Starting
+
+Provisioning can take up to 10 minutes. The endpoint accepts requests once the deployment reaches **Running**. You are not charged while it remains in **Starting**.
+
+### The API request returns an authentication error
+
+Check that you are using an **Inference API key**, not a Compute public API token or your console session credentials. Also confirm that the key is still **Active**.
+
+### The API request cannot find the model
+
+Use the exact `model` value from the deployment’s generated quick-start snippet. The served model name can differ from the catalog title and deployment name.
+
+### The organization does not have enough credits
+
+Add credits before deploying or restarting the model. If you cannot manage the organization balance yourself, ask the organization Owner to add credits.
+
+## Next steps
+
+- Read the [Inference API overview](/documentation/inference-api/overview).
+- Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
+- Review [Billing information](/documentation/account-billing/billing-info) for credits, payment methods, and invoices.

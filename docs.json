@@ -82,7 +82,8 @@
             "group": "Inference API",
             "icon": "sparkles",
             "pages": [
-              "documentation/inference-api/overview"
+              "documentation/inference-api/overview",
+              "documentation/inference-api/get-started"
             ]
           },
           {
