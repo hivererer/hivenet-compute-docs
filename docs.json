@@ -89,7 +89,8 @@
               "documentation/inference-api/call-your-endpoint",
               "documentation/inference-api/manage-deployments",
               "documentation/inference-api/replicas-and-capacity",
-              "documentation/inference-api/billing"
+              "documentation/inference-api/billing",
+              "documentation/inference-api/troubleshooting"
             ]
           },
           {
