@@ -1,24 +1,25 @@
 ---
 title: "Create and manage Inference API keys"
 sidebarTitle: "API keys"
-description: "Create organization-scoped Inference API keys, store the secret safely, and disable, re-enable, or revoke access without stopping your deployments."
+description: "Create organization-scoped Inference API keys, store the secret safely, and disable, re-enable, or revoke access without stopping your endpoints."
 icon: "key"
 ---
 
-Inference API keys authenticate requests to your organization's model deployments.
+Inference API keys authenticate requests to your organization's model endpoints.
 
-Keys are managed from the **API keys** section of the Inference API page. They are scoped to the active organization rather than to a single deployment.
+Keys are managed from the **API keys** section of the Inference API page. They are scoped to the active organization rather than to a single endpoint.
 
 ## Create a key
 
 1. Open **Inference API** in the Compute console.
 2. In **API keys**, select **New key**.
-3. Enter a label that helps you recognize what the key is used for.
-4. Create the key.
+3. Enter a unique label using lowercase letters, numbers, and hyphens.
+4. Select **Create**.
 5. Copy the full secret immediately and store it somewhere secure.
+6. Select **Copy and close** only after you have saved it.
 
 <Warning>
-  The full secret is shown only when the key is created. Save it before closing the dialog. If you lose it, create a new key and update the application that uses it.
+  The full secret is shown once. You won’t be able to view it again after closing the dialog. If you lose it, create a new key and update the application that uses it.
 </Warning>
 
 After creation, the API keys table shows a masked version of the key together with information such as:
@@ -26,25 +27,24 @@ After creation, the API keys table shows a masked version of the key together wi
 - Status
 - Label
 - Masked key
-- Creator
 - Last used
 - Created date
 
 ## Use the key in a request
 
-Pass the key as a bearer token when calling your deployment endpoint.
+Pass the key as a bearer token when calling your endpoint.
 
 ```bash
 -H "Authorization: Bearer YOUR_INFERENCE_API_KEY"
 ```
 
-The deployment details also provide generated Python, JavaScript, and `curl` quick-start snippets.
+The endpoint details also provide generated Python, JavaScript, and `curl` quick-start snippets.
 
 See [Call your Inference API endpoint](/documentation/inference-api/call-your-endpoint) for complete examples.
 
 ## Disable a key
 
-Disable a key when you want to stop it from authenticating requests without deleting it permanently.
+Disable a key when you want to stop it from authenticating requests without revoking it permanently.
 
 1. Open the key's options menu.
 2. Select **Disable**.
@@ -52,7 +52,7 @@ Disable a key when you want to stop it from authenticating requests without dele
 
 Requests made with that key stop authenticating after the key is disabled.
 
-Disabling a key does not stop any deployment. Running model capacity continues to use organization credits.
+Disabling a key does not stop any endpoint. Running model capacity continues to use organization credits.
 
 ## Re-enable a key
 
@@ -91,7 +91,7 @@ Revocation is permanent. Create a new key if the application needs replacement c
 
 Keys belong to the organization in which they were created.
 
-When working with multiple Compute organizations, confirm the active organization before creating a key or troubleshooting authentication. Use an Inference API key from the same organization as the deployment you are calling.
+When working with multiple Compute organizations, confirm the active organization before creating a key or troubleshooting authentication. Use an Inference API key from the same organization as the endpoint you are calling.
 
 ## Troubleshoot authentication
 
@@ -100,8 +100,8 @@ If a request is rejected:
 1. Confirm you copied the complete key secret when it was created.
 2. Check that the key status is **Active**.
 3. Confirm the request uses `Authorization: Bearer ...`.
-4. Confirm the key and deployment belong to the same organization.
-5. Check that you are calling the deployment's Inference API endpoint, not the Compute public API.
+4. Confirm the key and endpoint belong to the same organization.
+5. Check that you are calling the endpoint URL shown by Inference API, not the Compute public API.
 
 If the secret has been lost, revoked, or exposed, create a new key rather than trying to recover the old secret.
 
@@ -109,5 +109,5 @@ If the secret has been lost, revoked, or exposed, create a new key rather than t
 
 - [Call your endpoint](/documentation/inference-api/call-your-endpoint).
 - [Get started with Inference API](/documentation/inference-api/get-started).
-- [Manage a deployment](/documentation/inference-api/manage-deployments).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
 - [Understand Inference API billing](/documentation/inference-api/billing).

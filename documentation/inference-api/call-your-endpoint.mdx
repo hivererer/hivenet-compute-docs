@@ -1,20 +1,20 @@
 ---
 title: "Call your Inference API endpoint"
 sidebarTitle: "Call your endpoint"
-description: "Use the endpoint URL, served model name, and Inference API key from your deployment to send OpenAI-compatible requests with Python, JavaScript, or curl."
+description: "Use the endpoint URL, served model name, and Inference API key from your endpoint to send OpenAI-compatible requests with Python, JavaScript, or curl."
 icon: "terminal"
 ---
 
-Each running Inference API deployment gives you the values you need to make requests:
+Each running Inference API endpoint gives you the values you need to make requests:
 
 - An **endpoint URL**
 - A **served model name**
 - An **Inference API key** from your organization
 
-The deployment details view generates working quick-start snippets for Python, JavaScript, and `curl`.
+The endpoint details view generates quick-start snippets for Python, JavaScript, and `curl`.
 
 <Info>
-  Copy the generated values from the deployment you are calling. Do not infer the model name from the deployment label or catalog title.
+  Copy the generated values from the endpoint you are calling. Do not infer the model name from the endpoint label or catalog title.
 </Info>
 
 ## Endpoint URL
@@ -24,26 +24,26 @@ Use the endpoint URL exactly as the console shows it.
 A typical URL already ends with an API version path such as `/v1`:
 
 ```text
-https://YOUR_DEPLOYMENT_HOST/v1
+https://YOUR_ENDPOINT_HOST/v1
 ```
 
 <Warning>
-  Do not add another `/v1`. The API version is part of the deployment endpoint and can change independently of the console.
+  Do not add another `/v1`. The API version is already part of the endpoint URL.
 </Warning>
 
 For SDK clients, use the endpoint URL as the base URL. For a direct chat-completions request with `curl`, add `/chat/completions` after it.
 
 ## Served model name
 
-OpenAI-compatible requests include a `model` field. Use the exact value in the deployment's generated quick-start snippet.
+OpenAI-compatible requests include a `model` field. Use the exact value in the endpoint's generated quick-start snippet.
 
 This value can differ from:
 
-- The name you gave the deployment
+- The name you gave the endpoint
 - The shorter model title shown in the catalog
-- An older deployment's model identifier
+- An older endpoint's model identifier
 
-Hivenet stores the served model name with the deployment so the generated snippet uses the value expected by that endpoint.
+Use the generated snippet rather than guessing the model value.
 
 ## Python
 
@@ -53,7 +53,7 @@ Install the OpenAI SDK:
 pip install openai
 ```
 
-Then create a client with your deployment URL and key:
+Then create a client with your endpoint URL and key:
 
 ```python
 from openai import OpenAI
@@ -113,7 +113,7 @@ curl YOUR_ENDPOINT_URL/chat/completions \
   }'
 ```
 
-## Use secrets rather than hard-coding keys
+## Keep API keys out of source code
 
 For local testing, environment variables keep the key out of your source file.
 
@@ -129,7 +129,7 @@ Then read that value from your application instead of committing a credential to
 
 ## When requests fail
 
-### 401 or authentication errors
+### Authentication errors
 
 Check that:
 
@@ -139,18 +139,18 @@ Check that:
 
 ### Model not found
 
-Copy the `model` value from the deployment's quick-start snippet. Do not use the deployment name as the model identifier.
+Copy the `model` value from the endpoint's quick-start snippet. Do not use the endpoint name as the model identifier.
 
 ### Endpoint cannot be reached
 
-Confirm the deployment is **Running** or **Partially Running**. A stopped or terminated deployment does not serve requests.
+Confirm the endpoint is **Running** or **Partially running**. A stopped or terminated endpoint does not serve requests.
 
 ### Requests are slower than expected
 
-Open the deployment details and check the replica count and state. If some requested replicas are not active, the deployment may have less serving capacity until they recover.
+Open the endpoint details and check the replica count and state. If some requested replicas are not active, the endpoint may have less serving capacity until they recover.
 
 ## Next steps
 
 - [Create and manage API keys](/documentation/inference-api/api-keys).
-- [Manage a deployment](/documentation/inference-api/manage-deployments).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
 - [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).

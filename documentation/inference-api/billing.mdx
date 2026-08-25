@@ -1,105 +1,84 @@
 ---
 title: "Understand Inference API billing"
 sidebarTitle: "Billing"
-description: "Understand how Inference API deployments use organization credits, how replica count affects hourly cost, and when charges start and stop."
+description: "Understand how Inference API endpoints use organization credits, how replica count affects hourly cost, and when charges start and stop."
 icon: "credit-card"
 ---
 
 Hivenet Inference API uses the same prepaid organization credit balance as Compute.
 
-You pay for the model-serving capacity that is running. The console shows the current cost before deployment and updates it as you change fixed or autoscaling capacity.
+You pay for the fixed model-serving capacity you run. The console shows the current cost before deployment and while the endpoint is active.
 
-## Fixed-capacity billing
+## How cost is calculated
 
-With autoscaling turned off, the deployment keeps a fixed number of replicas running.
+A model variant has an hourly price per replica. Your displayed endpoint rate is based on the selected variant and replica count.
 
-The displayed hourly cost follows the selected model variant and the number of running replicas. Increasing the fixed replica count increases the current cost; reducing it lowers the cost after the change takes effect.
+Increasing the replica count raises the endpoint's hourly rate. Reducing it lowers the rate once the change takes effect.
 
-Before deployment, **Review your setup** also shows estimated cost over 24 hours and one week.
-
-## Autoscaling billing
-
-Autoscaling separates your baseline capacity from temporary burst capacity:
-
-- **Reserved replicas** stay running and are billed continuously while the deployment is active.
-- **Burst replicas** are best effort and are billed only while they are active.
-
-The console shows the current prices and estimates for the selected model variant. Use those live values rather than relying on an old screenshot or saved estimate.
+The deployment review screen also shows estimated cost over 24 hours and one week before you deploy.
 
 <Info>
-  Burst capacity can reduce the need to keep peak capacity running all the time, but it is not guaranteed when the region has no spare infrastructure.
+  Prices shown in the console are the current source of truth. Use the review screen rather than an old screenshot or saved estimate when creating a new endpoint.
 </Info>
 
 ## When charging starts
 
-A new or restarted deployment enters **Starting** while Hivenet prepares serving capacity.
+A new or restarted endpoint enters **Starting** while Hivenet provisions its replicas.
 
-The V2 deployment flow states that starting a model can take up to 10 minutes and that charges begin once the model is running.
-
-For autoscaling deployments, additional burst charges begin only when burst replicas become active.
-
-## When charging changes
-
-The current cost can change when you:
-
-- Increase or reduce a fixed replica count
-- Change the Reserved count
-- Change the Burst limit
-- Autoscaling starts or removes burst replicas
-- Stop or start the deployment
-
-The deployment details show current cost information together with replica activity so you can see how the active serving configuration relates to spend.
+The current production UI says starting a model takes about 90 seconds. Charges begin once the endpoint is running.
 
 ## When charging stops
 
-Stopping a deployment tears down its serving replicas. Charges stop once the running capacity has shut down.
+When you stop an endpoint, Hivenet tears down its replicas and serving charges stop once the endpoint reaches **Stopped**.
 
-Terminating a deployment also stops charges once termination is complete.
+When you terminate an endpoint, hourly charges stop once termination is complete.
 
 <Warning>
-  Disabling or revoking an Inference API key does not stop a deployment. Its serving capacity stays online and continues to use credits until you stop or terminate it.
+  Disabling or revoking an Inference API key does not stop an endpoint. The serving capacity stays online and charges continue.
 </Warning>
 
-## Stopped deployments
+## Changing replica count
 
-A stopped deployment keeps its configuration but does not keep serving replicas running.
+The current production version uses a fixed replica count. Increasing replicas increases hourly cost; reducing them lowers it after the change takes effect.
 
-You can start it again later if enough organization credits and regional capacity are available. Charges resume when serving capacity comes back online.
+Current regional capacity can limit how many replicas you are allowed to run.
 
-Stopping is useful when you expect to reuse the deployment but do not need the endpoint continuously.
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for how fixed scaling works.
+
+## Stopped endpoints
+
+A stopped endpoint keeps its configuration but has no running replicas.
+
+You can start it again later if enough capacity is available in the same location. Charges resume when the endpoint is running again.
+
+Stopping is useful when you expect to reuse the endpoint but do not need it continuously.
 
 ## Organization credits
 
 Inference API and Compute resources draw from the same organization balance.
 
-If the organization does not have enough credits to deploy or start a model, the console shows a warning and an **Add credits** path before the action proceeds.
-
-If you cannot manage the organization balance yourself, ask the organization Owner to add credits.
+If there are not enough credits to deploy or restart an endpoint, the console blocks the action and asks for more credits. If you cannot add credits yourself, ask the organization Owner to top up the balance.
 
 See [Billing information](/documentation/account-billing/billing-info) for payment methods, auto top-up, invoices, and organization billing roles.
 
-## Monitor spend
+## Monitor current spend
 
-The Inference API page can show:
+The Inference API page can show organization-level 24-hour spend and each active endpoint's current hourly cost.
 
-- Spend over the last 24 hours
-- Current hourly cost for each deployment
-- Cost so far in deployment details
-- Replica activity that can explain autoscaling changes
-
-You can also use the main Compute billing views to understand the shared organization balance.
+You can also use the main Compute billing and spending views to understand the shared organization balance.
 
 See [Track organization spending in real time](/documentation/account-billing/track-costs-real-time).
 
 ## Cost is based on serving capacity
 
-Inference API is not billed purely by the number of tokens in each request. The serving capacity you keep running is what drives the deployment cost.
+The current Inference API product is priced around the replicas you run rather than the number of tokens sent in each request.
 
-That means sending fewer requests does not automatically reduce the cost of a fixed deployment. With autoscaling enabled, burst replicas can scale down when demand falls, but your Reserved replicas remain running until you change the configuration or stop the deployment.
+Sending fewer requests does not automatically reduce the replica count or hourly rate. Autoscaling is not available in the current production version.
+
+If you no longer need the capacity, reduce the replica count or stop the endpoint.
 
 ## Next steps
 
 - [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
-- [Manage a deployment](/documentation/inference-api/manage-deployments).
-- [Track organization spending](/documentation/account-billing/track-costs-real-time).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
 - [Create and manage API keys](/documentation/inference-api/api-keys).

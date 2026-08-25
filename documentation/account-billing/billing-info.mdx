@@ -94,7 +94,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 ## How charging works
 
 - Charges begin when an instance reaches **Running** and stop when it is **Stopped** or **Terminated**.
-- Hivenet Inference API deployments also contribute to the organization’s live spend rate. See [Understand Inference API billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
+- Running Hivenet Inference API endpoints also contribute to the organization’s live spend rate. See [Understand Inference API billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
 - Stopping an instance pauses compute charges while preserving it for a later start.
 - Terminating an instance permanently deletes it and its local data.
 

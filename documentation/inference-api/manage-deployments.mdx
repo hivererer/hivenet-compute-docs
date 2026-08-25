@@ -1,19 +1,19 @@
 ---
-title: "Manage an Inference API deployment"
-sidebarTitle: "Manage deployments"
-description: "Understand Inference API deployment states, view endpoint details and metrics, and safely start, stop, retry, or terminate a model deployment."
+title: "Manage an Inference API endpoint"
+sidebarTitle: "Manage endpoints"
+description: "Understand Inference API endpoint states, view endpoint details and metrics, and safely start, stop, retry, terminate, or clear an endpoint."
 icon: "sliders"
 ---
 
-Use the **Deployments** section of Inference API to monitor and control the models your organization has deployed.
+Use the **Deployments** section of Inference API to monitor and control the model endpoints your organization has created.
 
-Each row can show the deployment status, name, model, location, replicas, recent request count, current hourly cost, and actions that apply to its current state.
+Each row shows the endpoint status, name, model, region, replica count, recent request count when available, and current hourly cost.
 
-## Open deployment details
+## Open endpoint details
 
-Open a deployment's options menu and select **Details**.
+Open an endpoint's options menu and select **Details**.
 
-The details dialog can include:
+Depending on the endpoint state, the details view can include:
 
 - Endpoint URL
 - Model
@@ -21,119 +21,94 @@ The details dialog can include:
 - Context window
 - License
 - Region
-- Cost so far
-- Creation time
-- Fixed or autoscaling replica configuration
-- Recent replica activity
+- Cost so far and current hourly rate
+- Creation or stop time
+- Replica count
 - Requests per hour
 - Inter-token latency
 - Tokens in and out over 24 hours
 - Output speed
 - Quick-start snippets for Python, JavaScript, and `curl`
 
-Some metrics can be empty while the deployment is starting or before it has served traffic.
+The endpoint URL can also be copied from the deployment list.
 
-## Deployment states
+## Endpoint states
 
-| State | What it means | Typical actions |
+| State | What it means | What you can usually do |
 | --- | --- | --- |
-| **Starting** | Hivenet is preparing the deployment. | View details or logs and wait for capacity to come online. |
-| **Running** | The deployment is serving requests. | View details, logs, edit capacity, stop, or terminate. |
-| **Partially running** | Some expected replicas are serving and others are not. | View details and logs, retry when available, edit capacity, stop, or terminate. |
-| **Stopped** | The deployment is offline but its configuration is retained. | Start or terminate. |
-| **Error** | No replicas are currently serving. | View details and logs, retry when available, or terminate. |
-| **Terminated** | The deployment has been permanently shut down. | View details or logs and remove it from the list. |
+| **Starting** | Hivenet is provisioning the endpoint. | Wait for it to become ready, or use the available management actions. |
+| **Running** | The endpoint is serving requests. | Call it, change replicas, stop, or terminate. |
+| **Partially running** | Some requested replicas are serving and others are not. | Keep serving with reduced capacity, retry when available, change replicas, stop, or terminate. |
+| **Stopped** | The endpoint is offline and its configuration is retained. | Start or terminate it. |
+| **Error** | The endpoint is not currently serving. | Retry failed replicas when available, stop, or terminate. |
+| **Terminated** | The endpoint is permanently shut down. | Clear it from the list. |
 
-The UI may briefly pass through transitional states while an action is being processed, but the table above reflects the customer-facing states shown in the current V2 design.
+## Stop an endpoint
 
-## View deployment logs
+Use **Stop** when you want to take an endpoint offline but may need the same configuration again.
 
-Select **Logs** for a deployment when the action is available.
-
-The logs dialog shows logs from the **past hour**. You can:
-
-- Search within the displayed logs
-- Download the logs
-- Switch between replicas when the deployment has more than one replica
-
-The console also handles cases where logs are unavailable because the deployment is not running, the log request timed out, no logs were returned, or the log service could not be reached.
-
-<Tip>
-  For a **Partially running** or **Error** deployment, logs are one of the first places to check before retrying or changing capacity.
-</Tip>
-
-## Stop a deployment
-
-Use **Stop** when you want to take a deployment offline but may need the same configuration again.
-
-1. Open the deployment options menu.
+1. Open the endpoint options menu.
 2. Select **Stop**.
-3. Review the confirmation.
+3. Review the confirmation message.
 4. Confirm the action.
 
-The endpoint stops serving once the deployment has shut down its running replicas.
+The replicas are torn down and the endpoint stops serving requests. Serving charges stop once the endpoint is stopped.
 
-Stopping preserves the deployment configuration, but starting it again still depends on enough credits and capacity being available.
+<Info>
+  Stopping preserves the endpoint configuration. Starting it later still depends on enough capacity being available in the same region.
+</Info>
 
-## Start a stopped deployment
+## Start a stopped endpoint
 
-You can start a **Stopped** deployment from the deployment list or its details view.
+1. Open the options menu for a **Stopped** endpoint.
+2. Select **Start**.
+3. Review the endpoint details.
+4. Confirm the start.
 
-Before the start proceeds, the console checks whether the organization has enough credits. If it does not, you are directed to add credits first.
+The endpoint moves to **Starting** and begins serving once it reaches **Running**.
 
-After a successful start request, the deployment returns to **Starting** while Hivenet prepares serving capacity.
+If the organization balance does not have enough credits, the console blocks the start and asks for more credits.
 
-## Retry a partially running or failed deployment
+## Retry failed replicas
 
-A **Retry** action can appear for **Partially running** and **Error** deployments.
+A **Retry** action can appear for **Partially running** or **Error** endpoints.
 
-Use it when you want Hivenet to retry replicas that are not currently serving. Whether retry succeeds still depends on the underlying condition, including available infrastructure.
+Use it to ask Hivenet to retry failed replicas. Retry does not change a deliberately stopped endpoint into a running one; use **Start** for an endpoint that is **Stopped**.
 
-If retry is unavailable, the console can show a tooltip explaining why.
+## Terminate an endpoint
 
-## Edit replicas
+Termination permanently removes the endpoint from service.
 
-Open **Details** and select **Edit** next to **Replicas**.
-
-You can switch between:
-
-- Fixed replica count
-- Autoscaling with **Reserved** and **Burst limit** values
-
-See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for the full explanation.
-
-## Terminate a deployment
-
-Termination permanently shuts down the deployment.
-
-1. Open the deployment options menu.
+1. Open the endpoint options menu.
 2. Select **Terminate**.
-3. Review each consequence in the confirmation dialog.
-4. Confirm that your application no longer needs the endpoint.
-5. Select **Terminate deployment**.
+3. Confirm that you understand the endpoint will stop accepting requests and cannot be started again.
+4. Confirm the termination.
 
-The confirmation makes clear that:
+After termination:
 
-- Requests to the endpoint fail after termination.
+- Requests to the endpoint fail.
 - The endpoint URL is no longer usable.
-- Charges stop once termination is complete.
-- The action cannot be undone.
+- The endpoint cannot be started again.
+- Hourly charges stop once termination is complete.
 
 <Warning>
-  Update any application that depends on the endpoint before terminating it.
+  Update applications that depend on the endpoint before terminating it. Termination is permanent.
 </Warning>
 
-## Remove a terminated deployment
+## Clear a terminated endpoint
 
-Termination and removal are separate actions.
+After an endpoint is **Terminated**, you can use **Clear** to remove the terminated entry from the deployment list.
 
-After a deployment is **Terminated**, select **Remove** if you want to clear that terminated record from the deployments list.
+Clearing does not terminate a running endpoint and does not affect an endpoint that still exists. It is only a cleanup action for an already-terminated entry.
 
-Removing the record does not terminate a running deployment. The deployment must already be terminated before **Remove** is available.
+## Partially running endpoints
+
+An endpoint becomes **Partially running** when fewer replicas are actively serving than requested.
+
+The endpoint can still accept requests, but its available throughput is reduced. You can retry failed replicas when the action is available, reduce the replica count, wait for recovery, or stop the endpoint.
 
 ## Next steps
 
 - [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
 - [Understand Inference API billing](/documentation/inference-api/billing).
 - [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).
-- [Call your endpoint](/documentation/inference-api/call-your-endpoint).

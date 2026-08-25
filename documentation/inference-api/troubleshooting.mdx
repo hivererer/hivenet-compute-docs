@@ -1,109 +1,93 @@
 ---
 title: "Troubleshoot Hivenet Inference API"
 sidebarTitle: "Troubleshooting"
-description: "Fix common Inference API problems with capacity, credits, deployment states, replicas, API keys, endpoint URLs, and served model names."
+description: "Fix common Inference API problems with location capacity, credits, endpoint states, replicas, API keys, endpoint URLs, and served model names."
 icon: "triangle-exclamation"
 ---
 
-Use this page when a deployment cannot start, is only partially running, requests fail, autoscaling does not add capacity, or recent logs are unavailable.
+Use this page when an endpoint cannot start, is only partially running, or an API request fails.
+
+## A location is sold out
+
+The current production flow asks you to choose a location before choosing a model.
+
+A location marked **Sold out** cannot accept another endpoint at that moment. Choose another available location or try again later.
+
+The console is the source of truth for current regional capacity.
 
 ## A model or variant is unavailable
 
-Model availability depends on the selected location and current infrastructure capacity.
+Model and variant availability depends on the selected location and current infrastructure capacity.
 
 Try one of these options:
 
+- Choose another available model or variant.
 - Choose another location.
-- Choose another model or variant.
-- Reduce the requested fixed or reserved capacity.
+- Reduce the replica count if the console allows it.
 - Try again later after capacity has been released.
-
-The live console is the source of truth for what can be deployed now.
 
 ## The organization does not have enough credits
 
 The console blocks deployment or start actions when the organization does not have enough credits.
 
-Use the **Add credits** link when it is shown, or ask the organization Owner to add credits if you do not have billing permissions.
+Add credits when the option is available, or ask the organization Owner to top up the balance if you do not have billing permissions.
 
 Inference API and Compute resources use the same organization balance.
 
-## The deployment is still Starting
+## The endpoint is still Starting
 
-Starting a model can take up to 10 minutes.
+The current production UI says starting a model takes about 90 seconds.
 
-While it is **Starting**:
+While the endpoint is **Starting**, it is not ready for normal traffic yet. Wait for **Running** before testing your integration.
 
-- The endpoint may not be ready for traffic yet.
-- Deployment metrics may still be empty.
-- Logs can help show recent provisioning activity when available.
+If it remains in **Starting** well beyond the expected period, note the endpoint name, model, region, and approximate start time before contacting Support.
 
-If the deployment does not progress after the expected startup period, open **Logs** and check for recent errors before retrying or contacting Support.
+## The endpoint is Partially running
 
-## The deployment is Partially running
+**Partially running** means some requested replicas are serving and others are not.
 
-**Partially running** means some expected serving replicas are available and others are not.
-
-The endpoint can still serve traffic, but available throughput is lower than the configured capacity.
+The endpoint can still accept traffic, but available throughput is lower than the configured capacity.
 
 You can:
 
-1. Open **Logs** and select the affected replica when there is more than one.
-2. Use **Retry** when the action is available.
-3. Reduce the fixed or reserved capacity if your workload can run with fewer replicas.
-4. Wait for capacity to recover.
-5. Stop the deployment if you do not want it serving with reduced capacity.
+1. Use **Retry** when the action is available.
+2. Reduce the replica count if your workload can run with less capacity.
+3. Wait for capacity to recover.
+4. Stop the endpoint if you do not want it serving with reduced capacity.
 
-## The deployment is in Error
+## The endpoint is in Error
 
-**Error** means no replicas are currently serving.
+**Error** means the endpoint is not currently serving normally.
 
 Start with these checks:
 
-1. Open **Logs**.
-2. Use **Retry** if the action is available.
-3. Check whether the selected location still has capacity.
-4. Check that the organization has enough credits.
-
-If retry continues to fail, collect the deployment name, region, model, approximate failure time, and relevant logs before contacting Support.
+1. Use **Retry** if the action is available.
+2. Check whether the selected location still has capacity.
+3. Check that the organization has enough credits.
+4. If the problem continues, collect the endpoint name, region, model, and approximate failure time before contacting Support.
 
 ## Retry is unavailable
 
-The **Retry** action is only shown when it applies to the deployment's current condition.
+The **Retry** action is shown only when it applies to the endpoint's current state.
 
-Hover the unavailable action when the console provides a tooltip. It can explain why retry cannot currently be used.
+If the action is unavailable, wait for the state to update or use another management action appropriate to the endpoint, such as **Start** for a stopped endpoint.
 
 Retry does not guarantee recovery if the underlying infrastructure condition still exists.
 
-## Autoscaling is not reaching the burst limit
-
-Burst replicas are **best effort**.
-
-Possible reasons include:
-
-- No spare regional capacity is currently available.
-- Traffic has not crossed the scaling threshold.
-- A requested burst replica is still starting.
-- Demand dropped before additional capacity was needed.
-
-Requests above currently running capacity can queue while another replica starts.
-
-If you need capacity that must remain available continuously, raise the **Reserved** count instead of relying entirely on burst replicas.
-
 ## A replica change cannot be saved
 
-Capacity can change while you are editing a deployment.
+Capacity can change while you are editing an endpoint.
 
-If the requested fixed, Reserved, or Burst limit value is no longer available, reduce the requested capacity or try the change later.
+If the requested replica count is no longer available, reduce it to the maximum currently offered by the console or try again later.
 
-## A stopped deployment will not start
+## A stopped endpoint will not start
 
-Starting a stopped deployment requires both:
+Starting a stopped endpoint requires:
 
 - Enough organization credits
-- Enough current capacity for its configuration
+- Enough current capacity for its existing configuration
 
-If the console reports insufficient credits, add credits first. If capacity is unavailable, wait or deploy another available configuration.
+If the console reports insufficient credits, add credits first. If capacity is unavailable, wait or create another endpoint using an available configuration.
 
 ## The API key is rejected
 
@@ -111,7 +95,7 @@ Check that:
 
 - You are using an **Inference API key**, not a Compute public API token.
 - The key is **Active** rather than disabled or revoked.
-- The key belongs to the same organization as the deployment.
+- The key belongs to the same organization as the endpoint.
 - The request sends the key as a bearer token.
 
 If the secret was lost or revoked, create a new key and update the application.
@@ -120,7 +104,7 @@ See [Create and manage Inference API keys](/documentation/inference-api/api-keys
 
 ## The endpoint URL does not work
 
-Copy the URL from **Details** rather than reconstructing it manually.
+Copy the URL from the endpoint details or from the copy control in the deployment list rather than reconstructing it manually.
 
 The endpoint already includes the API version path, such as `/v1`. Do not add a second `/v1`.
 
@@ -132,63 +116,47 @@ YOUR_ENDPOINT_URL/chat/completions
 
 ## The request cannot find the model
 
-Do not assume the deployment name or catalog title is the model identifier expected by the endpoint.
+Do not assume the endpoint name or catalog title is the model identifier expected by the API.
 
-Copy the exact `model` value from the deployment's generated **Quick-start snippets**.
-
-## Logs are empty or unavailable
-
-Deployment logs cover the **past hour only**.
-
-The logs dialog can show different unavailable states, including:
-
-- The deployment is not running
-- No logs were returned
-- The log request timed out
-- The log service is offline or could not be reached
-
-For a multi-replica deployment, make sure you selected the replica you actually want to inspect.
-
-You can also search or download the logs that are available.
+Copy the exact `model` value from the endpoint's generated **Quick-start snippets**.
 
 ## Requests are slower than expected
 
 Check:
 
-- Whether the deployment is **Partially running**.
-- How many replicas are currently active.
-- Whether autoscaling is waiting for burst capacity to start.
-- The request shape, especially long context, large output, multimodal input, or reasoning-heavy workloads.
-- The latency and output-speed metrics in **Details**.
+- Whether the endpoint is **Partially running**.
+- How many replicas are currently serving.
+- The request shape, especially long prompts or large outputs.
+- The inter-token latency and output-speed metrics in the endpoint details.
 
-A model's short-request capacity does not imply the same throughput for every workload shape.
+The requests-per-minute estimate shown with a model variant is a planning estimate for that serving configuration, not a guarantee for every prompt shape.
 
-## A terminated deployment disappeared or still appears
+## A terminated endpoint still appears
 
-Termination permanently shuts down the endpoint, but the terminated record can remain visible.
+Termination permanently shuts down the endpoint, but the terminated record can remain visible in the deployment list.
 
-Use **Remove** to clear a deployment that is already **Terminated** from the list.
+Use **Clear** to remove an endpoint that is already **Terminated** from the list.
 
-Removing and terminating are different actions: **Remove** does not shut down a running deployment.
+**Clear** does not terminate an active endpoint. It only removes the already-terminated record.
 
 ## What to send Support
 
 If you still need help, include:
 
 - Organization name
-- Deployment name
+- Endpoint name
 - Model and variant
 - Location
-- Deployment status
+- Endpoint status
+- Replica count
 - Approximate time the problem started
-- Relevant recent logs
 - What action you were trying to perform
 
 Do not send your full API-key secret.
 
 ## Next steps
 
-- [Manage deployments](/documentation/inference-api/manage-deployments).
+- [Manage endpoints](/documentation/inference-api/manage-deployments).
 - [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
 - [Create and manage API keys](/documentation/inference-api/api-keys).
 - [Call your endpoint](/documentation/inference-api/call-your-endpoint).
