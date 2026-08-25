@@ -86,7 +86,8 @@
               "documentation/inference-api/get-started",
               "documentation/inference-api/models-and-variants",
               "documentation/inference-api/api-keys",
-              "documentation/inference-api/call-your-endpoint"
+              "documentation/inference-api/call-your-endpoint",
+              "documentation/inference-api/manage-deployments"
             ]
           },
           {
