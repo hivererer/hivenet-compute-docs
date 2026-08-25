@@ -1,0 +1,86 @@
+---
+title: "Understand Inference API billing"
+sidebarTitle: "Billing"
+description: "Understand how Inference API deployments use organization credits, how replica count affects hourly cost, and when charges start and stop."
+icon: "credit-card"
+---
+
+Hivenet Inference API uses the same prepaid organization credit balance as Compute.
+
+You pay for the model-serving capacity you run. The console shows the current cost before deployment and while the deployment is active.
+
+## How cost is calculated
+
+A model variant has an hourly price per replica. Your displayed deployment rate is:
+
+```text
+hourly deployment cost = variant hourly price × requested replicas
+```
+
+For example, increasing a deployment from one replica to two doubles the displayed hourly rate for that variant.
+
+The deployment review screen also shows estimated cost over 24 hours and one week so you can see the effect before you deploy.
+
+<Info>
+  Prices shown in the console are the current source of truth. Model variants and prices can change over time, so use the review screen rather than an old screenshot or saved estimate when making a new deployment.
+</Info>
+
+## When charging starts
+
+A new or restarted deployment enters **Starting** while Hivenet provisions its replicas.
+
+Charges begin when the deployment is running and serving capacity is active. The console does not charge the normal running rate while the deployment is still being prepared.
+
+## When charging stops
+
+When you stop a deployment, Hivenet tears down all replicas. Compute billing stops when the last replica exits and the deployment reaches its stopped state.
+
+When you terminate a deployment, hourly charges stop once termination is complete.
+
+<Warning>
+  Disabling or revoking an Inference API key does not stop a deployment. The endpoint capacity stays online and hourly charges continue.
+</Warning>
+
+## Changing replica count
+
+Increasing the requested replica count increases the hourly deployment rate. Reducing it lowers the rate as the deployment reconciles to the new count.
+
+Current regional capacity can limit how many replicas you are allowed to request.
+
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for how scaling works.
+
+## Stopped deployments
+
+A stopped deployment keeps its configuration but has no running replicas.
+
+You can start it again later if enough capacity is available in the same location. Charges resume when the deployment returns to **Running**.
+
+Stopping is useful when you expect to reuse the configuration but do not need the endpoint continuously.
+
+## Organization credits
+
+Inference API and Compute instances draw from the same organization balance.
+
+If there are not enough credits to deploy or restart a model, the console blocks the action and shows how much is required. If you cannot add credits yourself, ask the organization Owner to top up the balance.
+
+See [Billing information](/documentation/account-billing/billing-info) for payment methods, auto top-up, invoices, and organization billing roles.
+
+## Monitor current spend
+
+The Inference API page can show organization-level 24-hour spend and each deployment's current hourly cost.
+
+You can also use the main Compute billing and spending views to understand the shared organization balance.
+
+See [Track organization spending in real time](/documentation/account-billing/track-costs-real-time).
+
+## Cost estimates are not traffic meters
+
+Dedicated Inference API deployments are priced around provisioned replicas rather than the number of tokens sent in each request. Sending fewer requests does not automatically reduce the replica count or hourly deployment rate.
+
+If you no longer need the capacity, reduce replicas where appropriate or stop the deployment.
+
+## Next steps
+
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Manage a deployment](/documentation/inference-api/manage-deployments).
+- [Create and manage API keys](/documentation/inference-api/api-keys).
