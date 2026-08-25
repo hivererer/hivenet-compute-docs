@@ -5,7 +5,7 @@ description: "Deploy an open-weight model, create an Inference API key, and send
 icon: "rocket"
 ---
 
-This guide takes you from the Compute console to a working inference request. You’ll choose a location and model, configure the deployment, create an API key, and use the generated quick-start snippet to call the endpoint.
+This guide takes you from the Compute console to a working inference request. You’ll choose a model and variant, configure fixed or autoscaling capacity, deploy it, create an API key, and use the generated quick-start snippet to call the endpoint.
 
 <Info>
   ## What you’ll need
@@ -15,7 +15,7 @@ This guide takes you from the Compute console to a working inference request. Yo
   - Enough credits in the organization balance for the deployment you choose
   - Python, Node.js, or a terminal with `curl` if you want to test the endpoint locally
 
-  Inference API uses the same organization balance as your Compute instances.
+  Inference API uses the same organization balance as your Compute resources.
 </Info>
 
 <Steps>
@@ -23,105 +23,106 @@ This guide takes you from the Compute console to a working inference request. Yo
     1. Sign in to the [Compute console](https://console.hivecompute.ai/).
     2. Confirm the organization shown in the upper-left corner.
     3. Open **Inference API** from the left sidebar.
-    4. Select **New deployment** or **Deploy model**.
+    4. Select **New deployment**.
 
-    The deployment and any API keys you create belong to the active organization.
-  </Step>
-  <Step title="Choose a location">
-    Select an available location.
-
-    Location affects:
-
-    - Which models and variants are currently available
-    - How much capacity is available for replicas
-    - Where your inference requests are processed
-
-    A location marked **Sold out** cannot accept a new Inference API deployment at that moment.
-
-    <Tip>
-      Capacity changes as deployments start and stop. If your preferred location is sold out, you can try another available location or check again later.
-    </Tip>
+    Deployments and API keys belong to the active organization.
   </Step>
   <Step title="Choose a model">
-    Select one of the models available in that location.
+    The deployment page starts with the model catalog.
 
-    Each model card can show:
+    Use the filters at the top to narrow the catalog by:
 
-    - A short description
-    - Capability tags
-    - A starting hourly price
-    - Whether the model is currently sold out in the selected location
+    - Location
+    - Use case
+    - Model provider
 
-    The console initially shows a curated subset. Select **All models** to browse the full current catalog.
-  </Step>
-  <Step title="Choose a model variant">
-    After selecting a model, choose one of its available variants.
+    Then select a model card to open its variants and technical details.
 
-    A variant fixes the serving configuration for that deployment. Depending on the model, the console can show details such as:
-
-    - GPU type and count
-    - Quantization
-    - Context window
-
-    Some variants may be marked **Sold out** or **Only X available** when regional capacity is limited.
+    A model card can show a short description, capability tags, and a starting price. The selected model panel can also show details such as GPU and quantization, context window, time to first token, inter-token latency, output speed, and license.
 
     <Info>
-      Model availability is dynamic. The live console is the source of truth for which variants can currently be deployed in a location.
+      The selected location affects which models and variants can currently be deployed. The live console is the source of truth for availability.
     </Info>
   </Step>
-  <Step title="Choose the number of replicas">
-    Set how many replicas you want to run.
+  <Step title="Choose a variant">
+    Select the variant that best matches your workload.
 
-    Each replica is a parallel copy of the model endpoint. Adding replicas can increase the number of requests your deployment can handle, but each replica adds to the hourly cost.
+    Variant cards can distinguish configurations by cost, performance, context size, GPU setup, or another serving characteristic. Review the technical details shown below the variants before continuing.
 
-    The console limits the selector to the capacity available for the selected variant and location.
+    If a model or configuration is unavailable in the selected location, choose another available option or location.
+  </Step>
+  <Step title="Choose fixed or autoscaling capacity">
+    Under **Capacity replicas**, decide how the deployment should keep serving capacity available.
+
+    For **fixed capacity**:
+
+    1. Leave **Autoscale replicas** off.
+    2. Set the total number of replicas you want running.
+
+    Each replica is one serving copy of the selected model variant. More replicas increase request capacity and increase the hourly cost.
+
+    For **autoscaling**:
+
+    1. Turn on **Autoscale replicas**.
+    2. Set **Reserved** to the number of replicas you want always running.
+    3. Set **Burst limit** to the highest replica count Hivenet may scale toward when traffic needs more capacity.
+
+    Reserved replicas are billed continuously while the deployment runs. Burst replicas are best effort and are billed only while active.
 
     <Note>
-      Auto-scaling is not available. You choose the replica count manually and can change it later when capacity is available.
+      Burst capacity depends on available infrastructure. Requests above currently running capacity can queue while an additional replica starts.
     </Note>
   </Step>
   <Step title="Name the deployment">
     Keep the suggested name or enter your own.
 
-    Use letters, numbers, and hyphens. The deployment name is a label for managing the deployment in the console. It is not the model name you pass in API requests.
-  </Step>
-  <Step title="Review the cost and deploy">
-    Review the selected model, location, replicas, and estimated cost.
+    Use lowercase letters, numbers, and hyphens. Deployment names must be unique within the organization.
 
-    The review section shows the current:
+    The deployment name is only a management label. It is not necessarily the model value used in API requests.
+  </Step>
+  <Step title="Review the setup and deploy">
+    Check the **Review your setup** section before you continue.
+
+    It shows the selected model, location, capacity configuration, and current estimates for:
 
     - Total cost per hour
-    - Estimated cost per 24 hours
-    - Estimated cost per week
+    - Cost per 24 hours
+    - Cost per week
+
+    If the organization does not have enough credits, the console shows a warning and a link to add credits.
 
     Select **Deploy model** when you’re ready.
 
-    The deployment moves to **Starting** while Hivenet prepares it. This can take up to 10 minutes. Charges begin only once it reaches **Running**.
+    The deployment appears under **Deployments** with **Starting** status while Hivenet prepares it. Starting a model can take up to 10 minutes. Charges begin once serving capacity is running.
   </Step>
   <Step title="Create an API key">
-    Once you are on the Inference API page, create a key if the organization does not already have one you want to use.
+    If the organization does not already have a key you want to use:
 
-    1. In **Keys**, select **New key**.
-    2. Enter a label using lowercase letters, numbers, and hyphens.
-    3. Select **Create**.
-    4. Copy the full API key and store it securely.
-    5. Close the dialog only after you have saved the key.
+    1. In **API keys**, select **New key**.
+    2. Enter a label.
+    3. Create the key.
+    4. Copy the full secret immediately and store it securely.
+    5. Close the dialog only after you have saved it.
 
     <Warning>
-      The full API key is shown once. If you lose it, create a new key and update your application.
+      The full API key is shown once. If you lose it, create another key and update your application.
     </Warning>
   </Step>
   <Step title="Open the deployment details">
-    When the deployment reaches **Running**, open it from the **Deployments** list.
+    When the deployment is ready, open **Details** from its menu.
 
-    The details view includes:
+    The details dialog can show:
 
     - Endpoint URL
-    - Served model details
+    - Model
+    - GPU and quantization
+    - Context window
+    - License
     - Region
-    - Replica count
-    - Current cost information
-    - Request and token metrics when data is available
+    - Cost so far
+    - Creation time
+    - Replica configuration and recent replica activity
+    - Request, latency, token, and output-speed metrics
     - Quick-start snippets for Python, JavaScript, and `curl`
 
     <Warning>
@@ -129,7 +130,7 @@ This guide takes you from the Compute console to a working inference request. Yo
     </Warning>
   </Step>
   <Step title="Send your first request">
-    The safest way to call a deployment is to copy the generated snippet from its details view. The snippet contains the exact endpoint URL and served model name for that deployment.
+    The safest approach is to copy one of the generated **Quick-start snippets** from the deployment details. It contains the endpoint structure and model value expected by that deployment.
 
     For Python, install the OpenAI SDK:
 
@@ -170,52 +171,58 @@ This guide takes you from the Compute console to a working inference request. Yo
     ```
 
     <Tip>
-      Do not substitute your deployment name or the catalog title for `YOUR_SERVED_MODEL_NAME`. Copy the exact `model` value generated by the console.
+      Do not substitute the deployment name for the `model` value. Copy the value generated by the console.
     </Tip>
   </Step>
 </Steps>
 
-## What happens after deployment
+## After your first request
 
-Your deployment stays online and continues using organization credits while it is running.
+The Inference API page gives you a combined view of keys, deployments, and recent service metrics.
 
-From the deployment menu or details view, you can later:
+From a deployment, you can:
 
-- Change the replica count when capacity allows
-- Stop the deployment and start it again later
-- Retry failed replicas after an underlying problem is resolved
-- Permanently terminate the deployment
+- Open **Details**
+- Open **Logs** for recent deployment logs
+- Change fixed or autoscaling replica settings
+- Stop a deployment
+- Start a stopped deployment when credits and capacity allow
+- Retry replicas for a **Partially running** or **Error** deployment when the action is available
+- Terminate a deployment permanently
+- Remove a terminated deployment from the list
 
-Stopping is reversible. Termination is permanent.
+Logs cover the past hour. For deployments with more than one replica, the logs dialog lets you choose the replica to inspect. You can also search and download the displayed logs.
 
 ## Troubleshooting
 
-### The location or model is sold out
+### A model or configuration is unavailable
 
-The selected location does not currently have enough free capacity for that model or variant. Choose another available option or try again later.
-
-### Fewer replicas are available than you expected
-
-The console adjusts the maximum replica count to current regional capacity. You can deploy with the available count and try to increase it later.
+Availability depends on location and current infrastructure capacity. Change the location or choose another available model or variant.
 
 ### The deployment is still Starting
 
-Provisioning can take up to 10 minutes. The endpoint accepts requests once the deployment reaches **Running**. You are not charged while it remains in **Starting**.
+Starting a model can take up to 10 minutes. Wait for serving capacity to become available before sending production traffic.
+
+### Autoscaling is not reaching the burst limit
+
+Burst replicas are best effort. They depend on available infrastructure and take time to start. Requests can queue while capacity is being added.
 
 ### The API request returns an authentication error
 
-Check that you are using an **Inference API key**, not a Compute public API token or your console session credentials. Also confirm that the key is still **Active**.
+Check that you are using an active **Inference API key** from the same organization as the deployment. A disabled or revoked key cannot authenticate requests.
 
 ### The API request cannot find the model
 
-Use the exact `model` value from the deployment’s generated quick-start snippet. The served model name can differ from the catalog title and deployment name.
+Use the exact `model` value from the deployment’s generated quick-start snippet. Do not assume it matches the deployment name.
 
 ### The organization does not have enough credits
 
-Add credits before deploying or restarting the model. If you cannot manage the organization balance yourself, ask the organization Owner to add credits.
+Add credits before deploying or starting the model. If you cannot manage the organization balance yourself, ask the organization Owner to add credits.
 
 ## Next steps
 
 - Read the [Inference API overview](/documentation/inference-api/overview).
-- Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
-- Review [Billing information](/documentation/account-billing/billing-info) for credits, payment methods, and invoices.
+- Learn how to [choose a model and variant](/documentation/inference-api/models-and-variants).
+- Learn how to [manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- Learn how to [manage deployments](/documentation/inference-api/manage-deployments).
+- Learn how to [call your endpoint](/documentation/inference-api/call-your-endpoint).

@@ -5,93 +5,108 @@ description: "Understand what replicas do, how live regional capacity limits sca
 icon: "layer-group"
 ---
 
-Replicas are parallel copies of your model endpoint. They let a deployment handle more work at the same time, but each replica adds to the hourly cost.
+Replicas are serving copies of your selected model variant. They determine how much request capacity your deployment keeps available and how much serving capacity you pay for.
 
-You choose the initial replica count during deployment and can change it later while the deployment is in a scalable state.
+Hivenet Inference API supports both **fixed** and **autoscaling** replica configurations.
 
-## How replica count affects a deployment
+## Fixed capacity
 
-A deployment tracks two related values:
+With autoscaling turned off, you choose the total number of replicas to keep running.
 
-- **Requested replicas:** The number you asked Hivenet to run.
-- **Active replicas:** The number currently registered and serving traffic.
+For example, a fixed deployment configured with three replicas aims to keep three replicas serving while the deployment is running.
 
-When both values match, all requested capacity is available. If fewer replicas are active, the deployment can become **Partially Running** and serve with reduced capacity.
+Use fixed capacity when you want predictable serving capacity and cost.
 
-## Choose the initial replica count
+## Autoscaling capacity
 
-After selecting a model variant, choose how many replicas to deploy.
+Turn on **Autoscale replicas** when you want a stable baseline with room to scale above it.
 
-The selector starts at one replica and is capped by current capacity for that variant in the selected location.
+Autoscaling uses two values:
 
-The normal product ceiling is four replicas, but you may be offered fewer when capacity is limited.
+- **Reserved:** Replicas that stay running while the deployment is active. This is your always-on capacity.
+- **Burst limit:** The highest replica count Hivenet may scale toward when traffic requires more capacity.
+
+If Reserved is 2 and Burst limit is 3, the deployment keeps two replicas running and can add a third when needed and available.
 
 <Info>
-  The console checks live capacity. A variant can be deployable with one or two replicas even when there is not enough room for the full four-replica range.
+  Burst replicas are best effort. They depend on available regional capacity and take time to start.
 </Info>
 
-## Increase or reduce replicas
+Requests above the capacity currently running can queue while another replica starts. The console does not imply that autoscaling is instantaneous or that every burst replica is always available.
 
-For a **Running**, **Partially Running**, or **Starting** deployment:
+## Capacity shown in the console
 
-1. Open the deployment details.
+The deployment configuration shows estimated request capacity alongside replica levels. Treat these figures as planning guidance for the selected model variant and request profile rather than as a universal hard request limit.
+
+Actual serving behavior depends on factors such as:
+
+- Model and variant
+- Input and output length
+- Request concurrency
+- Multimodal inputs
+- Reasoning or agentic workloads
+
+The live console remains the source of truth for the capacity configuration you can order.
+
+## Change capacity after deployment
+
+For a deployment whose capacity can be edited:
+
+1. Open **Details**.
 2. Find **Replicas**.
 3. Select **Edit**.
-4. Choose the new count allowed by the console.
-5. Select **Save**.
+4. Choose fixed or autoscaling capacity.
+5. Adjust the allowed replica values.
+6. Select **Save**.
 
-The hourly estimate updates with the replica count.
+For fixed capacity, change the total number of replicas.
 
-If additional replicas are not available, the console limits the maximum value and tells you how many can currently be added.
+For autoscaling, adjust **Reserved** and **Burst limit** separately.
 
-## Capacity can change between selection and save
+The console updates the displayed capacity and cost information as you change the configuration.
 
-Regional capacity is shared and can change while you are configuring a deployment or editing replicas.
+## Live regional limits
 
-If capacity disappears before the request is accepted, the console refreshes availability and asks you to choose a configuration that can still be provisioned.
+Capacity can change between deployment creation and a later edit. If the selected region no longer has room for the capacity you request, the console can limit the available values or reject the change.
 
-This is why a model or replica count that was selectable a moment earlier can become unavailable.
+A stopped deployment can also fail to start if the required capacity is no longer available.
 
-## Partially Running
+## Partially running deployments
 
-If some requested replicas are unavailable or responding more slowly than expected, the deployment may show **Partially Running**.
+A deployment can show **Partially running** when fewer replicas are serving than the current capacity configuration expects.
 
-The endpoint remains usable, but fewer replicas are available to serve traffic. You may see slower responses or lower throughput until capacity recovers.
+The endpoint can still serve requests through the replicas that are available, but throughput can be lower.
 
-Depending on your workload, you can:
+When the console exposes **Retry**, you can ask Hivenet to retry failed replicas. You can also review **Logs** for recent deployment activity and errors.
 
-- Keep the requested count and wait for recovery
-- Reduce the requested replica count
+Depending on the situation, you may choose to:
+
+- Wait for recovery
+- Retry failed replicas
+- Reduce the fixed or reserved capacity
 - Stop the deployment and start it later
 
-## No autoscaling
+## Replica activity
 
-Inference API does not currently change replica count automatically in response to traffic.
+Deployment details can show recent replica count over time.
 
-You manage the count manually. If you want to take the deployment fully offline, use **Stop** instead of trying to set the replica count to zero.
+For autoscaling deployments, this helps you see when the service moved above or below the reserved baseline. The details view can also explain recent scaling activity, such as a replica being removed after demand fell below the scaling threshold.
 
-## Replica count and billing
+## Capacity and billing
 
-Your current hourly deployment cost is based on the selected variant and requested replica count.
+Fixed and autoscaling capacity are billed differently:
 
-Increasing replicas raises the hourly cost. Reducing replicas lowers it after the change takes effect.
+- **Fixed:** Running replicas contribute to the deployment's current hourly cost.
+- **Reserved:** Reserved replicas are billed continuously while the deployment is running.
+- **Burst:** Burst replicas are billed only while active.
 
-Stopping the deployment tears down its replicas and stops hourly charges once the deployment reaches **Stopped**.
+Stopping or terminating the deployment removes serving capacity and stops those charges once the running replicas have shut down.
 
-See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing lifecycle.
-
-## Capacity figures and benchmarks
-
-A model's raw context limit or GPU configuration does not by itself tell you how many requests a replica can serve.
-
-Hivenet's V2 benchmark process tests defined workload envelopes with different input lengths, output lengths, concurrency, and modalities. Any published capacity figure should be read together with the workload shape it was measured against.
-
-<Warning>
-  Do not treat one requests-per-minute figure as a universal limit for every prompt. Long-context, multimodal, and agentic workloads can have very different serving costs from short chat requests.
-</Warning>
+See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing model.
 
 ## Next steps
 
 - [Choose a model and variant](/documentation/inference-api/models-and-variants).
 - [Manage a deployment](/documentation/inference-api/manage-deployments).
 - [Understand Inference API billing](/documentation/inference-api/billing).
+- [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).

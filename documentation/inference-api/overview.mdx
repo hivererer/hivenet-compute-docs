@@ -7,22 +7,38 @@ icon: "sparkles"
 
 Hivenet Inference API lets you deploy open-weight models as managed API endpoints without setting up and operating the inference serving stack yourself.
 
-You choose a location, model, model variant, and replica count in the Compute console. Hivenet provisions the deployment and gives you an endpoint URL that works with OpenAI-compatible clients such as the OpenAI SDK and `curl`.
+You choose a model and serving variant in the Compute console, decide how much capacity to keep available, and deploy. Hivenet provisions the serving infrastructure and gives you an endpoint that works with OpenAI-compatible clients such as the OpenAI SDK and `curl`.
 
 <Info>
-  Hivenet Inference API is part of the Compute console. It uses the same organization and credit balance as your Compute instances.
+  Hivenet Inference API is part of the Compute console. Deployments and API keys belong to the active organization and use the same organization credit balance as Compute resources.
 </Info>
 
-## How it works
+## How a deployment is configured
 
-A deployment brings together four things:
+A deployment brings together five choices:
 
+- **Location:** Where the deployment runs and where requests are processed. Location also determines which models and capacity are available.
 - **Model:** The open-weight model you want to serve.
-- **Variant:** A preconfigured combination of model settings and infrastructure, including GPU configuration, quantization, and context window.
-- **Location:** Where the deployment runs and where requests are processed. Available models and variants depend on regional capacity.
-- **Replicas:** Parallel copies of the serving endpoint. More replicas can handle more requests, but they also increase hourly cost.
+- **Variant:** A preconfigured serving setup that can define GPU configuration, quantization, context window, performance characteristics, and price.
+- **Capacity:** The number of replicas kept available for requests, either as a fixed total or with autoscaling.
+- **Deployment name:** The label you use to find and manage the deployment in the console.
 
-When the deployment reaches **Running**, the console shows its endpoint URL and quick-start snippets for Python, JavaScript, and `curl`.
+The deployment page lets you filter the catalog by location, use case, and model provider. Selecting a model opens its variants and technical details before you choose capacity and review the cost.
+
+## Fixed and autoscaling capacity
+
+A **replica** is one serving copy of the selected model variant. More running replicas provide more request capacity and increase the current cost.
+
+Hivenet Inference API supports two capacity modes:
+
+- **Fixed:** Choose the total number of replicas to keep running.
+- **Autoscaling:** Choose a **Reserved** count that stays running and a higher **Burst limit** that Hivenet can scale toward when traffic needs more capacity.
+
+Reserved replicas are always on while the deployment is running. Burst capacity is best effort and depends on available infrastructure. Burst replicas are charged only while they are active.
+
+<Note>
+  Autoscaling is designed for demand above your reserved capacity. It does not make scaling instantaneous, and burst replicas are not guaranteed when regional capacity is unavailable.
+</Note>
 
 ## Inference API, Compute, and Hivenet Router
 
@@ -30,62 +46,84 @@ These products solve different parts of the inference stack.
 
 | Product | Use it when | You manage |
 | --- | --- | --- |
-| **Hivenet Inference API** | You want a managed model endpoint for an application or service. | Your model choice, location, replicas, API keys, and client code. |
+| **Hivenet Inference API** | You want a managed model endpoint for an application or service. | Your model choice, location, capacity, API keys, and client code. |
 | **Compute with Hivenet** | You want direct GPU or CPU infrastructure and control over the serving environment. | The instance, runtime, model server, configuration, and operations. |
 | **Hivenet Router** | You want to run Hivenet's open-source model-routing software on infrastructure you control. | The router deployment, model backends, infrastructure, and operations. |
 
-If you only need an API endpoint and do not want to operate vLLM or another serving runtime yourself, Hivenet Inference API is the simpler path.
+If you need an API endpoint and do not want to operate vLLM or another serving runtime yourself, Hivenet Inference API is the managed path.
 
-## Deployment lifecycle
+## Deployment states
 
-A deployment can move through these customer-visible states:
+The Inference API page shows the current state of each deployment.
 
-- **Starting:** Hivenet is preparing the deployment. This can take up to 10 minutes. Charges have not started yet.
-- **Running:** The deployment is serving requests. Hourly charges apply.
-- **Partially Running:** Some replicas are serving while others are unavailable or recovering. Requests may take longer while fewer replicas are available.
-- **Stopping:** Hivenet is tearing down the replicas.
-- **Stopped:** The deployment is offline but its configuration is kept. You can start it again later if capacity is available.
-- **Terminating:** Permanent shutdown is in progress.
-- **Terminated:** The deployment can no longer be started and its endpoint is no longer usable.
-- **Error:** All replicas have failed. You can retry failed replicas after the underlying issue has been resolved.
+| Status | What it means |
+| --- | --- |
+| **Starting** | Hivenet is preparing the deployment. It is not ready to serve requests yet. |
+| **Running** | The deployment is serving requests. |
+| **Partially running** | Some requested replicas are running while others are unavailable or still recovering. |
+| **Stopped** | The deployment is offline but can be started again when capacity and credits allow. |
+| **Error** | No replicas are currently serving. The deployment can expose a **Retry** action when recovery is possible. |
+| **Terminated** | The deployment has been permanently shut down and cannot be started again. |
+
+Starting a model can take up to 10 minutes. Charges begin when serving capacity is running rather than while the deployment is still being prepared.
 
 <Warning>
-  Terminating a deployment is permanent. Stopping it is the reversible option when you expect to use the same deployment again.
+  **Stop** is reversible. **Terminate** permanently shuts down the deployment, makes its endpoint unusable, and cannot be undone.
 </Warning>
+
+## Deployment details and monitoring
+
+Open **Details** for a deployment to see its endpoint and serving information. Depending on its state and capacity mode, the view can include:
+
+- Endpoint URL
+- Model, GPU and quantization, context window, and license
+- Region, creation date, and cost so far
+- Fixed replica count or autoscaling Reserved and Burst limit values
+- Recent replica activity
+- Requests per hour
+- Inter-token latency
+- Tokens in and out over 24 hours
+- Output speed
+- Quick-start snippets for Python, JavaScript, and `curl`
+
+The deployment list also provides **Logs** when logs are available. Logs cover the past hour and can be searched or downloaded. For multi-replica deployments, you can select the replica whose logs you want to inspect.
 
 ## API keys
 
-Inference API keys belong to your organization rather than to a single deployment. A key can authenticate requests to the organization's inference deployments.
+Inference API keys are scoped to the organization rather than to a single deployment. One active key can authenticate requests to the organization's inference deployments.
 
-When you create a key, the full secret is shown once. After you close the dialog, the console keeps only a masked preview.
+When you create a key, the full secret is shown once. Save it before closing the dialog. The Inference API page then shows a masked version together with its status, creator, last-used time, and creation date.
 
 You can:
 
 - **Disable** a key temporarily and re-enable it later.
 - **Revoke** a key permanently.
 
-Disabling or revoking a key does not stop running deployments. Their hourly charges continue until you stop or terminate them.
+Disabling or revoking a key stops requests made with that key. It does not stop deployments or their charges.
 
 ## Billing
 
-Inference API uses the same prepaid organization credit balance as Compute.
+Inference API draws from the same prepaid organization credit balance as Compute.
 
-Your cost depends on the selected variant and number of replicas. The review screen shows the current estimated hourly, 24-hour, and weekly cost before you deploy.
+Before deployment, the review section shows the current estimated hourly, 24-hour, and weekly cost for the configuration you selected.
 
-Charging starts when the deployment reaches **Running**. When you stop a deployment, hourly charges stop once its replicas have been torn down. When you start it again, charging resumes when it is running.
+For fixed capacity, cost follows the number of running replicas. With autoscaling, reserved replicas are billed continuously while the deployment runs, while burst replicas are billed only while active.
 
-See [Billing information](/documentation/account-billing/billing-info) for how organization credits and payment methods work.
+Stopping or terminating a deployment stops its serving charges once the running replicas have shut down.
+
+See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing model.
 
 ## Capacity and availability
 
-Inference capacity is live rather than guaranteed by the catalog alone. The console checks which locations, models, variants, and replica counts can currently be provisioned.
+Capacity is live. The selected location, model variant, and replica settings can become unavailable as infrastructure is allocated to other deployments.
 
-You may see:
+The console can show:
 
-- **Sold out** on a location, model, or variant when no capacity is currently available.
-- **Only X available** when a variant can be deployed with fewer replicas than the normal maximum.
+- **Sold out** when an option cannot currently be provisioned.
+- A lower replica ceiling when only part of the usual capacity is available.
+- Autoscaling burst capacity as best effort rather than guaranteed capacity.
 
-Availability can change as capacity is allocated or released. A model documented by Hivenet may not be deployable in every location at every moment.
+The console is the source of truth for what you can deploy now.
 
 ## OpenAI-compatible requests
 
@@ -100,5 +138,6 @@ The served model name can differ from the catalog title or your deployment name.
 ## Next steps
 
 - [Deploy a model and make your first request](/documentation/inference-api/get-started).
-- Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
-- If you want to operate your own model server instead, see [How to use vLLM](/documentation/essentials/how-to-vllm).
+- [Choose a model and variant](/documentation/inference-api/models-and-variants).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Call your endpoint](/documentation/inference-api/call-your-endpoint).
