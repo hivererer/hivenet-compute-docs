@@ -7,7 +7,7 @@ icon: "key"
 
 Inference API keys authenticate requests to your organization's model endpoints.
 
-Keys are managed from the **API keys** section of the Inference API page. They are scoped to the active organization rather than to a single endpoint.
+Keys are managed from the **API keys** section of the Inference API page. They belong to the active organization rather than to a single endpoint, so one active key can be used with the organization's Inference API endpoints.
 
 ## Create a key
 
@@ -15,24 +15,24 @@ Keys are managed from the **API keys** section of the Inference API page. They a
 2. In **API keys**, select **New key**.
 3. Enter a unique label using lowercase letters, numbers, and hyphens.
 4. Select **Create**.
-5. Copy the full secret immediately and store it somewhere secure.
+5. Copy the full key and store it securely.
 6. Select **Copy and close** only after you have saved it.
 
 <Warning>
-  The full secret is shown once. You won’t be able to view it again after closing the dialog. If you lose it, create a new key and update the application that uses it.
+  The full key is shown once. You won’t be able to view it again after closing the dialog. If you lose it, create a replacement key and update the application or service that uses it.
 </Warning>
 
-After creation, the API keys table shows a masked version of the key together with information such as:
+After creation, the table keeps a masked version of the key and shows its:
 
 - Status
 - Label
 - Masked key
-- Last used
+- Last used time
 - Created date
 
-## Use the key in a request
+## Use a key in a request
 
-Pass the key as a bearer token when calling your endpoint.
+Send the key as a bearer token when calling an endpoint:
 
 ```bash
 -H "Authorization: Bearer YOUR_INFERENCE_API_KEY"
@@ -44,66 +44,70 @@ See [Call your Inference API endpoint](/documentation/inference-api/call-your-en
 
 ## Disable a key
 
-Disable a key when you want to stop it from authenticating requests without revoking it permanently.
+Disable a key when you want to stop requests that use it without revoking the key permanently.
 
 1. Open the key's options menu.
 2. Select **Disable**.
-3. Confirm the action.
+3. Confirm that you understand requests using the key will fail while it is disabled.
+4. Select **Disable key**.
 
-Requests made with that key stop authenticating after the key is disabled.
+The key remains in the table with a **Disabled** status and can be re-enabled later.
 
-Disabling a key does not stop any endpoint. Running model capacity continues to use organization credits.
+<Warning>
+  Disabling a key does not stop any endpoint. Running endpoints continue to incur charges.
+</Warning>
 
 ## Re-enable a key
 
-A disabled key can be made active again.
+To make a disabled key work again:
 
-1. Open the disabled key's options menu.
+1. Open its options menu.
 2. Select **Re-enable**.
 
-Applications using the same stored secret can authenticate again once the key is active.
+The same stored key secret can authenticate requests again once its status returns to **Active**.
 
 ## Revoke a key
 
-Revoke a key when it should never be usable again.
+Revoke a key when it should never work again, for example when you are rotating credentials or believe the key has been exposed.
 
 1. Open the key's options menu.
 2. Select **Revoke**.
-3. Review the confirmation.
-4. Confirm the revocation.
+3. Review the confirmation checklist.
+4. Confirm that dependent applications have been updated or no longer need the key.
+5. Select **Permanently revoke**.
 
-Revocation is permanent. Create a new key if the application needs replacement credentials.
+After revocation:
 
-<Warning>
-  Revoke a key immediately if you believe its secret has been exposed. Then update every application or service that used it.
-</Warning>
+- Requests using that key fail permanently.
+- The action cannot be undone.
+- Running endpoints stay online and continue to incur charges.
+- You need a new key for any application that still requires access.
 
-## Key management practices
+## Store and rotate keys safely
 
-- Give keys labels that identify the application, environment, or purpose.
-- Keep secrets out of source code and public repositories.
-- Store keys in environment variables or a secrets manager.
-- Use different keys where independent revocation would be useful.
-- Disable a key for temporary access changes; revoke it when access should end permanently.
-- Review **Last used** when checking whether an old key is still needed.
+- Give each key a label that identifies its application, environment, or purpose.
+- Keep key secrets out of source code and repositories.
+- Store them in environment variables or a secrets manager.
+- Use separate keys when you want to be able to disable or revoke one application without affecting another.
+- Check **Last used** before removing credentials that may still be active.
 
 ## Keys and organizations
 
 Keys belong to the organization in which they were created.
 
-When working with multiple Compute organizations, confirm the active organization before creating a key or troubleshooting authentication. Use an Inference API key from the same organization as the endpoint you are calling.
+If you work with more than one Compute organization, confirm the active organization before creating a key or troubleshooting authentication. Use a key from the same organization as the endpoint you are calling.
 
 ## Troubleshoot authentication
 
 If a request is rejected:
 
-1. Confirm you copied the complete key secret when it was created.
-2. Check that the key status is **Active**.
-3. Confirm the request uses `Authorization: Bearer ...`.
+1. Confirm you copied the complete key when it was created.
+2. Check that its status is **Active**.
+3. Confirm the request sends `Authorization: Bearer ...`.
 4. Confirm the key and endpoint belong to the same organization.
-5. Check that you are calling the endpoint URL shown by Inference API, not the Compute public API.
+5. Check that you are calling the endpoint URL shown by Inference API rather than the Compute public API.
 
-If the secret has been lost, revoked, or exposed, create a new key rather than trying to recover the old secret.
+If the key was lost, revoked, or exposed, create a new one rather than trying to recover or reuse the old secret.
 
 ## Next steps
 
