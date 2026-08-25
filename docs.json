@@ -83,7 +83,9 @@
             "icon": "sparkles",
             "pages": [
               "documentation/inference-api/overview",
-              "documentation/inference-api/get-started"
+              "documentation/inference-api/get-started",
+              "documentation/inference-api/models-and-variants",
+              "documentation/inference-api/api-keys"
             ]
           },
           {

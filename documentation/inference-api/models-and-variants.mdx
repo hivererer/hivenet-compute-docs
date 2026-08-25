@@ -1,0 +1,89 @@
+---
+title: "Choose an Inference API model and variant"
+sidebarTitle: "Models and variants"
+description: "Learn how Hivenet Inference API models, variants, context windows, GPU configurations, quantization, and live regional availability affect your deployment."
+icon: "grid-2"
+---
+
+Hivenet Inference API uses a curated model catalog. Each model can have one or more **variants** that define how that model is served.
+
+The live console is the source of truth for what you can deploy. Model and variant availability changes with regional capacity.
+
+## Model versus variant
+
+A **model** is the model family or checkpoint you want to use. Its catalog card can include a description, capability tags, provider information, and a starting hourly price.
+
+A **variant** is a deployable configuration of that model. A variant can define:
+
+- GPU type and GPU count
+- Quantization or precision
+- Context window
+- Infrastructure preset
+- Current hourly price
+- Locations where it can run
+
+You select a variant before you choose the number of replicas.
+
+## Choose for the workload first
+
+Start with what your application needs rather than with the largest model in the catalog.
+
+Consider:
+
+- **Task type:** chat, structured extraction, coding, tool use, multimodal input, or other supported capabilities
+- **Context needs:** how much input and conversation history the model must handle
+- **Latency:** whether users wait interactively for responses or jobs run asynchronously
+- **Throughput:** how many requests need to be served at the same time
+- **Cost:** the variant rate multiplied by your chosen replica count
+
+A smaller model that meets your quality and context requirements can be a better production fit than a larger model with higher infrastructure cost.
+
+## Context window
+
+The context window is the maximum token space available to the model server for a request and its generated output.
+
+A larger context limit does not mean every request shape has the same performance. Long prompts require more prefill work and can increase time to first token.
+
+<Info>
+  Hivenet's V2 inference benchmarks test defined workload envelopes rather than treating every request as equivalent. Performance depends on input length, output length, concurrency, modality, and the model itself.
+</Info>
+
+## Quantization and precision
+
+Some models use quantized Hivenet serving artifacts to reduce memory use or improve serving efficiency.
+
+The console shows quantization as part of the variant specification when it applies. Treat this as part of the selected serving configuration rather than a setting you change after deployment.
+
+## Regional availability
+
+Choosing a location comes before choosing the model in the current deployment flow.
+
+The selected location determines which model variants are orderable. You may see:
+
+- **Sold out** when a model has no variant with free capacity in that location
+- **Sold out** on an individual variant when that configuration is unavailable
+- **Only X available** when a variant can run, but fewer replicas are available than the normal maximum
+
+Availability can change throughout the day as other deployments start or stop.
+
+## V2 benchmark coverage
+
+Hivenet's current V2 benchmark work covers serving configurations for several open-weight model families, including Gemma, GPT-OSS, and Qwen models.
+
+The benchmark program measures serving capacity and latency for defined request shapes. It does **not** measure whether one model is better than another for your application.
+
+<Warning>
+  A model appearing in Hivenet's benchmark work does not guarantee that it is currently deployable in every location. Check the console for live availability before planning around a specific model or replica count.
+</Warning>
+
+## Existing deployments keep their configuration
+
+A deployment keeps the model and infrastructure specification selected at creation time. Later catalog changes do not silently rewrite the configuration of an existing deployment.
+
+The served model name used in API requests is also attached to the deployment. Use the exact `model` value shown in its generated quick-start snippet.
+
+## Next steps
+
+- [Get started with Inference API](/documentation/inference-api/get-started).
+- Learn how to [manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- Learn how to [call a deployment](/documentation/inference-api/call-your-endpoint).
