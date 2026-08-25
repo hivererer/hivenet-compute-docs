@@ -1,7 +1,7 @@
 ---
 title: "Choose an Inference API model and variant"
 sidebarTitle: "Models and variants"
-description: "Learn how production Inference API models, variants, context windows, GPU configurations, fixed replicas, and regional availability affect your endpoint."
+description: "Learn how Inference API models and variants work, how to choose for your workload, and how Hivenet characterizes context and serving behavior."
 icon: "grid-2"
 ---
 
@@ -57,21 +57,57 @@ The model cards and tags in the console are there to help narrow the catalog bef
 
 The context window is the token space available to the served model for input and generated output.
 
-A larger context window can support longer prompts and conversations, but it does not guarantee the same latency or throughput as a shorter request.
+A larger context window can support longer prompts and conversations, but it does not guarantee the same latency or throughput as a shorter request. Long prompts require more prefill work and can take longer before the first output token is returned.
 
 Use the context value shown for the production variant you are actually deploying.
 
+## How Hivenet characterizes models
+
+Hivenet maintains a newer benchmark and model-characterization set for the serving artifacts it evaluates. It separates model characteristics from the live self-service catalog so model data can evolve without implying that every characterized artifact is currently orderable in every location.
+
+The current characterization set includes:
+
+| Model profile | Characterized serving artifact | Context characterized | Workload shapes tested |
+| --- | --- | --: | --- |
+| **Gemma 4 26B-A4B IT** | HivenetQuant NVFP4 W4A16 hybrid | 262,144 tokens | Chat, agentic, async, async multimodal |
+| **Gemma 4 31B IT** | HivenetQuant NVFP4 W4A4 mixed precision | 262,144 tokens | Chat, agentic, async, async multimodal |
+| **GPT-OSS 20B** | Native OpenAI MXFP4 | 131,072 tokens | Chat, agentic, async |
+| **Qwen3.6 27B** | HivenetQuant NVFP4 W4A4 | 262,144 tokens | Chat, agentic, async, async multimodal |
+| **Qwen3.6 35B-A3B** | HivenetQuant NVFP4 W4A16 hybrid | 131,072 tokens certified | Chat, agentic, async, async multimodal |
+| **Qwen3.8 27B** | HivenetQuant NVFP4 W4A4 | 262,144 tokens | Chat, agentic, async, async multimodal |
+
+For Qwen3.6 35B-A3B, the underlying checkpoint has a larger native context ceiling, but the current benchmark certification covers requests up to 131,072 tokens. We use the certified range rather than turning the larger native limit into a performance claim.
+
+<Warning>
+  This table describes model-characterization work. It is **not** a list of models guaranteed to be available in the production console. Check the live model and variant cards for the endpoint you are creating.
+</Warning>
+
+## What the workload labels mean
+
+The benchmark uses several repeatable request shapes so capacity and latency are not reduced to one misleading number:
+
+- **Chat:** Short interactive requests.
+- **Agentic:** Longer requests designed to represent reasoning and tool-oriented workflows.
+- **Async:** Batch-style text work where interactive first-token latency is less important.
+- **Async multimodal:** Batch work that combines visual input with text on models characterized for multimodal serving.
+
+A model appearing in one of these benchmark categories means Hivenet measured that serving artifact against that request shape. It does not mean the benchmark proves that model gives the best answers for that use case.
+
+<Info>
+  The benchmark measures serving capacity and latency, not model quality. Test candidate models with your own prompts and data before choosing one for production.
+</Info>
+
 ## Quantization and GPU configuration
 
-The selected variant can show the GPU and quantization used to serve the model.
+Hivenet can characterize quantized serving artifacts to reduce memory use and improve serving efficiency. Some are produced by **HivenetQuant**, while GPT-OSS 20B uses OpenAI's native MXFP4 release in the current characterization set.
 
-These are part of the managed serving configuration. You do not configure the underlying model server or GPU settings yourself after deployment.
+The variant card in the console shows the quantization and GPU configuration for the endpoint you can actually deploy. Treat those live details as the production configuration rather than assuming they match a benchmark artifact exactly.
 
 ## Request capacity and replicas
 
-The variant section can show an approximate requests-per-minute figure alongside the replica selector.
+The production variant section can show an approximate requests-per-minute figure alongside the replica selector.
 
-Treat that figure as a planning estimate for the displayed serving configuration rather than a universal limit for every possible prompt. Real request cost varies with input length, output length, and workload shape.
+Treat that figure as a planning estimate for the displayed serving configuration rather than a universal limit for every possible prompt. Real request cost varies with input length, output length, concurrency, modality, and the model itself.
 
 The production product uses a fixed replica count. More replicas increase available serving capacity and hourly cost.
 
@@ -79,11 +115,11 @@ The production product uses a fixed replica count. More replicas increase availa
   Autoscaling is not available in the current production version.
 </Note>
 
-## Current production catalog
+## Live availability comes from the console
 
-The production Figma shows the catalog containing models from families including Falcon and Mistral, with **All models** available to browse beyond the initial cards.
+The console initially shows a curated set of model cards and provides **All models** to browse the wider catalog.
 
-Do not rely on a static list in these docs to decide what can be deployed. Models, variants, prices, GPUs, and regional capacity can change independently of documentation updates.
+Do not rely on a static model list in these docs to decide what can be deployed. Models, variants, prices, GPUs, context settings, and regional capacity can change independently of documentation updates.
 
 <Warning>
   Check the console for the model, GPU configuration, quantization, context window, price, and replica capacity you can deploy now.
