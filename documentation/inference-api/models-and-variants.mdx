@@ -7,37 +7,24 @@ icon: "grid-2"
 
 Hivenet Inference API uses a curated model catalog. Each model can have one or more **variants** that define how that model is served.
 
-The production console is the source of truth for what you can deploy now. Model and variant availability depends on the location you choose first.
+The production console is the source of truth for what you can deploy now. Model and variant availability depends on the location selected for your Inference API models.
 
 ## Model versus variant
 
-A **model** is the model family or checkpoint you want to use. Its catalog card can include:
+A **model** is the model family or checkpoint you want to use. Its catalog card can include a description, capability tags, and a starting hourly price.
 
-- A short description
-- Capability tags
-- A starting hourly price
+A **variant** is a deployable serving configuration for that model. Depending on the model, the variant details can show:
 
-A **variant** is a deployable serving configuration for that model. Depending on the model, a variant can define or display:
-
-- GPU type and GPU count
-- Quantization
+- GPU and quantization
 - Context window
-- Expected request capacity
+- Approximate request capacity
 - Time to first token
 - Inter-token latency
 - Output speed
 - License
-- Current hourly price
+- Current price
 
-You select a variant before choosing the number of replicas.
-
-## Choose the location first
-
-The current production flow starts with location.
-
-The selected location determines which models and variants can be provisioned. A location can be marked **Sold out** when there is no capacity for a new endpoint.
-
-The location screen also displays a data-handling notice. Read that notice before deploying because it describes how prompts and responses are handled for the selected location.
+You choose the model first, then the variant, and finally the number of replicas.
 
 ## Choose for the workload
 
@@ -45,91 +32,90 @@ Start with what your application needs rather than automatically choosing the la
 
 Consider:
 
-- **Task type:** chat, document Q&A, instruction following, structured output, tool calling, multimodal input, or other capabilities shown in the catalog
-- **Context needs:** how much input and conversation history the endpoint needs to handle
-- **Latency:** whether people wait interactively for responses
-- **Throughput:** how much request capacity you need
-- **Cost:** the variant rate multiplied by the number of replicas you run
+- **Capabilities:** Does the model support the kind of work you need, such as chat, tool use, structured output, coding, or multimodal input?
+- **Context:** How much prompt, conversation history, or source material needs to fit into one request?
+- **Latency:** Does someone wait for the response, or can the work run asynchronously?
+- **Throughput:** How many requests do you expect to handle at the same time?
+- **Cost:** What does the selected variant cost per replica, and how many replicas do you need?
+- **License:** Does the model license fit how you plan to use and distribute your application?
 
-The model cards and tags in the console are there to help narrow the catalog before you inspect a variant in more detail.
+Use the model cards and capability tags to narrow the catalog, then compare the available variants before deploying.
 
-## Context window
+## Understand context window
 
-The context window is the token space available to the served model for input and generated output.
+The context window is the token space available to the served model for the request and generated output.
 
-A larger context window can support longer prompts and conversations, but it does not guarantee the same latency or throughput as a shorter request. Long prompts require more prefill work and can take longer before the first output token is returned.
-
-Use the context value shown for the production variant you are actually deploying.
-
-## How Hivenet characterizes models
-
-Hivenet maintains a newer benchmark and model-characterization set for the serving artifacts it evaluates. It separates model characteristics from the live self-service catalog so model data can evolve without implying that every characterized artifact is currently orderable in every location.
-
-The current characterization set includes:
-
-| Model profile | Characterized serving artifact | Context characterized | Workload shapes tested |
-| --- | --- | --: | --- |
-| **Gemma 4 26B-A4B IT** | HivenetQuant NVFP4 W4A16 hybrid | 262,144 tokens | Chat, agentic, async, async multimodal |
-| **Gemma 4 31B IT** | HivenetQuant NVFP4 W4A4 mixed precision | 262,144 tokens | Chat, agentic, async, async multimodal |
-| **GPT-OSS 20B** | Native OpenAI MXFP4 | 131,072 tokens | Chat, agentic, async |
-| **Qwen3.6 27B** | HivenetQuant NVFP4 W4A4 | 262,144 tokens | Chat, agentic, async, async multimodal |
-| **Qwen3.6 35B-A3B** | HivenetQuant NVFP4 W4A16 hybrid | 131,072 tokens certified | Chat, agentic, async, async multimodal |
-| **Qwen3.8 27B** | HivenetQuant NVFP4 W4A4 | 262,144 tokens | Chat, agentic, async, async multimodal |
-
-For Qwen3.6 35B-A3B, the underlying checkpoint has a larger native context ceiling, but the current benchmark certification covers requests up to 131,072 tokens. We use the certified range rather than turning the larger native limit into a performance claim.
-
-<Warning>
-  This table describes model-characterization work. It is **not** a list of models guaranteed to be available in the production console. Check the live model and variant cards for the endpoint you are creating.
-</Warning>
-
-## What the workload labels mean
-
-The benchmark uses several repeatable request shapes so capacity and latency are not reduced to one misleading number:
-
-- **Chat:** Short interactive requests.
-- **Agentic:** Longer requests designed to represent reasoning and tool-oriented workflows.
-- **Async:** Batch-style text work where interactive first-token latency is less important.
-- **Async multimodal:** Batch work that combines visual input with text on models characterized for multimodal serving.
-
-A model appearing in one of these benchmark categories means Hivenet measured that serving artifact against that request shape. It does not mean the benchmark proves that model gives the best answers for that use case.
+A larger context window lets you send longer prompts or retain more conversation history, but it does not mean the endpoint will perform the same way at every context length. Longer inputs require more processing before generation begins and can reduce throughput.
 
 <Info>
-  The benchmark measures serving capacity and latency, not model quality. Test candidate models with your own prompts and data before choosing one for production.
+  Hivenet characterizes serving behavior with different request shapes rather than treating every prompt as equivalent. A short chat request and a long reasoning request can produce very different latency and capacity on the same model.
 </Info>
 
-## Quantization and GPU configuration
+Use the context value shown on the variant you are actually deploying. If your application depends on very long context, test it with realistic prompts rather than assuming performance from short-request figures.
 
-Hivenet can characterize quantized serving artifacts to reduce memory use and improve serving efficiency. Some are produced by **HivenetQuant**, while GPT-OSS 20B uses OpenAI's native MXFP4 release in the current characterization set.
+## Understand the performance fields
 
-The variant card in the console shows the quantization and GPU configuration for the endpoint you can actually deploy. Treat those live details as the production configuration rather than assuming they match a benchmark artifact exactly.
+Variant details can include several serving measurements:
 
-## Request capacity and replicas
+- **Time to first token:** How long it takes before the endpoint begins returning generated text. This matters most for interactive experiences.
+- **Inter-token latency:** The delay between generated tokens once output has started. Lower values generally make streamed responses feel faster.
+- **Output speed:** How quickly generated tokens are returned once generation is underway.
+- **Request capacity:** An approximate requests-per-minute figure for the displayed serving configuration.
 
-The production variant section can show an approximate requests-per-minute figure alongside the replica selector.
+These figures describe serving performance, not answer quality.
 
-Treat that figure as a planning estimate for the displayed serving configuration rather than a universal limit for every possible prompt. Real request cost varies with input length, output length, concurrency, modality, and the model itself.
+<Warning>
+  Do not treat one requests-per-minute figure as a universal limit. Input length, output length, concurrency, reasoning depth, and multimodal content can all change how much work a request requires.
+</Warning>
 
-The production product uses a fixed replica count. More replicas increase available serving capacity and hourly cost.
+## How Hivenet tests serving behavior
+
+Hivenet's newer model-characterization work uses repeatable workload shapes so performance can be compared under more realistic conditions. These include:
+
+- **Chat:** Short, interactive requests.
+- **Agentic:** Longer reasoning or tool-oriented requests.
+- **Async:** Batch-style text work where interactive first-token latency matters less.
+- **Async multimodal:** Batch work that combines visual input with text on models that support it.
+
+The purpose is to characterize serving capacity and latency for a model configuration. It does not determine which model produces the best answers for your application.
+
+<Tip>
+  Test candidate models with your own prompts and data before choosing one for production. Use Hivenet's serving information to size the endpoint after you know which model meets your quality needs.
+</Tip>
+
+## Understand quantization and GPU configuration
+
+Some variants use quantized model weights to reduce memory use or improve serving efficiency. The selected variant shows the GPU and quantization used for that endpoint when those details apply.
+
+Because Hivenet manages the serving stack, you do not choose low-level model-server or GPU settings independently after deployment. Choose the variant whose documented characteristics fit your workload.
+
+## Choose replica capacity
+
+After selecting the variant, choose the fixed number of replicas to run.
+
+More replicas can increase the amount of traffic the endpoint can serve in parallel, and each replica adds to the hourly cost. The production flow supports up to four replicas, subject to available capacity.
 
 <Note>
-  Autoscaling is not available in the current production version.
+  Autoscaling is not available yet. You can change the fixed replica count later when capacity is available.
 </Note>
+
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for the full scaling behavior.
 
 ## Live availability comes from the console
 
-The console initially shows a curated set of model cards and provides **All models** to browse the wider catalog.
+The console initially shows a curated set of models and provides **All models** to browse the wider catalog.
 
-Do not rely on a static model list in these docs to decide what can be deployed. Models, variants, prices, GPUs, context settings, and regional capacity can change independently of documentation updates.
+Models, variants, prices, GPUs, context settings, and regional capacity can change independently of these docs. A model that Hivenet has benchmarked or characterized is not necessarily available for self-service deployment in every location.
 
 <Warning>
-  Check the console for the model, GPU configuration, quantization, context window, price, and replica capacity you can deploy now.
+  Check the live console for the exact model, variant, context window, GPU configuration, quantization, price, and replica capacity you can deploy now.
 </Warning>
 
-## Existing endpoints keep their serving configuration
+## Use the served model name in API requests
 
-An endpoint keeps the model and serving configuration selected when it was created unless you explicitly change a supported setting such as replica count.
+Your endpoint has an exact model identifier for API calls. It can differ from the endpoint name or the shorter catalog title.
 
-The model name used in API requests is attached to the endpoint. Use the exact `model` value shown in its generated quick-start snippet.
+Use the `model` value shown in the endpoint's generated quick-start snippet rather than typing it from memory.
 
 ## Next steps
 
