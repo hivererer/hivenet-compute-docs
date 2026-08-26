@@ -5,7 +5,7 @@ description: "Understand Inference API endpoint states, view endpoint details an
 icon: "sliders"
 ---
 
-Use the **Deployments** section of Inference API to monitor and control the model endpoints your organization has created.
+Use the **Deployments** section of Inference API to monitor and manage the model endpoints your organization has created.
 
 Each row shows the endpoint status, name, model, region, replica count, recent request count when available, and current hourly cost.
 
@@ -22,7 +22,7 @@ Depending on the endpoint state, the details view can include:
 - License
 - Region
 - Cost so far and current hourly rate
-- Creation or stop time
+- Created or stopped time
 - Replica count
 - Requests per hour
 - Inter-token latency
@@ -30,82 +30,93 @@ Depending on the endpoint state, the details view can include:
 - Output speed
 - Quick-start snippets for Python, JavaScript, and `curl`
 
-The endpoint URL can also be copied from the deployment list.
+You can also copy the endpoint URL directly from the Deployments list.
 
 ## Endpoint states
 
-| State | What it means | What you can usually do |
-| --- | --- | --- |
-| **Starting** | Hivenet is provisioning the endpoint. | Wait for it to become ready, or use the available management actions. |
-| **Running** | The endpoint is serving requests. | Call it, change replicas, stop, or terminate. |
-| **Partially running** | Some requested replicas are serving and others are not. | Keep serving with reduced capacity, retry when available, change replicas, stop, or terminate. |
-| **Stopped** | The endpoint is offline and its configuration is retained. | Start or terminate it. |
-| **Error** | The endpoint is not currently serving. | Retry failed replicas when available, stop, or terminate. |
-| **Terminated** | The endpoint is permanently shut down. | Clear it from the list. |
+| State | What it means |
+| --- | --- |
+| **Starting** | Hivenet is preparing the endpoint. It is not ready to serve requests yet. |
+| **Running** | The endpoint is serving requests. |
+| **Partially running** | Some requested replicas are serving while others are unavailable or recovering. The endpoint can still accept traffic with reduced capacity. |
+| **Stopped** | The endpoint is offline, but its configuration is kept so it can be started again later. |
+| **Error** | The endpoint is not currently serving. A **Retry** action can appear when recovery is possible. |
+| **Terminated** | The endpoint has been permanently shut down and cannot be started again. |
+
+The console says starting a model takes about 90 seconds.
 
 ## Stop an endpoint
 
-Use **Stop** when you want to take an endpoint offline but may need the same configuration again.
+Use **Stop** when you want to take an endpoint offline without deleting its configuration.
 
-1. Open the endpoint options menu.
+1. Open the endpoint's options menu.
 2. Select **Stop**.
-3. Review the confirmation message.
-4. Confirm the action.
+3. Review the confirmation.
+4. Select **Stop model**.
 
-The replicas are torn down and the endpoint stops serving requests. Serving charges stop once the endpoint is stopped.
+The endpoint stops serving requests and its replicas are shut down. Serving charges stop once the endpoint reaches **Stopped**.
 
 <Info>
-  Stopping preserves the endpoint configuration. Starting it later still depends on enough capacity being available in the same region.
+  Starting the endpoint again still depends on enough capacity being available in the same location.
 </Info>
 
 ## Start a stopped endpoint
 
-1. Open the options menu for a **Stopped** endpoint.
-2. Select **Start**.
-3. Review the endpoint details.
+1. Open the options menu for a **Stopped** endpoint, or open its details.
+2. Select **Start** or **Start model**.
+3. Review the confirmation.
 4. Confirm the start.
 
-The endpoint moves to **Starting** and begins serving once it reaches **Running**.
+The endpoint moves to **Starting** and begins serving again when it reaches **Running**.
 
-If the organization balance does not have enough credits, the console blocks the start and asks for more credits.
+Starting can be blocked if the organization does not have enough credits or the required capacity is unavailable.
 
-## Retry failed replicas
+## Retry a failed endpoint
 
-A **Retry** action can appear for **Partially running** or **Error** endpoints.
+A **Retry** action can appear when an endpoint is **Partially running** or in **Error**.
 
-Use it to ask Hivenet to retry failed replicas. Retry does not change a deliberately stopped endpoint into a running one; use **Start** for an endpoint that is **Stopped**.
+Retry asks Hivenet to recover the failed serving replicas. It does not start an endpoint that you deliberately stopped; use **Start** for a **Stopped** endpoint.
+
+If Retry is unavailable or repeatedly fails, see [Troubleshoot Hivenet Inference API](/documentation/inference-api/troubleshooting).
 
 ## Terminate an endpoint
 
-Termination permanently removes the endpoint from service.
+Use **Terminate** only when you no longer need the endpoint. Termination is permanent.
 
-1. Open the endpoint options menu.
+1. Open the endpoint's options menu.
 2. Select **Terminate**.
-3. Confirm that you understand the endpoint will stop accepting requests and cannot be started again.
-4. Confirm the termination.
+3. Review the confirmation checklist.
+4. Confirm that you understand the endpoint will stop serving and cannot be restored.
+5. Select **Permanently terminate**.
 
 After termination:
 
-- Requests to the endpoint fail.
-- The endpoint URL is no longer usable.
-- The endpoint cannot be started again.
-- Hourly charges stop once termination is complete.
+- The endpoint stops accepting requests.
+- Its URL is no longer usable.
+- It cannot be started again.
+- Serving charges stop once termination is complete.
+- The terminated entry remains visible until you clear it.
 
 <Warning>
-  Update applications that depend on the endpoint before terminating it. Termination is permanent.
+  Update any application that depends on the endpoint before terminating it. Termination cannot be undone.
 </Warning>
 
 ## Clear a terminated endpoint
 
-After an endpoint is **Terminated**, you can use **Clear** to remove the terminated entry from the deployment list.
+**Clear** removes an already-terminated entry from the Deployments list.
 
-Clearing does not terminate a running endpoint and does not affect an endpoint that still exists. It is only a cleanup action for an already-terminated entry.
+1. Open the options menu for a **Terminated** endpoint.
+2. Select **Clear**.
+3. Review the confirmation.
+4. Select **Clear model**.
 
-## Partially running endpoints
+Clearing is only a list-cleanup action. It does not terminate a running or stopped endpoint.
 
-An endpoint becomes **Partially running** when fewer replicas are actively serving than requested.
+## Change replica count
 
-The endpoint can still accept requests, but its available throughput is reduced. You can retry failed replicas when the action is available, reduce the replica count, wait for recovery, or stop the endpoint.
+For a running endpoint, use **Edit** beside the replica count in the details view to change fixed serving capacity when additional capacity is available.
+
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for the scaling behavior and cost implications.
 
 ## Next steps
 
