@@ -1,0 +1,108 @@
+---
+title: "Understand Inference API billing"
+sidebarTitle: "Billing"
+description: "Understand per-replica pricing, per-second billing, shared organization credits, and when Inference API charges start, change, pause, and stop."
+icon: "credit-card"
+---
+
+Hivenet Inference API uses the same prepaid organization credit balance as Compute.
+
+You pay for the fixed model-serving capacity that is running. Pricing is shown as a **per-replica hourly rate**, but usage is billed **per second** through the organization balance.
+
+## How cost is calculated
+
+Each model variant has a price per replica-hour. Your current endpoint rate depends on:
+
+- The selected model variant
+- The number of replicas running
+
+For example, increasing an endpoint from one replica to two increases the displayed hourly rate for that variant accordingly.
+
+Before you deploy, **Review your setup** shows:
+
+- Total cost per hour
+- Estimated cost per 24 hours
+- Estimated cost per week
+
+The 24-hour and weekly figures are estimates of continuous running at the selected configuration. They are not minimum commitments or separate billing periods.
+
+<Info>
+  Prices shown in the live console are the source of truth. Use the current variant and review screens rather than an older screenshot or saved estimate.
+</Info>
+
+## Billing is based on capacity, not tokens
+
+The current production product is a dedicated endpoint service. You are billed for the replicas serving the model, not for each token or request sent to the endpoint.
+
+Sending fewer requests does not automatically reduce the cost. The fixed replicas remain provisioned until you reduce the replica count, stop the endpoint, or terminate it.
+
+<Note>
+  Autoscaling is not available yet, so traffic volume does not automatically change replica count or hourly spend.
+</Note>
+
+## When charging starts
+
+A new or restarted endpoint enters **Starting** while Hivenet prepares its replicas.
+
+The console says starting a model takes about 90 seconds. Serving charges begin once the endpoint is running.
+
+## When charging changes
+
+Changing the replica count changes the endpoint's serving rate.
+
+- **Increase replicas:** The rate increases as the additional capacity comes online.
+- **Reduce replicas:** The rate decreases after the serving capacity is reduced.
+
+The replica editor shows the updated hourly rate before you save the change.
+
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for how scaling works.
+
+## When charging pauses or stops
+
+### Stop
+
+Stopping an endpoint shuts down its serving replicas but keeps the endpoint configuration so you can start it again later.
+
+Charges stop once the running replicas have been shut down and the endpoint reaches **Stopped**.
+
+Starting it again later is subject to available capacity, and billing resumes once it is running again.
+
+### Terminate
+
+Termination permanently shuts down the endpoint. Serving charges stop when termination is complete.
+
+A terminated endpoint cannot be started again. You can later use **Clear** to remove its terminated record from the Deployments list; clearing does not affect billing because the serving capacity has already been terminated.
+
+<Warning>
+  Disabling or revoking an Inference API key does **not** stop an endpoint. The endpoint remains provisioned and continues to incur charges until you reduce, stop, or terminate its serving capacity.
+</Warning>
+
+## Organization credits
+
+Inference API endpoints and Compute resources draw from the same organization balance.
+
+If the organization does not have enough credits, the console can block a new deployment or a restart. Running Inference API endpoints stop automatically when the organization balance reaches zero.
+
+Only the organization Owner can add credits or configure auto top-up. See [Billing information](/documentation/account-billing/billing-info) for payment methods, billing roles, auto top-up, and transaction history.
+
+## Monitor spend
+
+The Inference API page shows product-level usage information including **Spend (24h)** and the current **Cost /h** for active endpoints.
+
+The main Compute billing views also show the shared organization balance and current spend rate across resources.
+
+See [Track organization spending in real time](/documentation/account-billing/track-costs-real-time) for the organization-wide view.
+
+## Reduce serving cost
+
+- Reduce replicas if you still need the endpoint but can run with less capacity.
+- Stop the endpoint if you plan to use the same configuration again later.
+- Terminate the endpoint when you no longer need it.
+
+Stopping is usually the safer choice when you are unsure, because termination cannot be undone.
+
+## Next steps
+
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
+- [Create and manage API keys](/documentation/inference-api/api-keys).

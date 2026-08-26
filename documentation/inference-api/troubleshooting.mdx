@@ -1,0 +1,179 @@
+---
+title: "Troubleshoot Hivenet Inference API"
+sidebarTitle: "Troubleshooting"
+description: "Fix common Inference API problems with location capacity, credits, endpoint states, replicas, API keys, endpoint URLs, and model identifiers."
+icon: "triangle-exclamation"
+---
+
+Use this page when an endpoint cannot start, is only partially running, or an API request fails.
+
+## A location is sold out
+
+A location marked **Sold out** cannot accept another endpoint at that moment.
+
+If you are choosing your Inference API location for the first time, select another available location or try again later.
+
+If your Inference API location has already been established, new endpoints inherit that location in the current production version. In that case, try another available model or variant in the same location, reduce the replica count where possible, or wait for capacity to become available.
+
+<Info>
+  Per-model location selection is not available yet. The console is the source of truth for current regional capacity.
+</Info>
+
+## I chose Global but the endpoint shows a specific region
+
+This is expected.
+
+Choosing **Global** lets Hivenet assign an available region. After deployment, the endpoint details show the region where it was actually placed.
+
+## A model or variant is unavailable
+
+Model and variant availability depends on your selected location and current capacity.
+
+Try one of these options:
+
+- Choose another available model or variant.
+- Reduce the replica count if the console offers a lower count.
+- Try again later after capacity has been released.
+
+## The organization does not have enough credits
+
+The console can block a new deployment or restart when the organization does not have enough credits.
+
+Add credits when the option is available, or ask the organization Owner to top up the balance if you do not have billing permissions.
+
+Inference API and Compute resources use the same organization balance.
+
+## The endpoint is still Starting
+
+The console says starting a model takes about 90 seconds.
+
+While the endpoint is **Starting**, it is not ready for normal traffic yet. Wait for **Running** before testing your integration.
+
+If it remains in **Starting** well beyond the expected period, note the endpoint name, model, region, and approximate start time before contacting Support.
+
+## The endpoint is Partially running
+
+**Partially running** means fewer replicas are serving than requested. For example, **1/3** means one replica is serving out of three requested.
+
+The endpoint can still accept traffic, but available throughput is lower.
+
+You can:
+
+1. Use **Retry** when the action is available.
+2. Reduce the replica count if your workload can run with less capacity.
+3. Wait for capacity to recover.
+4. Stop the endpoint if you do not want it serving with reduced capacity.
+
+## The endpoint is in Error
+
+**Error** means no healthy replica is currently serving requests.
+
+Start with these checks:
+
+1. Use **Retry** if the action is available.
+2. Check that the organization still has enough credits.
+3. Check whether the selected model configuration still has capacity in the current location.
+4. If the problem continues, collect the endpoint name, region, model, replica count, and approximate failure time before contacting Support.
+
+## The endpoint shows Retrying
+
+After you select **Retry**, the endpoint can temporarily show **Retrying** while Hivenet attempts to recover failed serving replicas.
+
+Wait for the state to settle. A successful retry returns the endpoint to **Running** or **Partially running**, depending on how many replicas recover.
+
+## Retry is unavailable or keeps failing
+
+The **Retry** action appears only when it applies to the current endpoint state.
+
+Retry does not start a deliberately stopped endpoint. Use **Start** for an endpoint that is **Stopped**.
+
+If Retry repeatedly fails, the underlying capacity or serving problem may still exist. Wait and try again later, reduce the requested replica count where possible, or contact Support if the endpoint remains unusable.
+
+## A replica change cannot be saved
+
+Capacity can change while you are editing an endpoint.
+
+If the requested count is no longer available, choose the maximum currently offered by the console or try the change later. A failed resize leaves the existing endpoint configuration in place.
+
+## A stopped endpoint will not start
+
+Starting a stopped endpoint requires:
+
+- Enough organization credits
+- Enough current capacity for its existing configuration
+
+Stopping preserves the endpoint configuration, not the underlying GPU capacity. If capacity is unavailable, wait and try again later.
+
+## The API key is rejected
+
+Check that:
+
+- You are using an **Inference API key**, not a Compute public API token.
+- The key is **Active**, not disabled or revoked.
+- The key belongs to the same organization as the endpoint.
+- The request sends the key as `Authorization: Bearer ...`.
+
+If the key was lost, revoked, or exposed, create a new one and update the application.
+
+See [Create and manage Inference API keys](/documentation/inference-api/api-keys).
+
+## The endpoint URL does not work
+
+Copy the URL from endpoint details or from the copy control in the Deployments list rather than reconstructing it manually.
+
+The endpoint URL already includes the API version path, such as `/v1`. Do not add another `/v1`.
+
+For the documented Chat Completions interface, the direct request path is:
+
+```text
+YOUR_ENDPOINT_URL/chat/completions
+```
+
+Also confirm that the endpoint is **Running** or **Partially running**. Stopped and terminated endpoints do not serve requests.
+
+## The request cannot find the model
+
+Do not assume the endpoint name or shorter catalog title is the model identifier expected by the API.
+
+Copy the exact `model` value from the endpoint's generated **Quick-start snippets**.
+
+## Requests are slower than expected
+
+Check:
+
+- Whether the endpoint is **Partially running**.
+- How many replicas are currently serving compared with the requested count.
+- Whether the request uses long input, large output, or another expensive workload shape.
+- The inter-token latency and output-speed metrics in endpoint details when they are available.
+
+The requests-per-minute figure shown for a model variant is a planning estimate for that serving configuration, not a guarantee for every request shape.
+
+## A terminated endpoint still appears
+
+Termination permanently shuts down the endpoint, but its record can remain in the **Deployments** list.
+
+Use **Clear** to remove an endpoint that is already **Terminated**.
+
+**Clear** does not stop or terminate an active endpoint. It only removes the terminated record.
+
+## What to send Support
+
+If you still need help, include:
+
+- Organization name
+- Endpoint name
+- Model and variant
+- Location
+- Endpoint status
+- Requested and active replica count, when visible
+- Approximate time the problem started
+- What action or request you were trying to perform
+
+Do not send your full API-key secret.
+
+## Next steps
+
+- [Manage endpoints](/documentation/inference-api/manage-deployments).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Create and manage API keys](/documentation/inference-api/api-keys).
+- [Call your endpoint](/documentation/inference-api/call-your-endpoint).

@@ -1,0 +1,138 @@
+---
+title: "Call your Inference API endpoint"
+sidebarTitle: "Call your endpoint"
+description: "Use the endpoint URL, model identifier, and Inference API key from your endpoint to send OpenAI-compatible Chat Completions requests with Python, JavaScript, or curl."
+icon: "terminal"
+---
+
+Each running Inference API endpoint gives you three values you need to make a request:
+
+- An **endpoint URL**
+- A **model value** for the request
+- An **Inference API key** from the same organization
+
+Open the endpoint details and use the generated **Quick-start snippets** for Python, JavaScript, or `curl`. They contain the values expected by that endpoint.
+
+<Info>
+  The current quick-start flow documents the OpenAI-compatible **Chat Completions** interface. Do not assume other OpenAI API routes are supported unless they are documented separately.
+</Info>
+
+## Use the endpoint URL as shown
+
+The endpoint URL already includes its API version path. It typically looks like:
+
+```text
+https://YOUR_ENDPOINT_HOST/v1
+```
+
+Use this full value as the base URL in an SDK client.
+
+<Warning>
+  Do not append another `/v1`. For a direct Chat Completions request, add `/chat/completions` to the endpoint URL, not another API-version segment.
+</Warning>
+
+## Use the exact model value from the snippet
+
+Chat Completions requests include a `model` field. Copy the exact value generated for the endpoint.
+
+It can differ from:
+
+- The endpoint name you chose
+- The shorter model title in the catalog
+- The identifier used by another or older endpoint
+
+If you receive a model-not-found error, check this value first.
+
+## Python
+
+Install the OpenAI SDK:
+
+```bash
+pip install openai
+```
+
+Then use your endpoint values:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="YOUR_ENDPOINT_URL",
+    api_key="YOUR_INFERENCE_API_KEY",
+)
+
+response = client.chat.completions.create(
+    model="YOUR_MODEL_VALUE",
+    messages=[
+        {"role": "user", "content": "Hello!"}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+## JavaScript
+
+Install the OpenAI package in your Node.js project:
+
+```bash
+npm install openai
+```
+
+Then configure the client with the same endpoint URL and key:
+
+```javascript
+import OpenAI from 'openai'
+
+const client = new OpenAI({
+  baseURL: 'YOUR_ENDPOINT_URL',
+  apiKey: 'YOUR_INFERENCE_API_KEY',
+})
+
+const response = await client.chat.completions.create({
+  model: 'YOUR_MODEL_VALUE',
+  messages: [{ role: 'user', content: 'Hello!' }],
+})
+
+console.log(response.choices[0].message.content)
+```
+
+## curl
+
+For a direct request, append `/chat/completions` to the endpoint URL and send the API key as a bearer token:
+
+```bash
+curl YOUR_ENDPOINT_URL/chat/completions \
+  -H "Authorization: Bearer YOUR_INFERENCE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "YOUR_MODEL_VALUE",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
+
+## Protect your API key
+
+Do not commit the key to source control. For local testing, store it in an environment variable or another local secret store. For deployed applications, use the secret-management mechanism provided by your runtime or hosting platform.
+
+<Warning>
+  If a key is exposed, create a replacement, update the applications that use it, and revoke the exposed key.
+</Warning>
+
+See [Create and manage Inference API keys](/documentation/inference-api/api-keys) for the full key lifecycle.
+
+## Before troubleshooting the request
+
+Check these three things first:
+
+- The endpoint is **Running** or **Partially running**.
+- The API key is **Active** and belongs to the same organization as the endpoint.
+- The endpoint URL and `model` value were copied from that endpoint's Quick-start snippet.
+
+For authentication, capacity, latency, or endpoint-state problems, see [Troubleshoot Hivenet Inference API](/documentation/inference-api/troubleshooting).
+
+## Next steps
+
+- [Create and manage API keys](/documentation/inference-api/api-keys).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).

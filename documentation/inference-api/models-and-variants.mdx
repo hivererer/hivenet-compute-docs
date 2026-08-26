@@ -1,0 +1,124 @@
+---
+title: "Choose an Inference API model and variant"
+sidebarTitle: "Models and variants"
+description: "Learn how to compare Inference API models and serving variants using capabilities, context, latency, request capacity, and cost."
+icon: "grid-2"
+---
+
+Hivenet Inference API uses a curated model catalog. Each model can have one or more **variants** that define how that model is served.
+
+The production console is the source of truth for what you can deploy now. Model and variant availability depends on the location selected for your Inference API models.
+
+## Model versus variant
+
+A **model** is the model family or checkpoint you want to use. Its catalog card can include a description, capability tags, and a starting hourly price.
+
+A **variant** is a deployable serving configuration for that model. Depending on the model, the variant details can show:
+
+- GPU and quantization
+- Context window
+- Approximate request capacity
+- Time to first token
+- Inter-token latency
+- Output speed
+- License
+- Current price
+
+You choose the model first, then the variant, and finally the number of replicas.
+
+## Choose for the workload
+
+Start with what your application needs rather than automatically choosing the largest model.
+
+Consider:
+
+- **Capabilities:** Does the model support the kind of work you need, such as chat, tool use, structured output, coding, or multimodal input?
+- **Context:** How much prompt, conversation history, or source material needs to fit into one request?
+- **Latency:** Does someone wait for the response, or can the work run asynchronously?
+- **Throughput:** How many requests do you expect to handle at the same time?
+- **Cost:** What does the selected variant cost per replica, and how many replicas do you need?
+- **License:** Does the model license fit how you plan to use and distribute your application?
+
+Use the model cards and capability tags to narrow the catalog, then compare the available variants before deploying.
+
+## Understand context window
+
+The context window is the token space available to the served model for the request and generated output.
+
+A larger context window lets you send longer prompts or retain more conversation history, but it does not mean the endpoint will perform the same way at every context length. Longer inputs require more processing before generation begins and can reduce throughput.
+
+<Info>
+  Hivenet characterizes serving behavior with different request shapes rather than treating every prompt as equivalent. A short chat request and a long reasoning request can produce very different latency and capacity on the same model.
+</Info>
+
+Use the context value shown on the variant you are actually deploying. If your application depends on very long context, test it with realistic prompts rather than assuming performance from short-request figures.
+
+## Understand the performance fields
+
+Variant details can include several serving measurements:
+
+- **Time to first token:** How long it takes before the endpoint begins returning generated text. This matters most for interactive experiences.
+- **Inter-token latency:** The delay between generated tokens once output has started. Lower values generally make streamed responses feel faster.
+- **Output speed:** How quickly generated tokens are returned once generation is underway.
+- **Request capacity:** An approximate requests-per-minute figure for the displayed serving configuration.
+
+These figures describe serving performance, not answer quality.
+
+<Warning>
+  Do not treat one requests-per-minute figure as a universal limit. Input length, output length, concurrency, reasoning depth, and multimodal content can all change how much work a request requires.
+</Warning>
+
+## How Hivenet tests serving behavior
+
+Hivenet's newer model-characterization work uses repeatable workload shapes so performance can be compared under more realistic conditions. These include:
+
+- **Chat:** Short, interactive requests.
+- **Agentic:** Longer reasoning or tool-oriented requests.
+- **Async:** Batch-style text work where interactive first-token latency matters less.
+- **Async multimodal:** Batch work that combines visual input with text on models that support it.
+
+The purpose is to characterize serving capacity and latency for a model configuration. It does not determine which model produces the best answers for your application.
+
+<Tip>
+  Test candidate models with your own prompts and data before choosing one for production. Use Hivenet's serving information to size the endpoint after you know which model meets your quality needs.
+</Tip>
+
+## Understand quantization and GPU configuration
+
+Some variants use quantized model weights to reduce memory use or improve serving efficiency. The selected variant shows the GPU and quantization used for that endpoint when those details apply.
+
+Because Hivenet manages the serving stack, you do not choose low-level model-server or GPU settings independently after deployment. Choose the variant whose documented characteristics fit your workload.
+
+## Choose replica capacity
+
+After selecting the variant, choose the fixed number of replicas to run.
+
+More replicas can increase the amount of traffic the endpoint can serve in parallel, and each replica adds to the hourly cost. The production flow supports up to four replicas, subject to available capacity.
+
+<Note>
+  Autoscaling is not available yet. You can change the fixed replica count later when capacity is available.
+</Note>
+
+See [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity) for the full scaling behavior.
+
+## Live availability comes from the console
+
+The console initially shows a curated set of models and provides **All models** to browse the wider catalog.
+
+Models, variants, prices, GPUs, context settings, and regional capacity can change independently of these docs. A model that Hivenet has benchmarked or characterized is not necessarily available for self-service deployment in every location.
+
+<Warning>
+  Check the live console for the exact model, variant, context window, GPU configuration, quantization, price, and replica capacity you can deploy now.
+</Warning>
+
+## Use the served model name in API requests
+
+Your endpoint has an exact model identifier for API calls. It can differ from the endpoint name or the shorter catalog title.
+
+Use the `model` value shown in the endpoint's generated quick-start snippet rather than typing it from memory.
+
+## Next steps
+
+- [Get started with Inference API](/documentation/inference-api/get-started).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
+- [Call your endpoint](/documentation/inference-api/call-your-endpoint).

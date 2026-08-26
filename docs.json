@@ -79,6 +79,21 @@
             ]
           },
           {
+            "group": "Inference API",
+            "icon": "sparkles",
+            "pages": [
+              "documentation/inference-api/overview",
+              "documentation/inference-api/get-started",
+              "documentation/inference-api/models-and-variants",
+              "documentation/inference-api/api-keys",
+              "documentation/inference-api/call-your-endpoint",
+              "documentation/inference-api/manage-deployments",
+              "documentation/inference-api/replicas-and-capacity",
+              "documentation/inference-api/billing",
+              "documentation/inference-api/troubleshooting"
+            ]
+          },
+          {
             "group": "Organizations",
             "icon": "users",
             "pages": [

@@ -1,0 +1,94 @@
+---
+title: "Manage replicas and Inference API capacity"
+sidebarTitle: "Replicas and capacity"
+description: "Understand fixed replicas, requested versus active capacity, live scaling limits, and how replica count affects throughput and cost."
+icon: "layer-group"
+---
+
+A replica is one serving copy of the model variant behind your endpoint. More replicas let the same endpoint handle more work in parallel, but each running replica adds to the hourly cost.
+
+The current production version uses a **fixed replica count**. You choose the initial count when you deploy the model and can change it later when capacity is available.
+
+## Fixed capacity in production
+
+The production replica control supports **1 to 4 replicas**, subject to available capacity for the selected model variant and location.
+
+As you change the count, the console shows the corresponding hourly price and an approximate requests-per-minute estimate.
+
+<Note>
+  Autoscaling is not available yet. If you want the endpoint fully offline, use **Stop** rather than trying to reduce the replica count to zero.
+</Note>
+
+## Requested and active replicas
+
+An endpoint can have a requested replica count that is higher than the number currently serving traffic.
+
+For example, **1/3** in the Deployments list means one replica is currently serving out of three requested.
+
+- When all requested replicas are serving, the endpoint is **Running**.
+- When only some are serving, the endpoint can be **Partially running** and continue accepting requests with reduced capacity.
+- When no healthy replica is serving, the endpoint can move to **Error**.
+
+<Info>
+  An active replica is one that is actually available to serve requests, not simply one that was requested.
+</Info>
+
+## Choose a replica count
+
+Start with enough capacity for the traffic you expect, then adjust after observing the endpoint.
+
+More replicas can help when you need to handle more simultaneous requests, but they do not make an individual model response inherently better. Latency and throughput also depend on the model, context length, output length, and workload shape.
+
+The requests-per-minute figure in the console is a planning estimate for the displayed configuration, not a universal rate limit for every prompt.
+
+See [Choose a model and variant](/documentation/inference-api/models-and-variants) for how to interpret serving performance.
+
+## Change the replica count
+
+When the **Edit** control is available beside **Replicas** in endpoint details:
+
+1. Select **Edit**.
+2. Choose the new replica count allowed by the console.
+3. Review the updated capacity estimate and hourly price.
+4. Select **Save**.
+
+The endpoint keeps the same URL and model configuration while Hivenet adjusts its serving capacity.
+
+If the change succeeds, the details view updates to the new replica count. If capacity is no longer available, the console can reject the change and leave the existing configuration in place.
+
+## Partially running endpoints
+
+If fewer replicas are serving than requested, the endpoint can remain available as **Partially running**.
+
+You can:
+
+- Keep serving with reduced capacity while waiting for recovery
+- Use **Retry** when the action is available
+- Reduce the requested replica count if your workload can run with less capacity
+- Stop the endpoint if you do not want it serving in the partial state
+
+Retry asks Hivenet to recover failed replicas without deliberately stopping the healthy ones that are already serving.
+
+## Capacity is live
+
+Replica capacity is not reserved simply because an option was available earlier.
+
+Availability can change while you are deploying a model, editing replicas, or restarting a stopped endpoint. The console is the source of truth for the replica count that can be provisioned at that moment.
+
+<Warning>
+  Stopping an endpoint preserves its configuration, not its underlying GPU capacity. Starting it again later can fail if that capacity is no longer available.
+</Warning>
+
+## Replica count and billing
+
+Each running replica contributes to the endpoint's serving cost.
+
+Increasing replicas raises the hourly rate as additional capacity comes online. Reducing replicas lowers it after the change takes effect. Stopping the endpoint tears down its replicas and pauses serving charges once it reaches **Stopped**.
+
+See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing lifecycle.
+
+## Next steps
+
+- [Choose a model and variant](/documentation/inference-api/models-and-variants).
+- [Manage an endpoint](/documentation/inference-api/manage-deployments).
+- [Understand Inference API billing](/documentation/inference-api/billing).
