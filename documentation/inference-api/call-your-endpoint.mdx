@@ -5,45 +5,43 @@ description: "Use the endpoint URL, served model name, and Inference API key fro
 icon: "terminal"
 ---
 
-Each running Inference API endpoint gives you the values you need to make requests:
+Each running Inference API endpoint gives you three values you need to make a request:
 
 - An **endpoint URL**
-- A **served model name**
-- An **Inference API key** from your organization
+- A **model value** for the request
+- An **Inference API key** from the same organization
 
-The endpoint details view generates quick-start snippets for Python, JavaScript, and `curl`.
+Open the endpoint details and use the generated **Quick-start snippets** for Python, JavaScript, or `curl`. They contain the values expected by that endpoint.
 
 <Info>
-  Copy the generated values from the endpoint you are calling. Do not infer the model name from the endpoint label or catalog title.
+  The current quick-start flow documents the OpenAI-compatible **Chat Completions** interface. Do not assume other OpenAI API routes are supported unless they are documented separately.
 </Info>
 
-## Endpoint URL
+## Use the endpoint URL as shown
 
-Use the endpoint URL exactly as the console shows it.
-
-A typical URL already ends with an API version path such as `/v1`:
+The endpoint URL already includes its API version path. It typically looks like:
 
 ```text
 https://YOUR_ENDPOINT_HOST/v1
 ```
 
+Use this full value as the base URL in an SDK client.
+
 <Warning>
-  Do not add another `/v1`. The API version is already part of the endpoint URL.
+  Do not append another `/v1`. For a direct Chat Completions request, add `/chat/completions` to the endpoint URL, not another API-version segment.
 </Warning>
 
-For SDK clients, use the endpoint URL as the base URL. For a direct chat-completions request with `curl`, add `/chat/completions` after it.
+## Use the exact model value from the snippet
 
-## Served model name
+Chat Completions requests include a `model` field. Copy the exact value generated for the endpoint.
 
-OpenAI-compatible requests include a `model` field. Use the exact value in the endpoint's generated quick-start snippet.
+It can differ from:
 
-This value can differ from:
+- The endpoint name you chose
+- The shorter model title in the catalog
+- The identifier used by another or older endpoint
 
-- The name you gave the endpoint
-- The shorter model title shown in the catalog
-- An older endpoint's model identifier
-
-Use the generated snippet rather than guessing the model value.
+If you receive a model-not-found error, check this value first.
 
 ## Python
 
@@ -53,7 +51,7 @@ Install the OpenAI SDK:
 pip install openai
 ```
 
-Then create a client with your endpoint URL and key:
+Then use your endpoint values:
 
 ```python
 from openai import OpenAI
@@ -64,7 +62,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="YOUR_SERVED_MODEL_NAME",
+    model="YOUR_MODEL_VALUE",
     messages=[
         {"role": "user", "content": "Hello!"}
     ],
@@ -75,13 +73,13 @@ print(response.choices[0].message.content)
 
 ## JavaScript
 
-Install the OpenAI package:
+Install the OpenAI package in your Node.js project:
 
 ```bash
 npm install openai
 ```
 
-Then configure the client:
+Then configure the client with the same endpoint URL and key:
 
 ```javascript
 import OpenAI from 'openai'
@@ -92,7 +90,7 @@ const client = new OpenAI({
 })
 
 const response = await client.chat.completions.create({
-  model: 'YOUR_SERVED_MODEL_NAME',
+  model: 'YOUR_MODEL_VALUE',
   messages: [{ role: 'user', content: 'Hello!' }],
 })
 
@@ -101,56 +99,40 @@ console.log(response.choices[0].message.content)
 
 ## curl
 
-Send the API key as a bearer token:
+For a direct request, append `/chat/completions` to the endpoint URL and send the API key as a bearer token:
 
 ```bash
 curl YOUR_ENDPOINT_URL/chat/completions \
   -H "Authorization: Bearer YOUR_INFERENCE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "YOUR_SERVED_MODEL_NAME",
+    "model": "YOUR_MODEL_VALUE",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'
 ```
 
-## Keep API keys out of source code
+## Protect your API key
 
-For local testing, environment variables keep the key out of your source file.
-
-```bash
-export HIVENET_INFERENCE_API_KEY="YOUR_INFERENCE_API_KEY"
-```
-
-Then read that value from your application instead of committing a credential to source control.
+Do not commit the key to source control. For local testing, store it in an environment variable or another local secret store. For deployed applications, use the secret-management mechanism provided by your runtime or hosting platform.
 
 <Warning>
-  Treat Inference API keys as secrets. If a key is exposed, create a replacement, update your application, and revoke the exposed key.
+  If a key is exposed, create a replacement, update the applications that use it, and revoke the exposed key.
 </Warning>
 
-## When requests fail
+See [Create and manage Inference API keys](/documentation/inference-api/api-keys) for the full key lifecycle.
 
-### Authentication errors
+## Before troubleshooting the request
 
-Check that:
+Check these three things first:
 
-- You are using an Inference API key rather than a Compute public API token.
-- The key is still **Active**.
-- The full secret was copied correctly.
+- The endpoint is **Running** or **Partially running**.
+- The API key is **Active** and belongs to the same organization as the endpoint.
+- The endpoint URL and `model` value were copied from that endpoint's Quick-start snippet.
 
-### Model not found
-
-Copy the `model` value from the endpoint's quick-start snippet. Do not use the endpoint name as the model identifier.
-
-### Endpoint cannot be reached
-
-Confirm the endpoint is **Running** or **Partially running**. A stopped or terminated endpoint does not serve requests.
-
-### Requests are slower than expected
-
-Open the endpoint details and check the replica count and state. If some requested replicas are not active, the endpoint may have less serving capacity until they recover.
+For authentication, capacity, latency, or endpoint-state problems, see [Troubleshoot Hivenet Inference API](/documentation/inference-api/troubleshooting).
 
 ## Next steps
 
 - [Create and manage API keys](/documentation/inference-api/api-keys).
 - [Manage an endpoint](/documentation/inference-api/manage-deployments).
-- [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).
+- [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
