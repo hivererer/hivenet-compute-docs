@@ -19,7 +19,7 @@ In the Hivenet dashboard, copy your instance ID (looks like `ba184ade-84ed...`).
 
 ## Step 2: Open Terminal
 
-Press **Cmd + Space**, type `Terminal`, and hit **Return** to open it.
+Press **Cmd \+ Space**, type `Terminal`, and hit **Return** to open it.
 
 ## Step 3: Prepare your SSH key (recommended for security)
 
@@ -27,7 +27,7 @@ To keep things tidy and secure, move your downloaded key to your Mac’s SSH fol
 
 In Terminal, run these commands one by one:
 
-```
+```text
 mkdir -p ~/.ssh                # Make the SSH folder if it doesn’t exist
 chmod 700 ~/.ssh               # Lock the folder so only you can open it
 mv ~/Downloads/your-key.pem ~/.ssh/     # Move your downloaded key
@@ -38,21 +38,23 @@ Replace `/path/to/your-key.pem` with the actual path to the key you downloaded.
 
 ## Step 4: Connect to your instance
 
-Copy your **instance ID** from the Hivenet dashboard. Then run:
+Open the instance's connectivity details in Compute and copy the SSH command shown there. Compute exposes a stable SSH endpoint for each instance on port 22, so use the current command from the console rather than reconstructing the address yourself.
 
-```
+A typical command looks like:
+
+```text
 ssh -i /path/to/your-key.pem ubuntu@your-instance-id.ssh.hivecompute.ai
 ```
 
-1. Replace `/path/to/your-key.pem` with your key file location
-2. Replace `your-instance-id` with the full ID (something like `ba184ade-84ed...`)
-3. The default username is **ubuntu**
+1. Replace `/path/to/your-key.pem` with your key file location if needed.
+2. Use the hostname and username shown for your instance in Compute.
+3. The default username is usually **ubuntu**, depending on the selected image.
 
 ## Step 5: Accept the connection
 
 On first connect, you’ll see a message like:
 
-```
+```text
 Are you sure you want to continue connecting (yes/no)?
 ```
 
