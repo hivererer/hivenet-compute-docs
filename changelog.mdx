@@ -4,6 +4,35 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="August 2026" description="v1.35">
+  > ## More predictable billing, more resilient Endpoints deployments, and clearer instance recovery.
+
+  #### Billing and credits
+
+  - Instance billing now stops as soon as an instance leaves the Running state. Time spent stopping or terminating is no longer charged.
+  - Organizations on contracts with a 100% discount now show an effective hourly price of €0.
+  - Endpoints deployments stop automatically when an organization's credit balance reaches zero.
+
+  #### Endpoints
+
+  - Replicas stuck in Starting can now recover automatically, with a manual retry available when needed.
+  - Scaling down pauses surplus replicas instead of deleting them, making it faster to scale back up.
+  - Dashboard metrics now report 7-day request counts and input/output token counts more accurately. p95 latency and error rate are measured over a 24-hour window.
+  - GPT-OSS 20B now supports OpenAI-compatible tool calls and reasoning output.
+  - Model variants are now served under their own names, avoiding collisions between variants.
+
+  #### Instance reliability
+
+  - Instances that fail to start retry a limited number of times before moving to a clear error state that you can retry manually.
+  - Instances stuck while stopping or terminating are cleaned up automatically.
+  - Reboots now have their own recovery window and no longer fall back to a stop.
+  - Invalid instance actions now return clearer errors instead of generic server errors.
+
+  #### SSH connectivity
+
+  Every instance now exposes a stable SSH endpoint on port 22. The endpoint is reported in the instance's events so it can be discovered consistently as the instance moves through its lifecycle.
+</Update>
+
 <Update label="August 2026" description="v1.34">
   > ## Public API access, organizations and teams, the production launch of Hivenet Inference API, and major reliability improvements across Compute.
 
