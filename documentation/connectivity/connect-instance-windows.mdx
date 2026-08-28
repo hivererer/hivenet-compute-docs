@@ -11,19 +11,11 @@ sidebarTitle: "Connect to an instance from Windows"
 - Windows Terminal or another SSH-capable terminal (like PowerShell)
 - A configured `config` file (optional but helpful)
 
-## Step 1 – Get your instance ID
+## Step 1 – Open the SSH connection details
 
-When you create a Compute instance, you'll receive a unique ID that looks like:
+Open your instance in Compute and go to **Connectivity options → SSH**. Compute exposes a stable SSH endpoint for the instance on port 22.
 
-```
-ba184ade-84ed-4047-90bb-ca3b76e84246
-```
-
-Use this to build your SSH HostName:
-
-```
-ba184ade-84ed-4047-90bb-ca3b76e84246.ssh.hivecompute.ai
-```
+The console shows the current hostname and connection command. Use those values rather than building the hostname yourself.
 
 ![Connect Instance Windows 1 Pn](/images/connect-instance-windows-1.png)
 
@@ -41,15 +33,17 @@ ba184ade-84ed-4047-90bb-ca3b76e84246.ssh.hivecompute.ai
 
 **Build the command yourself**
 
-```
-ssh ubuntu@<your-instance-id>.ssh.hivecompute.ai
+If you prefer to type the command manually, use the hostname and username shown in the instance's SSH connection details:
+
+```text
+ssh ubuntu@<your-ssh-hostname>
 ```
 
-Replace `<your-instance-id>` with the ID you copied in Step 1.
+SSH uses port 22 by default, so you do not need to specify the port unless the console tells you otherwise.
 
 \*\*If you’ve created a Host entry in \*\*`~/.ssh/config`
 
-```
+```text
 ssh hivenet
 ```
 
@@ -57,7 +51,7 @@ ssh hivenet
 
 Some connections require a jump host (a "bastion") for access. If you're getting timeouts, try this:
 
-```
+```text
 ssh -i ~/.ssh/id_ed25519 -o "ProxyCommand ssh bastion@ssh.hivecompute.ai %h" ubuntu@<your-instance-id>.ssh.hivecompute.ai
 ```
 

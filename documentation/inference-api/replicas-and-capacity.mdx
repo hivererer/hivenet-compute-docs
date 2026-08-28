@@ -54,7 +54,7 @@ When the **Edit** control is available beside **Replicas** in endpoint details:
 
 The endpoint keeps the same URL and model configuration while Hivenet adjusts its serving capacity.
 
-If the change succeeds, the details view updates to the new replica count. If capacity is no longer available, the console can reject the change and leave the existing configuration in place.
+If the change succeeds, the details view updates to the new replica count. When you scale down, surplus replicas are paused rather than deleted, which makes a later scale-up faster when the same capacity is reused. If capacity is no longer available, the console can reject the change and leave the existing configuration in place.
 
 ## Partially running endpoints
 
