@@ -115,7 +115,11 @@ Models, variants, prices, GPUs, context settings, and regional capacity can chan
 
 Your endpoint has an exact model identifier for API calls. It can differ from the endpoint name or the shorter catalog title.
 
-Use the `model` value shown in the endpoint's generated quick-start snippet rather than typing it from memory.
+Use the `model` value shown in the endpoint's generated quick-start snippet rather than typing it from memory. Each serving variant now has its own model name, so copy the value from the specific endpoint you are calling instead of reusing an identifier from another variant.
+
+## GPT-OSS 20B capabilities
+
+GPT-OSS 20B supports OpenAI-compatible tool calls and reasoning output when you use a serving variant that exposes those capabilities. Use the generated endpoint examples and the exact served model name shown in the console.
 
 ## Next steps
 

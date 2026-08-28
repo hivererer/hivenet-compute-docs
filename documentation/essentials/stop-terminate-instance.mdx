@@ -23,14 +23,14 @@ You’ll need to tick some boxes before confirming Terminate, just to be sure yo
 
 ## Stop vs. Terminate
 
-| Action        | What it does                     | Can you restart it later? | Keeps config? | Charges stop? | Auto-expires?         |
-| :------------ | :------------------------------- | :------------------------ | :------------ | :------------ | :-------------------- |
-| **Stop**      | Pauses the instance              | Yes, within 5 days        | Yes           | Yes           | Yes, after **5 days** |
-| **Terminate** | Deletes the instance permanently | No                        | No            | Yes           | Yes, immediately      |
+| Action | What it does | Can you restart it later? | Keeps config? | Charges stop? | Auto-expires? |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+| **Stop** | Pauses the instance | Yes, within 10 days | Yes | As soon as it leaves **Running** | Yes, after **10 days** |
+| **Terminate** | Deletes the instance permanently | No | No | As soon as it leaves **Running** | Yes, immediately |
 
 ## ⚠️ Stopped instances are not forever
 
-Stopping an instance pauses it, but only temporarily. If you don’t restart it within **5 days**, it will be **automatically terminated**, and that means:
+Stopping an instance pauses it, but only temporarily. If you don’t restart it within **10 days**, it will be **automatically terminated**, and that means:
 
 - The instance is deleted
 - All data is lost
@@ -46,7 +46,7 @@ Use Stop when you:
 - Want to save on Compute charges for a bit
 - Plan to restart it soon
 
-Once stopped, the instance will show as **Stopped** in your list. To avoid losing it, just make sure you start it again within 5 days.
+Once stopped, the instance will show as **Stopped** in your list. To avoid losing it, make sure you start it again within 10 days.
 
 ## When to use **Terminate**
 

@@ -7,7 +7,7 @@ icon: "sliders"
 
 Use the **Deployments** section of Inference API to monitor and manage the model endpoints your organization has created.
 
-Each row shows the endpoint status, name, model, region, replica count, recent request count when available, and current hourly cost.
+Each row shows the endpoint status, name, model, region, replica count, request count over the last 7 days when available, and current hourly cost.
 
 ## Open endpoint details
 
@@ -23,9 +23,11 @@ For a running endpoint, the details view can include:
 - Region
 - Cost so far and current hourly rate
 - Replica count
-- Requests per hour
+- Requests over the last 7 days
+- Input and output token counts
+- p95 latency over the last 24 hours
+- Error rate over the last 24 hours
 - Inter-token latency
-- Tokens in and out over 24 hours
 - Output speed
 - Quick-start snippets for Python, JavaScript, and `curl`
 

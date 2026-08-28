@@ -260,5 +260,22 @@
       "autogenerate": true
     },
     "url": "full"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/documentation/essentials/how-to-vllm",
+      "destination": "/documentation/inference-api/overview",
+      "permanent": true
+    },
+    {
+      "source": "/documentation/reference/vllm-models",
+      "destination": "/documentation/inference-api/models-and-variants",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/more-guides/advanced-vllm-settings",
+      "destination": "/documentation/inference-api/models-and-variants",
+      "permanent": true
+    }
+  ]
 }
