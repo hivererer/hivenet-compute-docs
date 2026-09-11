@@ -28,15 +28,15 @@ The newest key becomes **Primary**. An existing key becomes **Secondary** and ke
 
 Select **View** beside a key to see its ID, creation date, endpoint, and setup snippets.
 
-The secret is not available in this view. For verified client settings, use [Connection settings](/documentation/object-storage/connection-settings).
+The secret is not available in this view. For client setup instructions, use [Connection settings](/documentation/object-storage/connection-settings).
 
 ## Rotate a key
 
 Rotation lets you move applications to a new credential pair before removing the old one.
 
 <Steps>
-  <Step title="Make a slot available">
-    If you have one key, create a second.
+  <Step title="Check for an available key slot">
+    If you have one key, continue to the next step to create its replacement.
 
     If you already have two, identify a key your applications no longer need and revoke it to free a slot. If both are in use, move their clients onto the key you will keep first.
   </Step>
