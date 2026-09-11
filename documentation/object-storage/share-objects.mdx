@@ -1,0 +1,49 @@
+---
+title: "Share an object from Hivenet Object Storage"
+sidebarTitle: "Share objects"
+description: "Create an expiring download link and understand who can use it."
+icon: "link"
+---
+
+A share link gives someone temporary download access to one object without a Hivenet account or access key.
+
+<Warning>
+  Anyone who has the link can use it while it is valid. Treat the complete URL as a secret and share it only with the intended recipients.
+</Warning>
+
+## Create a share link
+
+1. Open **Object Storage**, then open the bucket.
+2. In **Objects**, open the object's options menu.
+3. Select **Create share link**.
+4. Choose **1 hour**, **24 hours**, or **7 days** under **Link expires after**.
+5. Select **Create and copy link**.
+6. Share the copied URL with the recipient.
+
+Choose the shortest duration that gives the recipient enough time.
+
+The link is a presigned URL: it includes a signature and an expiry. The recipient uses the complete URL to make a download request.
+
+## Understand link access
+
+- The link grants access to the selected object without sign-in.
+- It can be used more than once while valid.
+- Copying or forwarding it gives another person the same download access.
+- Creating a link does not change the bucket's organization access.
+- Expiry stops future requests using that link. It does not remove copies someone has already downloaded.
+
+The console offers fixed expiry choices and no separate per-link revoke control. Do not use access-key rotation as a way to manage a link's lifetime.
+
+If a link was shared with the wrong person, contact support for the available options. Do not assume a key change has invalidated an existing link.
+
+## If the link does not work
+
+Check that:
+
+1. The complete URL was copied without changes.
+2. The selected expiry has not passed.
+3. The object still exists at the same key.
+
+A link may stop working before its selected expiry if the object is removed or access changes. If you are still authorized to share the object, create a new link and send the replacement.
+
+For signed URLs created by your own application, use the Hivenet client settings in [Connection settings](/documentation/object-storage/connection-settings) and the compatible operations in [S3 compatibility](/documentation/object-storage/s3-compatibility).

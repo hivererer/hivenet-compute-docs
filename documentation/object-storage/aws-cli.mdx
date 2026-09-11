@@ -1,0 +1,118 @@
+---
+title: "Use AWS CLI with Hivenet Object Storage"
+sidebarTitle: "AWS CLI"
+description: "Configure a Hivenet profile, list objects, and upload or download files with AWS CLI."
+icon: "terminal"
+---
+
+The AWS CLI can call Hivenet Object Storage through the Hivenet S3 endpoint. Use a dedicated profile so these settings do not replace an existing AWS configuration.
+
+## What you'll need
+
+- AWS CLI installed.
+- Your Hivenet access key ID and secret access key.
+- A bucket created in [Object Storage](/documentation/object-storage/buckets).
+- A small local test file, such as `hello.txt`.
+
+These commands use the profile name `hivenet`. Replace `YOUR_BUCKET` with your bucket's name.
+
+## Configure the profile
+
+Run:
+
+```bash
+aws configure --profile hivenet
+```
+
+At the prompts, enter:
+
+| Prompt | Value |
+| --- | --- |
+| AWS Access Key ID | Your Hivenet access key ID |
+| AWS Secret Access Key | Your Hivenet secret access key |
+| Default region name | `Europe` |
+| Default output format | `json` |
+
+Then explicitly enable path-style addressing and Signature Version 4:
+
+```bash
+aws configure set s3.addressing_style path --profile hivenet
+aws configure set s3.signature_version s3v4 --profile hivenet
+```
+
+<Warning>
+  Protect the local credentials file created by the CLI. Enter the Hivenet credential pair at the prompts; do not put real secrets in shared commands or documentation.
+</Warning>
+
+## Test the connection
+
+List buckets:
+
+```bash
+aws s3api list-buckets --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+An empty bucket list is a valid response if your organization has no buckets.
+
+List objects in a bucket:
+
+```bash
+aws s3 ls "s3://YOUR_BUCKET/" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+Every command in this guide includes the Hivenet endpoint. Omitting it can send the request to AWS.
+
+## Upload a file
+
+Choose an object key that does not already contain data you need to keep:
+
+```bash
+aws s3 cp "./hello.txt" "s3://YOUR_BUCKET/hello.txt" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+Uploading to an existing key replaces that object.
+
+The high-level `aws s3 cp` command manages multipart transfers when needed. A raw `s3api put-object` request is a single upload and has Hivenet's 5 GB single-request limit.
+
+## Download a file
+
+Use a new local filename to avoid replacing a file you need:
+
+```bash
+aws s3 cp "s3://YOUR_BUCKET/hello.txt" "./hello-downloaded.txt" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+## Download many objects
+
+First preview a copy of the bucket into a local directory:
+
+```bash
+aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --dryrun --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+Check the source and destination, then run it without `--dryrun`:
+
+```bash
+aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+```
+
+To copy only a prefix, use a source such as `s3://YOUR_BUCKET/reports/`.
+
+For repeat downloads, `aws s3 sync` can transfer new or changed files. Review the [AWS sync reference](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) before adding filters or deletion options.
+
+## Use a command copied from the console
+
+Configure the `hivenet` profile first. Before running **Copy CLI command** output, check that it:
+
+- Uses `https://eu.s3.public.hivenet.com`.
+- Uses the `hivenet` profile, or add `--profile hivenet`.
+- Targets the intended bucket or prefix and local directory.
+- Includes filters if you intend to copy only selected objects.
+
+Path-style addressing is a profile setting. AWS CLI does not use `--force-path-style` as a standard `s3` command flag. If copied output includes that flag, remove it and use the `aws configure set` command above.
+
+## Request reference
+
+See [AWS CLI S3 configuration](https://docs.aws.amazon.com/cli/latest/topic/s3-config.html) and the [copy command reference](https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html) for client syntax. Use only the operations covered by [Hivenet S3 compatibility](/documentation/object-storage/s3-compatibility).
+
+For connection failures, see [Troubleshooting](/documentation/object-storage/troubleshooting).

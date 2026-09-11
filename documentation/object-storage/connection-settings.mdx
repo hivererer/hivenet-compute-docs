@@ -1,0 +1,73 @@
+---
+title: "Connect to Hivenet Object Storage"
+sidebarTitle: "Connection settings"
+description: "Configure the Hivenet endpoint, signing region, access keys, and required path-style addressing."
+icon: "plug"
+---
+
+Use these settings when connecting an S3-compatible client to Hivenet Object Storage.
+
+## Required settings
+
+| Setting | Value |
+| --- | --- |
+| Endpoint URL | `https://eu.s3.public.hivenet.com` |
+| Signing region | `Europe` |
+| Addressing style | Path style, explicitly enabled |
+| Authentication | AWS Signature Version 4 with your Hivenet access key ID and secret access key |
+| Console region label | **EU** |
+
+The signing region is case-sensitive. Use `Europe`, even though the console displays **EU**. Do not substitute an AWS region name.
+
+Use your credential pair from **Object Storage > My keys**. An AWS account is not required to use the AWS CLI or AWS SDKs with the Hivenet endpoint.
+
+## Path-style addressing
+
+Hivenet uses one endpoint for the region. The bucket name goes in the URL path:
+
+```text
+https://eu.s3.public.hivenet.com/BUCKET_NAME/OBJECT_KEY
+```
+
+For example, the object `reports/report.csv` in `my-app-bucket` has this path:
+
+```text
+https://eu.s3.public.hivenet.com/my-app-bucket/reports/report.csv
+```
+
+This illustrates the address format; it is not an unauthenticated download link.
+
+Set the endpoint to the base URL only. Pass the bucket and object key separately through your client's request parameters.
+
+| Client | Required path-style setting |
+| --- | --- |
+| AWS CLI | `s3.addressing_style = path` in the selected profile |
+| boto3 | `Config(s3={"addressing_style": "path"})` |
+| AWS SDK for JavaScript v3 | `forcePathStyle: true` |
+| rclone | `force_path_style = true` |
+
+<Warning>
+  Hivenet does not provide per-bucket subdomains. Do not rely on your client's automatic or virtual-host addressing default.
+</Warning>
+
+## Credentials and request signing
+
+An S3-compatible client uses the secret access key to sign requests. It sends the access key ID as part of the signed authentication information.
+
+You do not send an Object Storage key as a bearer token. The identity and administration APIs used by the console have a separate authentication model and are not the customer S3 endpoint.
+
+Keep credential pairs out of source code. Use protected client profiles, environment variables, or your application's secrets manager.
+
+## Choose a client guide
+
+- [AWS CLI](/documentation/object-storage/aws-cli): configure a profile and transfer files.
+- [Python and JavaScript SDKs](/documentation/object-storage/sdks): make requests from an application.
+- [rclone](/documentation/object-storage/rclone): copy directories and download buckets or prefixes.
+
+All examples use the same Hivenet endpoint and signing region.
+
+## Use AWS request documentation
+
+The [Amazon S3 API reference](https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations_Amazon_Simple_Storage_Service.html) describes request and response formats.
+
+Use it for operations listed in [Hivenet S3 compatibility](/documentation/object-storage/s3-compatibility), with the Hivenet settings above. AWS documentation alone does not establish that a feature, header, or optional behavior is available on Hivenet.

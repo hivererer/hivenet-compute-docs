@@ -1,0 +1,74 @@
+---
+title: "Get started with Hivenet Object Storage"
+sidebarTitle: "Get started"
+description: "Activate Object Storage, save your credentials, create a bucket, and upload your first object."
+icon: "rocket"
+---
+
+This guide takes you from activation to your first stored object and a client connection.
+
+## What you'll need
+
+- Access to a business organization enabled for Hivenet Object Storage.
+- A desktop browser.
+- A secure place to save your access key ID and secret.
+- A small test file with a simple name, such as `hello.txt`.
+
+Confirm your organization's agreed storage rate and monthly minimum before activating. Storage uses [monthly invoicing](/documentation/object-storage/usage-and-billing).
+
+<Steps>
+  <Step title="Open Object Storage">
+    Sign in to the [Compute console](https://console.hivecompute.ai/), check the organization in the upper-left corner, and open **Object Storage**.
+
+    If your organization has already activated storage, skip activation. Joining an organization does not create a key for you. Use **New key** in **My keys** when you need credentials for an external client.
+  </Step>
+  <Step title="Activate storage">
+    Read the activation acknowledgment and select its checkbox. Then select **Activate Object Storage**.
+
+    Activation is permanent and creates your first access key. Stay in the flow to save its credentials.
+  </Step>
+  <Step title="Save the credential pair">
+    Save both the access key ID and the secret access key. Select **Download credentials** or copy both values to secure storage.
+
+    Confirm that you have saved them before continuing.
+
+    <Warning>
+      The secret is shown once. Leaving the flow does not undo activation or remove the key. If you leave without saving it, follow the [lost-secret recovery steps](/documentation/object-storage/access-keys#replace-a-lost-secret).
+    </Warning>
+  </Step>
+  <Step title="Create your first bucket">
+    Enter a bucket name using 3–63 lowercase letters, numbers, and hyphens. Start and end with a letter or number, and do not use dots.
+
+    Review the **EU** region, organization access, and always-on server-side encryption. Then select **Create bucket**.
+
+    Every member of your organization can access this bucket. Its name must be available in the region.
+
+    You can choose **Skip for now** at the bucket step and create one later with **New bucket**.
+  </Step>
+  <Step title="Upload a test object">
+    Open the bucket and select **Choose files**, or drag your test file into the upload area. Leave **Destination** empty to upload to the bucket root.
+
+    Review the selected file and start the upload. Wait for the result, then check that the object appears in the list.
+
+    Uploading to an existing name replaces the stored object.
+  </Step>
+  <Step title="Download the object">
+    Open the object's options menu and select **Download**. Your browser handles the download.
+
+    Check that the downloaded file contains the data you uploaded.
+  </Step>
+  <Step title="Make your first API call">
+    Choose [AWS CLI](/documentation/object-storage/aws-cli), [Python or JavaScript](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone).
+
+    Each guide starts with a listing request and includes the required Hivenet endpoint and path-style setting. Use your saved credential pair.
+  </Step>
+</Steps>
+
+## If a step fails
+
+- **Object Storage is missing:** Confirm the organization and ask your Hivenet contact to check access.
+- **The bucket name is taken:** Choose another name.
+- **You lost the secret:** Create a replacement key and update your client before revoking the old key.
+- **The client cannot connect:** Check the endpoint, signing region, and path-style setting in [Connection settings](/documentation/object-storage/connection-settings).
+
+See [Troubleshooting](/documentation/object-storage/troubleshooting) for upload, download, and deletion errors.

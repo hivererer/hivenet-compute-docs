@@ -1,0 +1,129 @@
+---
+title: "Troubleshoot Hivenet Object Storage"
+sidebarTitle: "Troubleshooting"
+description: "Resolve common problems with activation, credentials, client settings, uploads, sharing, and deletion."
+icon: "triangle-exclamation"
+---
+
+Start with the organization, endpoint, and credential pair. Then use the section that matches the failed operation.
+
+## Object Storage is missing
+
+Check the organization selected in the console. Hivenet Object Storage is visible only for enabled business organizations.
+
+Contact your Hivenet contact if the expected organization does not have access.
+
+## Activation is unavailable
+
+Read and select the acknowledgment checkbox before selecting **Activate Object Storage**.
+
+If you previously activated storage and left the credentials screen, activation remains in place. Open **My keys** and follow [lost-secret recovery](/documentation/object-storage/access-keys#replace-a-lost-secret).
+
+## You cannot create or revoke a key
+
+- **Two keys already exist:** Revoke an unused key to free a slot. Update its clients first.
+- **Only one key exists:** The console blocks revoking it. Create and save a replacement, update clients, and then revoke the old key.
+- **The secret is missing:** **View** cannot reveal it again. Create a replacement pair.
+
+See [Access keys](/documentation/object-storage/access-keys) for the full rotation procedure.
+
+## Authentication or signature errors
+
+For `InvalidAccessKeyId`, `SignatureDoesNotMatch`, or access errors:
+
+1. Confirm the endpoint is `https://eu.s3.public.hivenet.com`.
+2. Set the signing region to `Europe`, with the same capitalization.
+3. Explicitly enable path-style addressing.
+4. Use the matching access key ID and secret from the intended organization.
+5. Check for truncated values, extra whitespace, or an old credential in the application's environment or profile.
+6. Confirm that the key has not been revoked.
+
+For time-related signature errors, check that the client machine's clock is correct.
+
+Object Storage credentials sign S3 requests. Do not send them as an Inference API bearer token.
+
+### A revoked key still works
+
+Verify the result using a fresh request with that specific key. A removed row in **My keys** is not proof that every request path has stopped accepting it.
+
+If it still works, contact support with the revocation time, the failing request details, and a redacted key identifier. Do not send the secret or a complete signed URL.
+
+## The client uses a bucket subdomain or reaches AWS
+
+Set path style explicitly:
+
+| Client | Setting |
+| --- | --- |
+| AWS CLI | `aws configure set s3.addressing_style path --profile hivenet` |
+| boto3 | `Config(s3={"addressing_style": "path"})` |
+| JavaScript SDK v3 | `forcePathStyle: true` |
+| rclone | `force_path_style = true` |
+
+Use the Hivenet base endpoint and pass the bucket separately. Include `--endpoint-url https://eu.s3.public.hivenet.com` on AWS CLI requests.
+
+See [Connection settings](/documentation/object-storage/connection-settings).
+
+## Bucket creation fails
+
+Use 3–63 lowercase letters, numbers, and hyphens. Start and end with a letter or number, and do not use dots.
+
+If the name is already in use in the region, choose another. The console shows the backend rejection beside the field.
+
+Do not assume bucket names are available because your organization has not used them.
+
+## An upload fails
+
+Check the file's name and size before retrying.
+
+- **Invalid name:** Follow the [object naming rules](/documentation/object-storage/objects#choose-object-names).
+- **File too large:** The per-object limit is 5 TB. A raw single-request upload has a 5 GB limit.
+- **Only some files uploaded:** Use **Retry failed files** and check the resulting object list.
+- **Connection or browser interruption:** Reopen the bucket to see what was stored, then retry the missing files.
+- **An older file changed:** Uploading to the same key replaces the object.
+
+If a browser request is blocked by CORS, capture the failed request's time, method, and status for support. Do not change bucket policies or expose credentials to work around it.
+
+## An object cannot be downloaded
+
+Copy the exact object key, including its prefix and capitalization. Check that it still exists.
+
+A deleted object returns a not-found response. If the console list is stale, refresh it.
+
+For console downloads, check the browser's download list. Use [AWS CLI](/documentation/object-storage/aws-cli) or [rclone](/documentation/object-storage/rclone) for multiple objects.
+
+## A share link fails
+
+Check that the URL was copied in full, that it has not expired, and that the object still exists.
+
+If you are authorized to share the object, generate a new link with an appropriate expiry. See [Share objects](/documentation/object-storage/share-objects).
+
+Do not include the complete share URL in a public issue or support screenshot.
+
+## A bucket will not delete
+
+`BucketNotEmpty` means objects remain.
+
+Keep the console tab open during emptying. After a partial failure or **Stop emptying**, refresh the object list and retry the remaining objects before deleting the bucket.
+
+A lost connection can leave the outcome uncertain. Refresh first; do not assume nothing was deleted.
+
+See [Empty or delete a bucket](/documentation/object-storage/buckets#empty-or-delete-a-bucket).
+
+## Usage or cost looks unexpected
+
+Check the billing period, your organization's rate, and the €50 monthly minimum. Distinguish the usage-based cost so far from the end-of-month estimate.
+
+Transfer data is aggregated hourly. It is not a real-time activity log.
+
+See [Usage and billing](/documentation/object-storage/usage-and-billing).
+
+## Contact support
+
+Use **Chat with us** in the console or your Hivenet contact. Include:
+
+- Organization, operation, and approximate time with time zone.
+- Client name and version.
+- Error code, status, and request ID if available.
+- Whether the same operation works in the console or another client.
+
+Remove secrets, signed query strings, and sensitive object names from logs before sharing them.

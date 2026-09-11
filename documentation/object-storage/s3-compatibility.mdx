@@ -1,0 +1,68 @@
+---
+title: "Hivenet Object Storage S3 compatibility"
+sidebarTitle: "S3 compatibility"
+description: "Review the implemented S3 operations covered by these guides and the Hivenet-specific connection requirements."
+icon: "list-check"
+---
+
+Hivenet Object Storage implements a subset of Amazon S3 operations. The operations below are the implemented subset covered by these guides.
+
+Use the [AWS S3 API reference](https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations_Amazon_Simple_Storage_Service.html) for request and response formats. Configure the Hivenet endpoint and path-style addressing before using AWS examples.
+
+## Connection requirements
+
+- Endpoint: `https://eu.s3.public.hivenet.com`.
+- Signing region: `Europe`.
+- Authentication: AWS Signature Version 4 with a Hivenet access key ID and secret.
+- Addressing: path style, explicitly enabled.
+
+See [Connection settings](/documentation/object-storage/connection-settings) for client-specific options.
+
+## Documented operations
+
+| Area | Operations |
+| --- | --- |
+| Buckets | `ListBuckets`, `CreateBucket`, `HeadBucket`, `DeleteBucket`, `GetBucketLocation` |
+| Objects | `PutObject`, `GetObject`, `HeadObject`, `DeleteObject`, `DeleteObjects`, `CopyObject` |
+| Listing | `ListObjects` (V1), `ListObjectsV2` |
+| Multipart uploads | `CreateMultipartUpload`, `UploadPart`, `CompleteMultipartUpload`, `AbortMultipartUpload`, `ListMultipartUploads` |
+| Presigned requests | GET and PUT URLs |
+
+Presigned URLs are signed requests, not separate S3 operation names.
+
+Support for an operation does not establish support for every optional header, feature, or client workflow built around it. An operation absent from this table is not a documented compatibility guarantee.
+
+## Listing and pagination
+
+Use `ListObjectsV2` for new integrations. Follow continuation tokens or use your SDK's paginator to retrieve more than one response.
+
+For clients using V1, use its marker-based pagination. The two pagination formats are different.
+
+## Upload limits
+
+- A single `PutObject` request supports objects up to **5 GB**.
+- Use multipart uploads for larger objects, up to Hivenet's **5 TB** per-object limit.
+
+Use a managed transfer function when you want the client to handle multipart uploads. A raw `PutObject` call does not automatically split a file.
+
+If you manage multipart uploads directly, complete successful uploads and abort abandoned ones.
+
+## Deletion behavior
+
+A bucket must be empty before `DeleteBucket` succeeds. Otherwise, the service returns `BucketNotEmpty`.
+
+The console performs the emptying steps for you. API clients need to list objects, delete them, and then delete the empty bucket.
+
+For portable client code, send no more than **1,000 keys** per `DeleteObjects` request, as described by the [AWS request specification](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html). Check per-object results and refresh the object list after partial failures or interrupted requests.
+
+Do not assume an HTTP success alone means every requested object was deleted.
+
+## Client guides
+
+The core operations support the workflows described in these guides:
+
+- [AWS CLI](/documentation/object-storage/aws-cli)
+- [Python with boto3 and JavaScript SDK v3](/documentation/object-storage/sdks)
+- [rclone](/documentation/object-storage/rclone)
+
+Client defaults can differ. Keep Hivenet's endpoint, signing region, and path-style setting explicit, and use [Troubleshooting](/documentation/object-storage/troubleshooting) if a request fails.

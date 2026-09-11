@@ -97,7 +97,19 @@
             "group": "Hivenet Object Storage",
             "icon": "database",
             "pages": [
-              "documentation/object-storage/overview"
+              "documentation/object-storage/overview",
+              "documentation/object-storage/get-started",
+              "documentation/object-storage/access-keys",
+              "documentation/object-storage/buckets",
+              "documentation/object-storage/objects",
+              "documentation/object-storage/share-objects",
+              "documentation/object-storage/connection-settings",
+              "documentation/object-storage/aws-cli",
+              "documentation/object-storage/sdks",
+              "documentation/object-storage/rclone",
+              "documentation/object-storage/usage-and-billing",
+              "documentation/object-storage/s3-compatibility",
+              "documentation/object-storage/troubleshooting"
             ]
           },
           {
