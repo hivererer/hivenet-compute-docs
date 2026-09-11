@@ -94,6 +94,13 @@
             ]
           },
           {
+            "group": "Hivenet Object Storage",
+            "icon": "database",
+            "pages": [
+              "documentation/object-storage/overview"
+            ]
+          },
+          {
             "group": "Organizations",
             "icon": "users",
             "pages": [
