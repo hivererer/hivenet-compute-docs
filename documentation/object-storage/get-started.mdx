@@ -20,7 +20,9 @@ Confirm your organization's agreed storage rate and monthly minimum before activ
   <Step title="Open Object Storage">
     Sign in to the [Compute console](https://console.hivecompute.ai/), check the organization in the upper-left corner, and open **Object Storage**.
 
-    If your organization has already activated storage, skip activation. Joining an organization does not create a key for you. Use **New key** in **My keys** when you need credentials for an external client.
+    If your organization has already activated storage, skip the activation step. You still need your own active key to use bucket and object actions in the console. Joining an organization does not create one for you.
+
+    If **My keys** is empty, select **New key** and follow the credential-saving step below. If you already have an active key, continue to the bucket step.
   </Step>
   <Step title="Activate storage">
     Read the activation acknowledgment and select its checkbox. Then select **Activate Object Storage**.
@@ -67,6 +69,7 @@ Confirm your organization's agreed storage rate and monthly minimum before activ
 ## If a step fails
 
 - **Object Storage is missing:** Confirm the organization and ask your Hivenet contact to check access.
+- **Buckets are visible but actions are disabled:** Create and save your own key in **My keys** to enable the actions.
 - **The bucket name is taken:** Choose another name.
 - **You lost the secret:** Create a replacement key and update your client before revoking the old key.
 - **The client cannot connect:** Check the endpoint, signing region, and path-style setting in [Connection settings](/documentation/object-storage/connection-settings).

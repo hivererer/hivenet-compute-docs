@@ -5,7 +5,7 @@ description: "Upload files, organize object keys, download objects, and recover 
 icon: "file"
 ---
 
-Open a bucket in **Object Storage** and use its **Objects** tab to work with files.
+Create an [access key](/documentation/object-storage/access-keys) of your own if you do not already have an active one. Then open a bucket in **Object Storage** and use its **Objects** tab to work with files.
 
 An object key is the full name within the bucket, including any prefix. For example, `releases/1.4.2/app.zip` is one object key.
 
@@ -31,11 +31,15 @@ An object key is the full name within the bucket, including any prefix. For exam
     Select the upload button for the selected files. Keep the tab open and follow the per-file progress.
   </Step>
   <Step title="Check the result">
-    Confirm which files uploaded. If only some failed, use **Retry failed files**.
+    The console retries failed uploads automatically before showing an error. Check the final result and use **Retry failed files** if some files still failed.
+
+    While failed files remain in the dialog, you cannot add more files. Retry them or close the dialog before starting another upload.
 
     Use **Retry all** only when you intend to upload the whole selection again. Repeating successful uploads can replace objects already stored at those keys.
   </Step>
 </Steps>
+
+Reloading the page stops all in-progress uploads. Files that finished uploading remain stored. After an interruption, check the object list and retry the files that are missing.
 
 <Warning>
   Uploading to an existing object key replaces the old object. If files in the same selection have the same destination key, the last write wins. Do not rely on the console to recover replaced data.
@@ -57,9 +61,9 @@ Objects created through an API may have names the console upload form would reje
 
 ## File size and large transfers
 
-Hivenet Object Storage has a 5 TB per-object limit. A single `PutObject` request is limited to 5 GB; larger uploads use multipart operations.
+Hivenet Object Storage supports objects up to 5 TB through multipart uploads. A single `PutObject` request is limited to 5 GB.
 
-The console handles upload splitting for you. For large or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
+The console currently uses single-request uploads and does not support multipart uploads. Files larger than 5 GB cannot be uploaded through the console. For larger files or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
 
 An operation being implemented does not mean every client option is supported. Check [S3 compatibility](/documentation/object-storage/s3-compatibility) before changing transfer settings.
 
@@ -69,11 +73,9 @@ An operation being implemented does not mean every client option is supported. C
 2. Select **Download**.
 3. Check your browser's download list.
 
-Downloads do not show progress inside the console. Console downloads handle one object at a time.
+Downloads do not show progress inside the console. Console downloads handle one object at a time. Multi-select supports deletion only.
 
 To download many objects, use a client. The [AWS CLI](/documentation/object-storage/aws-cli#download-many-objects) and [rclone](/documentation/object-storage/rclone#download-a-bucket-or-prefix) guides show commands for a bucket or prefix.
-
-Where **Copy CLI command** is available after selection, review the copied source, destination, and filters before running it. A command targeting a whole bucket may cover more objects than the current selection.
 
 ## Delete objects
 

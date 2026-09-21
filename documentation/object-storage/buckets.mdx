@@ -5,7 +5,9 @@ description: "Create buckets, understand organization access, and safely empty o
 icon: "bucket"
 ---
 
-A bucket holds objects for your organization. All members of that organization can access its buckets and objects.
+A bucket holds objects for your organization. Buckets and objects are shared across its members.
+
+You need an active [access key](/documentation/object-storage/access-keys) of your own to use bucket actions. Without one, the bucket list remains visible, but its actions and options menus are disabled.
 
 ## Create a bucket
 
@@ -62,15 +64,15 @@ Emptying removes the objects and leaves the bucket. Deleting removes the bucket 
 1. Open the bucket and review the objects it contains.
 2. Start the delete flow. When prompted to empty the bucket, review and confirm the permanent object deletion.
 3. Keep the browser tab open while the console empties the bucket.
-4. Wait for the result. If objects remain, retry emptying and check the remaining list.
-5. Once the bucket is empty, complete the **Delete bucket** confirmation if the console presents it.
+4. Wait for the console to empty the bucket and delete it.
+5. If the operation stops or fails, review the remaining objects and retry against that list.
 6. Verify that the bucket is gone.
 
 The console empties buckets in batches. This work depends on the browser tab staying open.
 
 ### If emptying is interrupted
 
-**Stop emptying** stops further work between batches. Objects already deleted stay deleted.
+**Stop emptying** lets the running batch finish and stops before another batch starts. Wait for the stop result and check the remaining object count. Objects deleted by completed batches stay deleted.
 
 After a stopped operation, connection loss, or a partial failure, reopen the bucket and refresh its contents. Retry against the objects that remain. Do not assume an interrupted request left every object unchanged.
 

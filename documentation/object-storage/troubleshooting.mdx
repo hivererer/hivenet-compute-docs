@@ -19,6 +19,14 @@ Read and select the acknowledgment checkbox before selecting **Activate Object S
 
 If you previously activated storage and left the credentials screen, activation remains in place. Open **My keys** and follow [lost-secret recovery](/documentation/object-storage/access-keys#replace-a-lost-secret).
 
+## Buckets are visible but actions are disabled
+
+You need an active key of your own to use bucket and object actions in the console. Joining an organization does not create one for you.
+
+If **My keys** is empty, select **New key**, save both credential values, and confirm that you have saved them. Creating the key enables bucket actions and options menus.
+
+See [Access keys](/documentation/object-storage/access-keys).
+
 ## You cannot create or revoke a key
 
 - **Two keys already exist:** Revoke an unused key to free a slot. Update its clients first.
@@ -76,9 +84,11 @@ Do not assume bucket names are available because your organization has not used 
 Check the file's name and size before retrying.
 
 - **Invalid name:** Follow the [object naming rules](/documentation/object-storage/objects#choose-object-names).
-- **File too large:** The per-object limit is 5 TB. A raw single-request upload has a 5 GB limit.
+- **File too large:** The console currently uses single-request uploads, which have a 5 GB limit. For larger files, use a client with multipart support, up to the 5 TB per-object limit. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers).
 - **Only some files uploaded:** Use **Retry failed files** and check the resulting object list.
-- **Connection or browser interruption:** Reopen the bucket to see what was stored, then retry the missing files.
+- **You cannot add more files:** Resolve failed uploads by retrying them or closing the dialog before adding more.
+- **Page reloaded:** In-progress uploads stop, while completed files remain stored. Check the object list and retry the missing files.
+- **Connection interruption:** Reopen the bucket to see what was stored, then retry the missing files.
 - **An older file changed:** Uploading to the same key replaces the object.
 
 If a browser request is blocked by CORS, capture the failed request's time, method, and status for support. Do not change bucket policies or expose credentials to work around it.
@@ -103,7 +113,7 @@ Do not include the complete share URL in a public issue or support screenshot.
 
 `BucketNotEmpty` means objects remain.
 
-Keep the console tab open during emptying. After a partial failure or **Stop emptying**, refresh the object list and retry the remaining objects before deleting the bucket.
+Keep the console tab open during emptying. **Stop emptying** lets the running batch finish and prevents the next batch from starting. Wait for the result, check the remaining object count, and retry against the objects that remain.
 
 A lost connection can leave the outcome uncertain. Refresh first; do not assume nothing was deleted.
 
@@ -111,7 +121,9 @@ See [Empty or delete a bucket](/documentation/object-storage/buckets#empty-or-de
 
 ## Usage or cost looks unexpected
 
-Check the billing period, your organization's rate, and the €50 monthly minimum. Distinguish the usage-based cost so far from the end-of-month estimate.
+Check the billing period, your organization's rate, and the €50 monthly minimum. Distinguish the actual cost so far from the end-of-month estimate.
+
+**Total storage** measures the current amount stored. GiB-hours measure accumulated usage over time; they are not a current storage size.
 
 Transfer data is aggregated hourly. It is not a real-time activity log.
 

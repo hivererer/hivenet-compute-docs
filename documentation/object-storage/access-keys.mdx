@@ -7,6 +7,8 @@ icon: "key"
 
 An access key ID and secret access key work together to authenticate an external application, SDK, or command-line tool. Manage your keys in **Object Storage > My keys**.
 
+You also need an active key of your own to use bucket and object actions in the console. Without one, you can see the bucket list, but its actions and options menus are disabled. Select **New key** when you see **Create your first key to access the buckets**.
+
 You can have up to two keys in an organization. Keys have no names, and the secret cannot be retrieved after its creation dialog closes.
 
 ## Create a key
@@ -21,7 +23,7 @@ Selecting **New key** creates the key. Closing or leaving the dialog does not ca
 The newest key becomes **Primary**. An existing key becomes **Secondary** and keeps working. These labels do not change the credentials stored in your applications.
 
 <Note>
-  Joining an organization creates no key automatically. Activation creates the first key for the user who activates storage; other members create their own keys when needed.
+  Joining an organization creates no key automatically. Activation creates the first key for the user who activates storage. Other members create their own keys before using bucket or object actions.
 </Note>
 
 ## View an existing key

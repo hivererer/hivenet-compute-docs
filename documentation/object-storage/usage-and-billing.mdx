@@ -25,15 +25,22 @@ There is no minimum storage duration for an individual upload. The monthly invoi
 
 Deleting objects ends their contribution to future stored usage. It does not remove charges for the time they were stored.
 
+## How monthly invoicing works
+
+After each month ends, Hivenet reviews your organization's metered storage usage and agreed rate, applies the €50 monthly minimum, and issues a formal invoice. Payment terms follow your organization's contract.
+
+The console and invoice use your organization's configured rate and metered usage. Changes to your rate do not alter charges for a previous billing period.
+
 ## Read the cost cards
 
 Open **Object Storage** to review the current billing period.
 
 | Card | How to read it |
 | --- | --- |
-| **Cost this month** | The usage-based cost accumulated so far in the displayed period, using your organization's rate. |
+| **Total storage** | The current amount of data stored across your organization. This measures stored size, not accumulated usage over time. |
+| **Cost this month** | The actual storage cost accumulated so far in the displayed period, using your organization's configured rate. |
 | **Estimated cost this month** | A projection to the end of the month. It can change when you upload or delete data. |
-| **Estimated egress savings** | An estimate of outbound-transfer charges under the stated AWS comparison rate. It is not a credit or payment. |
+| **Estimated egress savings** | Your organization's outbound traffic multiplied by the AWS comparison rate named in the tooltip, displayed as “up to €X saved.” This is an estimate, not a credit or payment. |
 
 The final invoice can differ from the current usage-based amount because more usage may accrue and the monthly minimum applies.
 
@@ -41,7 +48,7 @@ Transfer data is aggregated hourly, so the egress comparison is not a real-time 
 
 ## Storage size and usage
 
-An object's size is shown in its bucket's object list.
+**Total storage** shows the current size across your organization. An individual object's size is shown in its bucket's object list.
 
 Do not treat cumulative GiB-hours as a current byte count or convert them to a monthly charge using an assumed rate formula. Billing uses your organization's configured rate and the billing period.
 
