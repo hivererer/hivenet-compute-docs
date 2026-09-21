@@ -1,0 +1,92 @@
+---
+title: "Manage Hivenet Object Storage access keys"
+sidebarTitle: "Access keys"
+description: "Create, save, rotate, and revoke the credential pairs used by S3-compatible clients."
+icon: "key"
+---
+
+An access key ID and secret access key work together to authenticate an external application, SDK, or command-line tool. Manage your keys in **Object Storage > My keys**.
+
+You also need an active key of your own to use bucket and object actions in the console. Without one, you can see the bucket list, but its actions and options menus are disabled. Select **New key** when you see **Create your first key to access the buckets**.
+
+You can have up to two keys in an organization. Keys have no names, and the secret cannot be retrieved after its creation dialog closes.
+
+## Create a key
+
+1. Confirm the active organization and open **Object Storage**.
+2. In **My keys**, select **New key**.
+3. Save the access key ID and secret access key together. Use **Download credentials** or copy them to secure storage.
+4. Select **I've saved my credentials** when both values are saved.
+
+Selecting **New key** creates the key. Closing or leaving the dialog does not cancel its creation.
+
+The newest key becomes **Primary**. An existing key becomes **Secondary** and keeps working. These labels do not change the credentials stored in your applications.
+
+<Note>
+  Joining an organization creates no key automatically. Activation creates the first key for the user who activates storage. Other members create their own keys before using bucket or object actions.
+</Note>
+
+## View an existing key
+
+Select **View** beside a key to see its ID, creation date, endpoint, and setup snippets.
+
+The secret is not available in this view. For client setup instructions, use [Connection settings](/documentation/object-storage/connection-settings).
+
+## Rotate a key
+
+Rotation lets you move applications to a new credential pair before removing the old one.
+
+<Steps>
+  <Step title="Check for an available key slot">
+    If you have one key, continue to the next step to create its replacement.
+
+    If you already have two, identify a key your applications no longer need and revoke it to free a slot. If both are in use, move their clients onto the key you will keep first.
+  </Step>
+  <Step title="Create and save the replacement">
+    Select **New key** and save both credential values. The replacement becomes your primary key.
+  </Step>
+  <Step title="Update and test each client">
+    Replace the credential pair in every affected application, script, or transfer tool. Test a request using the replacement.
+  </Step>
+  <Step title="Revoke the old key">
+    Once clients use the replacement, revoke the old key. Confirm that requests using the old credential pair are rejected.
+  </Step>
+</Steps>
+
+## Revoke a key
+
+1. Open the key's options menu and select **Revoke**.
+2. Review and select the acknowledgment checkboxes.
+3. Select **Revoke key**.
+
+Revocation permanently deletes the credential. It cannot be paused or reversed. Applications that still use it need a replacement pair.
+
+The console prevents you from revoking your only key. Create a replacement first. If you revoke the primary key while two keys exist, the remaining key becomes primary.
+
+<Warning>
+  Do not assume a revocation has taken effect just because the row disappears. Verify that the old key can no longer authenticate. Contact support if it still works.
+</Warning>
+
+## Replace a lost secret
+
+If you have one key, create a second, save the new pair, update your applications, and then revoke the key whose secret was lost.
+
+If both slots are occupied, revoke an unused key to free a slot. If neither secret is available, revoke one of the two entries, create and save a replacement, then update your applications and remove the other lost credential.
+
+There is no secret-recovery action.
+
+## Keys and organization membership
+
+Buckets and objects are shared across the organization. Your key provides access within that organization; **My keys** only lists keys belonging to you, even if you are an owner or administrator.
+
+Before leaving an organization or removing an account, replace credentials used by shared scripts and pipelines. Coordinate this with the people who operate them, and verify that the departing account's access has been removed.
+
+A different organization requires its own keys. Changing organizations does not move the credential pair.
+
+## Store credentials safely
+
+Keep secrets out of source code, screenshots, support messages, and shared documents. Use a secrets manager, a protected local profile, or environment variables appropriate to your application.
+
+Treat the downloaded credentials file as a secret. Do not use another product's API key as an Object Storage credential.
+
+See [Troubleshooting](/documentation/object-storage/troubleshooting) if authentication fails.

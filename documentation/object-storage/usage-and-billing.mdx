@@ -1,0 +1,66 @@
+---
+title: "Understand Hivenet Object Storage usage and billing"
+sidebarTitle: "Usage and billing"
+description: "Understand storage metering, organization rates, monthly invoices, and the difference between costs and estimates."
+icon: "receipt"
+---
+
+Hivenet Object Storage is billed after use through a monthly invoice. Storage charges are separate from your Compute credit balance.
+
+## Your organization's price
+
+The list price is **€9.99 per TB per month**. Your organization may have an agreed rate or discount.
+
+A **€50 monthly minimum** applies. Use your organization's agreement and invoice to confirm the applicable charges.
+
+Egress and API operations are included in the storage price. You do not buy Compute credits to pay for Object Storage.
+
+## How storage is metered
+
+Charges depend on both the amount stored and how long it is stored. Changes in stored data affect metered usage over time.
+
+The usage API records **GiB-hours**. For example, storing 1 GiB for one hour contributes 1 GiB-hour. This is a measure of storage over time, not the current size of a bucket.
+
+There is no minimum storage duration for an individual upload. The monthly invoice minimum still applies.
+
+Deleting objects ends their contribution to future stored usage. It does not remove charges for the time they were stored.
+
+## How monthly invoicing works
+
+After each month ends, Hivenet reviews your organization's metered storage usage and agreed rate, applies the €50 monthly minimum, and issues a formal invoice. Payment terms follow your organization's contract.
+
+The console and invoice use your organization's configured rate and metered usage. Changes to your rate do not alter charges for a previous billing period.
+
+## Read the cost cards
+
+Open **Object Storage** to review the current billing period.
+
+| Card | How to read it |
+| --- | --- |
+| **Total storage** | The current amount of data stored across your organization. This measures stored size, not accumulated usage over time. |
+| **Cost this month** | The actual storage cost accumulated so far in the displayed period, using your organization's configured rate. |
+| **Estimated cost this month** | A projection to the end of the month. It can change when you upload or delete data. |
+| **Estimated egress savings** | Your organization's outbound traffic multiplied by the AWS comparison rate named in the tooltip, displayed as “up to €X saved.” This is an estimate, not a credit or payment. |
+
+The final invoice can differ from the current usage-based amount because more usage may accrue and the monthly minimum applies.
+
+Transfer data is aggregated hourly, so the egress comparison is not a real-time meter. It is shown for the organization, not for individual buckets.
+
+## Storage size and usage
+
+**Total storage** shows the current size across your organization. An individual object's size is shown in its bucket's object list.
+
+Do not treat cumulative GiB-hours as a current byte count or convert them to a monthly charge using an assumed rate formula. Billing uses your organization's configured rate and the billing period.
+
+## Review an invoice question
+
+Compare:
+
+1. The organization and billing period.
+2. The agreed storage rate or discount.
+3. Changes in stored data during that period.
+4. The monthly minimum.
+
+If you need help, ask your Hivenet contact or use **Chat with us** in the console. Include the organization, billing period, and invoice reference. Do not send credentials.
+
+See [Manage objects](/documentation/object-storage/objects) to review or remove stored data.

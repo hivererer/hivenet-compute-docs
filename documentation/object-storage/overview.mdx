@@ -1,0 +1,58 @@
+---
+title: "Hivenet Object Storage overview"
+sidebarTitle: "Overview"
+description: "Learn how Hivenet Object Storage organizes data, controls organization access, and connects to S3-compatible tools."
+icon: "database"
+---
+
+Hivenet Object Storage stores files as objects in buckets. You can manage them in the console or connect an application, backup tool, or script through compatible Amazon S3 APIs.
+
+<Info>
+  Access is available to business organizations enabled by Hivenet. If **Object Storage** is missing from your console, check the active organization and ask your Hivenet contact to confirm access.
+</Info>
+
+## Buckets, objects, and keys
+
+- A **bucket** contains objects and belongs to your organization.
+- An **object** contains file data and has a name, called its **object key**. A key such as `backups/report.csv` includes a prefix that helps organize objects.
+- An **access key** is a credential pair: an access key ID and a secret access key. Applications use this pair to sign requests.
+
+An object key names data. An access key authenticates a client.
+
+## Who can access your data
+
+Buckets and objects are shared across your organization. All members can see the bucket list, but you need an active key of your own to use bucket and object actions in the console. Creating a bucket does not make it private to its creator.
+
+Access keys belong to individual users within the organization. **My keys** shows your own keys, including when you are an organization owner or administrator. You can have up to two keys.
+
+Objects use server-side encryption. The console shows **AES-256** as always on. The available storage region is displayed as **EU**.
+
+Storage currently operates in one EU region, with no failover to another region if it becomes unavailable.
+
+## Choose how to work
+
+| Task | Where to start |
+| --- | --- |
+| Activate storage and upload your first file | [Get started](/documentation/object-storage/get-started) |
+| Create or rotate application credentials | [Access keys](/documentation/object-storage/access-keys) |
+| Create, inspect, or delete a bucket | [Buckets](/documentation/object-storage/buckets) |
+| Upload, download, or delete objects | [Objects](/documentation/object-storage/objects) |
+| Give someone temporary download access | [Share objects](/documentation/object-storage/share-objects) |
+| Connect a script or transfer many files | [Connection settings](/documentation/object-storage/connection-settings) |
+| Understand usage and invoices | [Usage and billing](/documentation/object-storage/usage-and-billing) |
+
+Use a desktop browser for console tasks. The console supports multiple-file uploads and deletion, with downloads handled one object at a time. Use the AWS CLI or rclone to download many objects.
+
+## Connect through compatible S3 APIs
+
+Hivenet Object Storage implements the operations listed in [S3 compatibility](/documentation/object-storage/s3-compatibility). Compatibility applies to those operations; it does not imply support for every Amazon S3 feature or option.
+
+Clients must use the Hivenet endpoint, the signing region `Europe`, and explicit path-style addressing. See [Connection settings](/documentation/object-storage/connection-settings) before using an AWS example.
+
+## Billing
+
+Storage is invoiced monthly after use, separately from your Compute credit balance. Rates are set for your organization, and a monthly minimum applies. Read [Usage and billing](/documentation/object-storage/usage-and-billing) before activating storage.
+
+<Warning>
+  Uploading to an existing object key replaces the stored object. Treat replacement and deletion as permanent, and keep a separate copy of data you need to recover.
+</Warning>
