@@ -55,7 +55,9 @@ If you still see "Bad Gateway":
 If HTTPS still doesn’t work or you prefer to access it directly:
 
 ```text
-ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
+ssh -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Then open [http://localhost:8888](http://localhost:8888) on your Windows or Mac browser

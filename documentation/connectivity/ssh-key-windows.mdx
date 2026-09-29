@@ -43,8 +43,8 @@ C:\Users\<yourname>\.ssh\
 
 You can open this folder in File Explorer or use PowerShell:
 
-```
-cd $env:USERPROFILE\.ssh explorer .
+```text
+explorer "$env:USERPROFILE\.ssh"
 ```
 
 ## Step 3 – Add your public key to Hivenet
@@ -67,13 +67,15 @@ cd $env:USERPROFILE\.ssh explorer .
 
 In the same `.ssh` folder, create a new file named `config` (no file extension). Paste this in (make sure your SSH key name is similar to the name given):
 
+```text
+Host hivenet
+    HostName YOUR_SSH_HOST
+    User YOUR_SSH_USER
+    IdentityFile ~/.ssh/id_ed25519
+    Port 22
 ```
-Host hivenet     
-HostName <your-instance-id>.ssh.hivecompute.ai     
-User ubuntu     
-IdentityFile ~/.ssh/id_ed25519   
-ProxyCommand ssh bastion@ssh.hivecompute.ai %h
-```
+
+Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 This lets you connect with:
 

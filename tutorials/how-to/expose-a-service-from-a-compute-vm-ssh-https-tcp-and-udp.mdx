@@ -59,8 +59,10 @@ If your web UI is only meant for you, don’t make it public. Forward the port o
 Example (local forwarding):
 
 ```text
-ssh -L 7865:localhost:7865 ubuntu@<instance-id>.ssh.hivecompute.ai
+ssh -L 7865:localhost:7865 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Then open `http://localhost:7865` in your browser.\\
 

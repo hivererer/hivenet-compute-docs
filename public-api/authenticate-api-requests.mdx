@@ -49,6 +49,8 @@ curl --request GET \
 
 ## Understand access
 
+Service access tokens stop working when the user they belong to is deleted.
+
 An API key is scoped to the account it belongs to. It can only see and act on that account's instances. Regions and presets are shared catalogue data.
 
 A successful [`GET /instances`](/public-api/endpoints/list-instances) response can contain an empty `data` array if the account has no matching instances.

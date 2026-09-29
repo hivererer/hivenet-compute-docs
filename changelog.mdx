@@ -4,6 +4,40 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="September 2026" description="v1.36">
+  > ## More reliable instance starts, SSH connections, and billing.
+
+  #### Instance reliability and storage
+
+  - Instances now reach **Running** only after they respond over SSH. Applications inside the instance may still need time to start.
+  - The console filters instance sizes against host capacity, refreshes availability as instances are created, and hides presets with no available location.
+  - Failed starts have a limited number of automatic retries. Start and stop operations recover more reliably from internal conflicts.
+  - Startup waits for disk preparation to finish. Cleanup fixes prevent healthy instances from being terminated and protect persistent volumes if an instance cleanup fault occurs.
+
+  See [Start and stop instances](/documentation/essentials/start-stop-instances) for recovery steps and the existing retention limits. Keep backups of important data before terminating an instance.
+
+  #### SSH and diagnostics
+
+  - Instances present signed SSH host certificates for server identity verification and can use a configured login username instead of an image's default username.
+  - SSH routing recovers automatically when it loses track of an instance.
+  - Support can use VM serial-console logs to investigate boot and crash problems.
+
+  Use the username and SSH command in the instance's connection details. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+
+  #### Billing and credits
+
+  - Auto top-up is disabled when a user is moved to another organization without choosing to join it.
+  - Running Inference API deployments with an effective cost of €0 under a fully discounted contract are no longer stopped solely because the organization has zero credits.
+  - Organization discounts now apply to LLM model presets.
+  - Internal ledger entries no longer appear in transaction history.
+
+  See [Billing information](/documentation/account-billing/billing-info) and [Inference API billing](/documentation/inference-api/billing).
+
+  #### VM performance
+
+  GPU hosts use NVIDIA driver 610 with open kernel modules. Updated GPU VM images avoid rebuilding the driver at startup, reducing boot preparation. CPU-only VMs use hugepages to improve memory performance.
+</Update>
+
 <Update label="August 2026" description="v1.35">
   > ## More predictable billing, more resilient Endpoints deployments, and clearer instance recovery.
 

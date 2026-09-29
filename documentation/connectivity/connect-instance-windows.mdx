@@ -6,7 +6,7 @@ sidebarTitle: "Connect to an instance from Windows"
 
 ## What you’ll need
 
-- A Compute instance created via the Hivenet dashboard
+- A Compute instance in **Running**, which means it has responded over SSH
 - Your SSH private key
 - Windows Terminal or another SSH-capable terminal (like PowerShell)
 - A configured `config` file (optional but helpful)
@@ -15,7 +15,7 @@ sidebarTitle: "Connect to an instance from Windows"
 
 Open your instance in Compute and go to **Connectivity options → SSH**. Compute exposes a stable SSH endpoint for the instance on port 22.
 
-The console shows the current hostname and connection command. Use those values rather than building the hostname yourself.
+The console shows the current hostname, username, and connection command. The login can use a configured username instead of the image’s default user. Use those values rather than building the hostname yourself.
 
 ![Connect Instance Windows 1 Pn](/images/connect-instance-windows-1.png)
 
@@ -27,7 +27,7 @@ The console shows the current hostname and connection command. Use those values 
 2. Click **Copy to terminal to connect**.
 3. Paste the command into your terminal and hit Enter.
    - The command already includes your instance ID and user.
-   - It only works if you’ve added the “Add this to your SSH/config file” snippet shown right below the command.
+   - If the command uses an SSH alias, add the console’s matching SSH config snippet first.
 
 ![Connect Instance Windows Gif Gi](/images/connect-instance-windows-gif.gif)
 
@@ -36,30 +36,22 @@ The console shows the current hostname and connection command. Use those values 
 If you prefer to type the command manually, use the hostname and username shown in the instance's SSH connection details:
 
 ```text
-ssh ubuntu@<your-ssh-hostname>
+ssh -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
 ```
 
 SSH uses port 22 by default, so you do not need to specify the port unless the console tells you otherwise.
 
-\*\*If you’ve created a Host entry in \*\*`~/.ssh/config`
+If you’ve created a Host entry named `hivenet` in `~/.ssh/config`:
 
 ```text
 ssh hivenet
 ```
 
-## Step 3 – Use a ProxyCommand if needed
+## Step 3 – Verify the server identity
 
-Some connections require a jump host (a "bastion") for access. If you're getting timeouts, try this:
+Compute instances present signed SSH host certificates. Use the SSH configuration supplied by the console, including any additional connection settings it requires. Only add a proxy or jump host when those instructions specify one.
 
-```text
-ssh -i ~/.ssh/id_ed25519 -o "ProxyCommand ssh bastion@ssh.hivecompute.ai %h" ubuntu@<your-instance-id>.ssh.hivecompute.ai
-```
-
-<Note>
-  You may need to replace `id_ed25519` if your key has a different name.
-</Note>
-
-This creates a secure tunnel from your machine to the instance through Hivenet’s bastion.
+If the client asks you to accept a host identity or reports that it has changed, verify it before continuing. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 ## Step 4 – Confirm your connection
 

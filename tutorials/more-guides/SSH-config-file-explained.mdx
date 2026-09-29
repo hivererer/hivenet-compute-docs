@@ -4,59 +4,61 @@ description: "Understand what lives inside your .ssh folder, how known_hosts and
 sidebarTitle: "The SSH config file explained"
 ---
 
-## ****`What's inside .ssh?`****
+## What is in your SSH folder?
 
-After generating a key, your `.ssh` folder (usually in `C:\Users\<yourname>\.ssh\`) might contain:
+Your SSH folder is usually `~/.ssh` on macOS and Linux, or `C:\Users\<yourname>\.ssh` on Windows. It can contain:
 
-- `id_ed25519` or `id_rsa` – your **private key** (keep this safe!)
-- `id_ed25519.pub` or `id_rsa.pub` – your **public key** (used to connect)
-- `known_hosts` – tracks servers you’ve connected to before
-- `config` – optional but handy file to simplify commands
+- `id_ed25519` or `id_rsa`: your private key, which proves your identity.
+- A matching `.pub` file: the public key you add to Compute.
+- `known_hosts`: saved server identities and, when configured, trusted certificate authorities.
+- `config`: optional connection settings for your instances.
 
-## What does `known_hosts`do?
+## Use the instance's connection details
 
-Every time you connect to a new server, its signature is added here. This helps verify the identity of the server next time.
+Wait for **Running**, then open the instance's SSH connection details in the Compute console. Running means the instance has responded over SSH; it does not guarantee that an application inside it has finished starting.
 
-If you ever see:
+Copy the current hostname, username, and connection command. The instance has a stable SSH endpoint on port 22. Its login can use a configured username, so do not assume it is `ubuntu`.
 
-```
-WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
-```
+A basic config entry looks like this:
 
-…it means the server key doesn’t match what’s in `known_hosts`. This can happen if:
-
-- The instance was terminated and replaced
-- You're connecting to a different host than expected
-
-Fix it by deleting the old entry:
-
-```
-ssh-keygen -R <hostname>
+```text
+Host hivenet
+    HostName YOUR_SSH_HOST
+    User YOUR_SSH_USER
+    IdentityFile ~/.ssh/id_ed25519
+    Port 22
 ```
 
-## **What’s in a config file?**
+Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the console values, and set `IdentityFile` to your matching private key. Include any additional settings supplied in the console's SSH configuration. Only add a proxy or jump-host setting if those instructions require one.
 
-Create a plain text file named `config` inside `.ssh` and add:
+Connect with:
 
-```
-Host hivenet     HostName <your-instance-id>.ssh.hivecompute.ai     User ubuntu     IdentityFile ~/.ssh/id_ed25519     ProxyCommand ssh bastion@ssh.hivecompute.ai %h
-```
-
-Now you can connect with:
-
-```
+```bash
 ssh hivenet
 ```
 
-instead of typing everything out every time.
+Use a different Host alias for each instance.
 
-<Tip>
-  _Create a new Host block for each instance if you use multiple._
-</Tip>
+## Verify the server identity
 
-## **Public key vs. private key**
+Compute instances present signed SSH host certificates. A host certificate identifies the server; your own SSH key identifies you. These are separate checks.
 
-- The `.pub` file (public) is safe to share—it’s how servers recognize you
-- The private key must stay private—it proves who you are
+Certificate verification depends on your SSH client trusting the signing certificate authority. Use the SSH configuration supplied by Compute. If you need certificate-authority details that are not shown there, ask Support for the trusted configuration.
 
-Never send someone your private key, and don’t copy it into web forms.
+If your client asks you to accept a host identity, verify it using trusted information from Hivenet before accepting. Do not disable host checking to get past a warning.
+
+### A saved host identity has changed
+
+If you see `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`, stop and check that you are connecting to the hostname shown for the intended instance. A replaced instance can have a different identity, but the warning can also mean you reached an unexpected server.
+
+After verifying the replacement identity with Hivenet, remove only the stale entry if needed:
+
+```bash
+ssh-keygen -R YOUR_SSH_HOST
+```
+
+Reconnect and verify the new identity. Do not clear the entire `known_hosts` file.
+
+## Keep your private key private
+
+Upload only the `.pub` file contents to Compute. Never send your private key to Support or paste it into a web form.

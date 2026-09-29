@@ -58,16 +58,22 @@ Review the configuration details, then click **Start instance** to confirm.
 
 ![Start Stop Instances 4 Pn](/images/start-stop-instances-4.png)
 
-The instance will return to a **Running** state, and billing will resume.
+The instance returns to **Running** after it responds over SSH, and billing resumes. Disk preparation finishes before startup proceeds. An application inside the instance may still need time to become ready.
 
 ![Start Stop Instances 5 Pn](/images/start-stop-instances-5.png)
 
 ## If resources aren't available
 
-If the network can’t allocate the same configuration immediately, you’ll see a message asking you to try again later. This usually means there’s no matching capacity in that region right now. Your data and settings remain safe while you wait.
+If the network can’t allocate the same configuration immediately, you’ll see a message asking you to try again later. This usually means there’s no matching capacity in that region right now. Your data and settings are kept within the stopped-instance retention window described above. Back up important files; waiting for capacity does not extend that window.
 
 ## If an instance fails to start
 
 Compute retries failed starts a limited number of times instead of retrying indefinitely. If the instance still cannot start, it moves to a clear error state and you can retry the action manually from the instance controls.
 
-If repeated retries fail, note the instance ID and the error shown in the console before contacting Support.
+Start and stop operations also retry after internal conflicts. Let the current action settle before trying again.
+
+If repeated retries fail, note the instance ID, error, and approximate failure time before contacting Support. For virtual machines, Support can also review serial-console logs to investigate boot and crash problems.
+
+## Data protection during cleanup
+
+Persistent volumes are protected if an instance cleanup fault occurs. This safeguard does not replace backups or change the termination and stopped-instance retention guidance above.

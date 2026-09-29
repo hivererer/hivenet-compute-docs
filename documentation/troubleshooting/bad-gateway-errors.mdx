@@ -27,6 +27,8 @@ These are public links to help you access web interfaces like:
 
 ## Why you might see "Bad Gateway"
 
+**Running** means the instance has responded over SSH. Your web application may still be starting or may not be listening on the expected port.
+
 Seeing a Bad Gateway error usually means one of these:
 
 - **Your app isn’t running yet**
@@ -60,7 +62,9 @@ Here’s how to troubleshoot:
 If you can’t get the public link working, use SSH port forwarding:
 
 ```text
-ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
+ssh -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Then open [http://localhost:8888](http://localhost:8888) in your browser. This is usually more reliable.

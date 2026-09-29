@@ -54,7 +54,7 @@ Disable a key when you want to stop requests that use it without revoking the ke
 The key remains in the table with a **Disabled** status and can be re-enabled later.
 
 <Warning>
-  Disabling a key does not stop any endpoint. Running endpoints continue to incur charges.
+  Disabling a key does not stop any endpoint. Running endpoints remain provisioned and are billed at their effective rate after any organization discount.
 </Warning>
 
 ## Re-enable a key
@@ -80,7 +80,7 @@ After revocation:
 
 - Requests using that key fail permanently.
 - The action cannot be undone.
-- Running endpoints stay online and continue to incur charges.
+- Running endpoints stay online and are billed at their effective rate after any organization discount.
 - You need a new key for any application that still requires access.
 
 ## Store and rotate keys safely

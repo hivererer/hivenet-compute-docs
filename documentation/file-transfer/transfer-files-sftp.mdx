@@ -4,119 +4,72 @@ description: "Move files to and from a Compute with Hivenet instance over SFTP u
 sidebarTitle: "Transfer files with SFTP"
 ---
 
-## Pick your tool
+Use SFTP to transfer files over the instance's SSH connection.
 
-| Method                                  | Use it when               | Watch for                                                       |
-| :-------------------------------------- | :------------------------ | :-------------------------------------------------------------- |
-| **CLI (sftp / scp)**                    | You just want it to work. | If `ssh` works, the CLI works—no extra setup.                   |
-| **WinSCP (Windows)**                    | You need drag-and-drop.   | Must use a **.ppk** key _and_ a ProxyCommand.                   |
-| **FileZilla (Windows / macOS / Linux)** | Same, but cross-platform. | Same hurdles as WinSCP; can freeze after a few failed attempts. |
+## What you’ll need
 
-<Tip>
-  All methods use the same SSH key you already uploaded for Compute_._
-</Tip>
+- An instance in **Running**.
+- The SSH hostname and username from its connection details in Compute.
+- The private key matching the public key supplied for the instance.
+- An SFTP client, such as the command-line `sftp` tool, WinSCP, or FileZilla.
 
-<Note>
-  **Shortcut:** Stuck in a GUI loop? Drop back to the CLI. It’s faster than hunting for a hidden checkbox.
-</Note>
+The SSH endpoint uses port 22. Use the console's username, which may differ from the image's default user. Follow any additional SSH configuration supplied there.
 
-## Command‑line quick‑start
+## Transfer files from a terminal
 
-1. Open Windows Terminal or your preferred shell.
-2. Run:
+Replace the placeholders below with the console values and your private-key path:
 
-   ```
-   sftp -i ~/.ssh/id_ed25519 \
-        -o "ProxyCommand=ssh bastion@ssh.hivecompute.ai %h" \
-        ubuntu@<instance-id>.ssh.hivecompute.ai
-   ```
-3. At the `sftp>` prompt:
-
-| Command            | What it does                                                        | Example (Windows)              | Example (macOS/Linux) |
-| :----------------- | :------------------------------------------------------------------ | :----------------------------- | :-------------------- |
-| `put bigfile.zip`  | Upload a file                                                       | ―                              | ―                     |
-| `get results.csv`  | Download a file                                                     | ―                              | ―                     |
-| `lcd <local-path>` | **_Change local working folder_**Use quotes if the path has spaces. | `lcd "C:\Users\You\Downloads"` | `lcd ~/Downloads`     |
-| `lpwd`             | Show current local folder                                           | ―                              | ―                     |
-| `ls` / `pwd`       | List / show path on the instance                                    | ―                              | ―                     |
-| `exit`             | Quit                                                                | ―                              | ―                     |
-
-<Tip>
-  If `lcd` fails, check that the path exists and is spelled exactly—Windows paths need either double backslashes (`C:\\path\\to\\dir`) or quotes around spaces.
-</Tip>
-
-## WinSCP walkthrough (Windows)
-
-1. **Download & install** WinSCP.
-2. Click **New Site** → **SFTP**.
-3. In **Host name** enter `<instance-id>.ssh.hivecompute.ai`.
-4. **Port:** 22 • **User name:** `ubuntu`.
-5. Click **Advanced** → **Tunnel** → enable **ProxyCommand** and paste:
-
-   ```
-   ssh bastion@ssh.hivecompute.ai %h
-   ```
-6. Back in the main window, click **Authentication** → browse to your `.ppk` (or convert with PuTTYgen).
-7. **Save** the session → **Login**.
-
-Drag‑and‑drop files between panels as usual.
-
-### **WinSCP not connecting?**
-
-- **Permission denied** → Convert your key to **.ppk** with PuTTYgen and point WinSCP to it.
-- **Connection closed** → Double-check the ProxyCommand line: `ssh bastion@ssh.hivecompute.ai %h`.
-- Still no luck? Open **Session → Log Window** and search for “proxy command rejected.”
-
-## FileZilla setup (cross‑platform)
-
-1. Install FileZilla.
-2. File → Site Manager → **New Site**.
-3. Protocol **SFTP – SSH File Transfer Protocol**.
-4. **Host:** `<instance-id>.ssh.hivecompute.ai` • **Port:** 22.
-5. **Logon type:** Key file → point to your private key (ED25519/RSA). Convert to `.ppk` if prompted.
-6. Advanced → **Generic Proxy** → Command:
-
-   ```
-   ssh bastion@ssh.hivecompute.ai %h
-   ```
-7. Connect → accept the host fingerprint.
-
-### **FileZilla stalls or won’t connect?**
-
-- Ensure “Key file” is a **.ppk** (or run `Pageant` on Windows).
-- Confirm the Proxy command is **exactly** `ssh bastion@ssh.hivecompute.ai %h`.
-- After several failures FileZilla can lock up—quit and relaunch before retrying.
-
-### FileZilla setup (cross‑platform)
-
-1. Install FileZilla.
-2. File → Site Manager → **New Site**.
-3. Protocol **SFTP – SSH File Transfer Protocol**.
-4. **Host:** `<instance-id>.ssh.hivecompute.ai` • **Port:** 22.
-5. **Logon type:** Key file → point to your private key (ED25519/RSA). Convert to `.ppk` if prompted.
-6. Advanced → **Generic Proxy** → Command:
-
-   ```
-   ssh bastion@ssh.hivecompute.ai %h
-   ```
-7. Connect → accept the host fingerprint.
-
-### **FileZilla stalls or won’t connect?**
-
-- Ensure “Key file” is a **.ppk** (or run `Pageant` on Windows).
-- Confirm the Proxy command is **exactly** `ssh bastion@ssh.hivecompute.ai %h`.
-- After several failures FileZilla can lock up—quit and relaunch before retrying.
-
-## Large datasets? Use `rsync`
-
-```
-rsync -avz -e "ssh -i ~/.ssh/id_ed25519 \      -o ProxyCommand='ssh bastion@ssh.hivecompute.ai %h'" \      ./localfolder/ \      ubuntu@<instance-id>.ssh.hivecompute.ai:/data
+```text
+sftp -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
 ```
 
-`rsync` resumes partial transfers—great for multi‑GB files.
+If you already created an SSH config entry named `hivenet`, you can use `sftp hivenet` instead.
 
-## Common errors & fixes
+At the `sftp>` prompt:
 
-- `Permission denied` → wrong key or key not added to Compute.
-- `Connection closed` → missing ProxyCommand/bastion hop.
-- **GUI can’t find key file** → convert OpenSSH key to `.ppk` with PuTTYgen
+| Command | What it does |
+| :-- | :-- |
+| `put bigfile.zip` | Upload a local file. |
+| `get results.csv` | Download a file from the instance. |
+| `lcd "C:\Users\You\Downloads"` | Change the local folder on Windows. |
+| `lcd ~/Downloads` | Change the local folder on macOS or Linux. |
+| `lpwd` | Show the local folder. |
+| `ls` / `pwd` | List files or show the current folder on the instance. |
+| `exit` | Close the session. |
+
+## Connect with WinSCP or FileZilla
+
+Create a new SFTP connection using:
+
+| Setting | Value |
+| :-- | :-- |
+| Protocol | SFTP |
+| Host | The SSH hostname shown by Compute |
+| Port | 22 |
+| Username | The SSH username shown by Compute |
+| Authentication | Your matching private key |
+
+Use a private-key format supported by your client. If it requests conversion, use its supported key-import process or PuTTYgen. Never upload the private key to Compute.
+
+Only configure a proxy or jump host if the console's connection instructions require one. Verify any host-identity prompt before accepting it; see [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+
+After connecting, use the local and remote file panels to upload or download files.
+
+## Transfer a folder with rsync
+
+If `rsync` is installed on both computers, use it to copy a folder and retain partial transfers for a later retry:
+
+```bash
+rsync -avz --partial -e "ssh -i /path/to/private_key" ./localfolder/ YOUR_SSH_USER@YOUR_SSH_HOST:/path/to/remote-folder/
+```
+
+Use a destination folder your SSH user can write to. Rerun the command after an interruption.
+
+## Troubleshooting
+
+- **Permission denied:** Check the username, private-key path, and matching public key on the instance.
+- **Connection timed out or closed:** Confirm the instance is Running, use the current console connection details, and check outbound port 22 on your network.
+- **Host verification failed:** Verify the host identity before changing saved trust settings.
+- **The client rejects the key file:** Check which key formats it supports and convert locally if needed.
+
+If the problem continues, contact Support with the instance ID and error message. Keep your private key private.

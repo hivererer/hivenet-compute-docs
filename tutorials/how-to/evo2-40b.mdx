@@ -123,9 +123,11 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
 
     You can SSH into your instance to check GPU activity:
 
+    ```text
+    ssh -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
     ```
-    ssh -i ~/.ssh/id_rsa -o "ProxyCommand=ssh bastion@ssh.hivenet.com %h" nvs@<YOUR_INSTANCE_ID>.ssh.hivenet.com
-    ```
+
+    Use the username, hostname, and any additional SSH settings from the instance’s connection details. Select the private key matching your uploaded public key.
 
     Then run:
 
