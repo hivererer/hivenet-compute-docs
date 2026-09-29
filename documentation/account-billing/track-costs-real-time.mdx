@@ -53,7 +53,7 @@ The instance table shows the configuration and active price for each resource. U
 
 ## Understand the current spend rate
 
-The current spend rate is the total hourly price of resources running at that moment. It is a live estimate rather than the billing interval.
+The current spend rate is the total effective hourly price of resources running at that moment, including applicable organization discounts on LLM model presets. A fully discounted endpoint contributes €0 per hour. It is a live estimate rather than the billing interval.
 
 Compute charges eligible usage per second. For example, an instance priced at €0.75 per hour that runs for 30 minutes contributes approximately €0.375 before any other applicable usage.
 
@@ -99,7 +99,7 @@ If organization spending does not match what you expected:
 1. Check every running instance, not only the ones you created.
 2. Review the active price and configuration of each instance.
 3. Check whether Hivenet Inference API workloads are active.
-4. Review transaction history for recent credit purchases or transfers.
+4. Review transaction history for recent credit purchases or transfers. Internal ledger entries are not displayed.
 5. Note the organization name, affected instance IDs, and approximate timeframe.
 6. Contact Support through the console if the discrepancy remains.
 

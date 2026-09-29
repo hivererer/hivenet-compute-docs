@@ -24,7 +24,7 @@ _Last updated: 17 September 2025_
 
 **Compute with Hivenet** — Hivenet’s compute platform for running workloads on GPUs/CPUs.
 
-**Compute account (Hivenet)** — A separate account used only for Compute with Hivenet. Has its own balance and billing, even if you already have a general Hivenet account.
+**Compute account (Hivenet)** — A separate account used only for Compute with Hivenet. Uses an organization balance and billing, separate from a general Hivenet account.
 
 **concurrency (inference)** — How many requests your server can handle at the same time.
 
@@ -44,7 +44,7 @@ _Last updated: 17 September 2025_
 
 **egress** — Data that leaves Hivenet to the internet (downloads, API responses). May be subject to limits or fees depending on the feature.
 
-**endpoint (HTTPS)** — The public URL where your running service (e.g., vLLM) is reachable over TLS.
+**endpoint (HTTPS)** — The public URL where your running service is reachable over TLS.
 
 **encryption at rest / in transit** — Protecting data stored on devices (at rest) and moving across networks (in transit).
 
@@ -62,9 +62,9 @@ _Last updated: 17 September 2025_
 
 ## I
 
-**image (OS / container)** — The base software environment an instance boots with (e.g., Ubuntu, a CUDA image, or a vLLM template).
+**image (OS / container)** — The base software environment an instance boots with (e.g., Ubuntu or a CUDA image).
 
-**inference (LLM)** — Running a trained model to generate outputs. On Compute, you can run a vLLM server.
+**inference (LLM)** — Running a trained model to generate outputs. Hivenet Inference API provides managed model endpoints.
 
 **instance** — A running container or virtual machine on Compute. Billed while running; can be stopped or terminated.
 
@@ -112,7 +112,7 @@ _Last updated: 17 September 2025_
 
 **SSH** — Secure Shell. Use it to access your instance’s terminal.
 
-**stop / start (instances)** — Stop pauses your instance and billing for compute; start brings it back. Data on the instance disk stays unless you terminate.
+**stop / start (instances)** — Stop pauses your instance and billing for compute; start brings it back. Data is kept temporarily while stopped; instances stopped for more than 10 days are automatically terminated.
 
 **storage (instance)** — Local disk on the instance for your OS, packages, and temporary data. Not the same as Store.
 

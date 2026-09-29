@@ -13,8 +13,8 @@ sidebarTitle: "Add SSH key on Linux"
 
 ##  Step 1 – Create your SSH key pair
 
-```
-bashCopyEditssh-keygen -t ed25519
+```text
+ssh-keygen -t ed25519
 ```
 
 - Accept the default path (`/home/<you>/.ssh/id_ed25519`).
@@ -28,8 +28,8 @@ bashCopyEditssh-keygen -t ed25519
 
 Open the folder in your file manager:
 
-```
-bashCopyEditxdg-open ~/.ssh
+```text
+xdg-open ~/.ssh
 ```
 
 —or browse there manually (`Home → .ssh`). You should see:
@@ -41,8 +41,8 @@ bashCopyEditxdg-open ~/.ssh
 
 1. Copy the public key to your clipboard:
 
-   ```
-   bashCopyEditcat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+   ```text
+   cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
    ```
 
    _(If _`xclip`_isn’t installed, just open the file in a text editor and copy.)_ 
@@ -56,14 +56,20 @@ bashCopyEditxdg-open ~/.ssh
 
 Create or edit **~/.ssh/config**:
 
+```text
+Host hivenet
+    HostName YOUR_SSH_HOST
+    User YOUR_SSH_USER
+    IdentityFile ~/.ssh/id_ed25519
+    Port 22
 ```
-perlCopyEditHost hivenet HostName <your-instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 # Remove this line if no bastion host is listed ProxyCommand ssh bastion@ssh.hivecompute.ai %h
-```
+
+Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 Connect with:
 
-```
-bashCopyEditssh hivenet
+```text
+ssh hivenet
 ```
 
 ##  Troubleshooting
@@ -71,5 +77,5 @@ bashCopyEditssh hivenet
 | Message                           | Likely cause & fix                                                                                       |
 | :-------------------------------- | :------------------------------------------------------------------------------------------------------- |
 | **Permission denied (publickey)** | Wrong key or the public key isn’t on the instance. Re-check the key path or re-add the key.              |
-| **Connection timed out**          | Network issue or incorrect `ProxyCommand`. Try `ssh -v hivenet` for details.                             |
+| **Connection timed out** | Check the console’s connection details and outbound port 22. Try `ssh -v hivenet` for details. |
 | **ssh: command not found**        | Install the OpenSSH client package (`install openssh-client`, `sudo dnf install openssh-clients`, etc.). |

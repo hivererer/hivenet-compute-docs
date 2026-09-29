@@ -79,6 +79,8 @@ Auto top-up adds credits when the balance falls below a threshold. Only the Owne
   Transferring organization ownership turns off the existing auto top-up configuration. The new Owner must review the payment details and configure auto top-up again.
 </Warning>
 
+Auto top-up is also disabled if your account is moved to another organization without you choosing to join it. Check the organization shown in the console and its payment details before the Owner enables auto top-up again.
+
 ## Review billing details and transaction history
 
 Owners and Admins can review the organization’s billing details and transaction history.
@@ -88,6 +90,8 @@ Transaction history records changes to the organization balance, including:
 - Credit purchases
 - Credits transferred when someone joins the organization
 - Other recorded credit transfers
+
+Internal ledger entries are excluded from transaction history.
 
 Billing details and payment methods are managed through Stripe. Only the Owner can make changes, but Admins can view the information shown in Compute.
 
@@ -99,7 +103,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 - Terminating an instance permanently deletes it and its local data.
 
 <Note>
-  If your organization has a contracted discount, the instance price reflects the effective hourly rate after that discount. A 100% discount therefore appears as €0 per hour.
+  If your organization has a contracted discount, instance prices and LLM model preset prices reflect the effective hourly rate after that discount. A 100% discount therefore appears as €0 per hour.
 </Note>
 
 <Info>
@@ -108,7 +112,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 
 ## What happens when credits run low
 
-Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference API endpoints stop automatically when the organization reaches zero credit.
+Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference API endpoints with a nonzero effective cost stop automatically when the organization reaches zero credit. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
 
 The Owner can add credits or enable auto top-up to reduce the risk of an interruption.
 

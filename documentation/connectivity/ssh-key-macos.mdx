@@ -16,8 +16,8 @@ sidebarTitle: "Add SSH key on macOS"
 1. Open **Terminal**.
 2. Run:
 
-   ```
-   bashCopyEditssh-keygen -t ed25519
+   ```text
+   ssh-keygen -t ed25519
    ```
 3. Press **Enter** to accept the default location (`/Users/<you>/.ssh/id_ed25519`).
 4. When prompted, enter a passphrase (optional but recommended).
@@ -37,8 +37,8 @@ The command (or your manager) creates two files:
 
 Open the `.ssh` folder in Finder:
 
-```
-bashCopyEditopen ~/.ssh
+```text
+open ~/.ssh
 ```
 
 You’ll see the two files listed above.
@@ -63,14 +63,20 @@ You’ll see the two files listed above.
 
 In **~/.ssh**, create or edit a file named **config** (no extension) and paste:
 
+```text
+Host hivenet
+    HostName YOUR_SSH_HOST
+    User YOUR_SSH_USER
+    IdentityFile ~/.ssh/id_ed25519
+    Port 22
 ```
-perlCopyEditHost hivenet HostName <your-instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 # Remove the next line if your instance shows no bastion host ProxyCommand ssh bastion@ssh.hivecompute.ai %h
-```
+
+Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 Now you can connect with:
 
-```
-bashCopyEditssh hivenet
+```text
+ssh hivenet
 ```
 
 —much quicker than pasting the full string each time.
@@ -80,5 +86,5 @@ bashCopyEditssh hivenet
 | Message                           | Likely cause & fix                                                                                                          |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
 | **Permission denied (publickey)** | The public key isn’t on the instance, or you’re using the wrong private key. Re-add the key or point SSH at the right file. |
-| **Host key verification failed**  | You re-created the VM and the host key changed. Remove the old entry from `~/.ssh/known_hosts` and try again.               |
+| **Host key verification failed** | Verify the server identity with Hivenet before changing `known_hosts`. See the host-verification guide above. |
 | **ssh: command not found**        | OpenSSH is missing (rare on macOS). Install **Xcode Command Line Tools** with `xcode-select --install`.                     |

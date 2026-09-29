@@ -26,13 +26,15 @@ This is common with:
 In your Windows Terminal, run:
 
 ```text
-ssh -L 7865:localhost:7865 ubuntu@<your-instance-id>.ssh.hivecompute.ai
+ssh -L 7865:localhost:7865 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Replace:
 
 - `7865` with the actual port your app uses
-- `<your-instance-id>` with your Compute instance ID
+- `YOUR_SSH_USER` and `YOUR_SSH_HOST` with the console’s SSH username and hostname
 
 Now open [http://localhost:7865](http://localhost:7865) in your browser.
 
@@ -45,7 +47,8 @@ If you’re not sure which port your app uses:
 Run this from inside your instance:
 
 ```text
-whoami hostname -I
+whoami
+hostname -I
 ```
 
 Then test your app inside the VM:
@@ -83,7 +86,7 @@ If it doesn’t work or shows “Bad Gateway,” fall back to SSH port forwardin
 You can add more `-L` flags to forward several ports at once:
 
 ```text
-ssh -L 7865:localhost:7865 -L 8888:localhost:8888 ubuntu@<your-instance-id>.ssh.hivecompute.ai
+ssh -L 7865:localhost:7865 -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
 
 Great for debugging or running multiple services.

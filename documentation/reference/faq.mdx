@@ -26,7 +26,7 @@ No. You **only pay for compute time**. Storage attached to your on‑demand inst
 
 ### What happens if I run out of credits?
 
-Compute monitors your remaining balance. When you have **~5 minutes** of runtime left, your instance is **pre‑emptively terminated**. Top up ahead of time or enable auto top‑up to avoid interruptions.
+As the organization balance runs low, Compute instances may stop or be terminated. Top up ahead of time or enable auto top-up. Running Inference API endpoints with a nonzero effective cost stop at zero credits; fully discounted endpoints with an effective cost of €0 are not stopped solely for that reason. See [Billing information](/documentation/account-billing/billing-info).
 
 ### How is storage billed?
 
@@ -60,7 +60,7 @@ No. Stop/Start preserves your environment, but it doesn’t reserve the underlyi
 
 ### What happens to errored instances?
 
-If an instance enters an error state, it isn’t deleted right away. You can try to restart the instance from the Compute console. In many cases, this is enough to recover it. If the instance remains in an error state, it is automatically deleted after 15 days. This helps prevent unused resources from lingering and generating confusion later.
+Compute retries failed starts a limited number of times. If the instance reaches an error state, use the retry action when the console offers it. If it keeps failing, contact Support with the instance ID, error, and approximate time. Do not use an errored instance as a backup; download important files when access is available.
 
 If you’re not sure why the instance failed, check the instance logs in the app. They usually give enough context to understand what went wrong or what to try next.
 
@@ -74,7 +74,7 @@ Yes. Your environment is preserved when you stop an instance. Termination (manua
 
 ### What operating systems and images are available?
 
-For container-based instances, you can launch from clean **Ubuntu** images, **PyTorch** images, or **vLLM** images for inference. Choose the one that best matches your workflow.
+For container-based instances, choose from the templates currently shown in the console, or use a custom template. The former self-managed vLLM product flow has been retired. For managed model serving, use [Hivenet Inference API](/documentation/inference-api/overview).
 
 For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**.
 
@@ -86,21 +86,21 @@ A [**custom template**](/documentation/essentials/custom-templates) saves your c
 
 ### Do you support an OpenAI‑compatible API?
 
-Yes. Compute offers **vLLM** servers with an **OpenAI‑compatible** API surface. Most clients work by changing the **base URL** (and your key/environment variables where needed).
+Yes. [Hivenet Inference API](/documentation/inference-api/overview) provides managed, OpenAI-compatible endpoints. Use the endpoint URL, model name, and Inference API key from your deployment’s connection details.
 
 ### Can I tune inference settings?
 
-Yes. vLLM templates expose common controls (e.g., context length, sampling parameters, memory usage) so you can balance **latency** and **throughput** for your workload.
+Choose a model and serving variant for your workload, then set its fixed replica count. Available settings depend on the model and variant. See [Models and variants](/documentation/inference-api/models-and-variants) and [Call your endpoint](/documentation/inference-api/call-your-endpoint).
 
 ## Networking and access
 
 ### How do I expose my service?
 
-Enable networking on your instance and choose the protocol: **HTTPS**, **TCP**, or **UDP**. For vLLM servers, HTTPS is the default. Point your app or client to the generated endpoint.
+Enable the required **HTTPS**, **TCP**, or **UDP** connection option when creating your instance, then use the address in its connection details. Managed Inference API deployments have their own endpoint URLs.
 
 ### Can I use SSH?
 
-Yes. You can connect over **SSH**. Tools like `tmux` are helpful for long‑running sessions.
+Yes. Wait for **Running**, which means the instance has responded over SSH, then use the username and SSH command shown in its connection details. An application inside the instance may still be starting. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 ## Providers, regions, and reliability
 
@@ -141,7 +141,7 @@ Use environment variables or mounted files with restricted permissions, rotate k
 
 ### Do you log or store prompts/model inputs by default?
 
-No. Compute doesn’t capture or retain your application payloads by default. Any logging you enable in your apps (stdout, files, APM tools) is under **your** control.
+Compute records VM serial-console output, which Support can review for boot and crash troubleshooting. Data your software writes to that console can therefore appear in support diagnostics. Avoid writing secrets or sensitive payloads there, and contact Support if you need details about log access or retention.
 
 ### Can my data stay in a specific country or region (e.g., EU)?
 
@@ -205,7 +205,7 @@ Join our [**Discord community**](https://discord.com/cTmPDPrMG2) or contact **su
 
 ### My instance was terminated unexpectedly
 
-Check your **credit balance**. Instances auto‑terminate when funds are low (with a short pre‑emptive window). Enable **auto top‑up** or add credits.
+Check the organization balance and whether the instance had been stopped for more than 10 days. If neither explains the termination, contact Support with the instance ID and approximate time. Cleanup protections do not replace backups or change the documented retention limits.
 
 ### I can’t connect to my inference server
 
@@ -213,11 +213,11 @@ Make sure networking is **enabled** and the correct **protocol** (HTTPS/TCP/UDP)
 
 ### SSH fails to connect
 
-Verify the **public key** on the instance, confirm the **public IP/endpoint**, ensure your **firewall** allows outbound SSH, and check that the instance is **running** (not stopped or terminated).
+Confirm the instance is **Running**, copy its current SSH hostname and username from the console, use the matching private key, and check that your network allows outbound port 22. Verify host-identity warnings before accepting a changed identity.
 
 ## See also
 
-- Managed vLLM servers: quick start and tuning
+- [Get started with Hivenet Inference API](/documentation/inference-api/get-started)
 - [Create and reuse custom templates](/documentation/essentials/custom-templates)
 - [Stop/Start instances: how it works](/documentation/essentials/start-stop-instances)
 - [Pricing and billing](/documentation/account-billing/billing-info)

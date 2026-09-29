@@ -42,7 +42,7 @@ This guide takes you from sign-in to a running Compute instance. You’ll confir
     2. Choose **GPU** or **vCPU only**.
     3. Select the resource profile and size that fit your workload.
 
-    The console shows the hardware, memory, disk, bandwidth, and active price for each available option. Sold-out configurations cannot be selected.
+    The console shows the hardware, memory, disk, bandwidth, and active price for each available option. Sizes are filtered against host capacity, and presets with no available location are hidden. Availability updates as instances are created, but capacity can change before your launch completes.
   </Step>
   <Step title="Choose your software environment">
     For a container, select an available template or create a custom one. For a virtual machine, select the operating-system image you want to use.
@@ -71,7 +71,7 @@ This guide takes you from sign-in to a running Compute instance. You’ll confir
   <Step title="Create and wait for Running">
     Select the creation button shown for your resource type. The new instance appears under **Instances** while Compute prepares it.
 
-    Charging begins when the instance reaches **Running**. The preparation stage can take a few minutes.
+    The instance reaches **Running** after it responds over SSH, and charging begins at that point. Disk preparation and startup can take a few minutes. Applications inside the instance may need additional time to start.
   </Step>
   <Step title="Connect to the instance">
     Open the running instance and find its connection details.
@@ -82,7 +82,7 @@ This guide takes you from sign-in to a running Compute instance. You’ll confir
     ssh -i /path/to/private_key username@host
     ```
 
-    Use the private key that matches the public key supplied during creation. If you enabled Jupyter Notebook or a public endpoint, use the link shown in the instance’s connectivity details.
+    Use the username and host shown by the console, along with the private key that matches the public key supplied during creation. The username may differ from the image’s default user. If you enabled Jupyter Notebook or a public endpoint, use the link shown in the instance’s connectivity details.
   </Step>
   <Step title="Stop or terminate when you’re done">
     - **Stop** the instance when you want to pause compute usage and continue later.
@@ -107,7 +107,7 @@ Make sure that:
 - The instance was created with the correct public key.
 - Your SSH command uses the matching private key.
 - The private-key file has restricted permissions where required.
-- You are using the username shown for the selected template or OS.
+- You are using the username shown in the instance’s connection details.
 
 See the SSH-key guides for [Linux](/documentation/connectivity/ssh-key-linux), [macOS](/documentation/connectivity/ssh-key-macos), or [Windows](/documentation/connectivity/ssh-key-windows).
 

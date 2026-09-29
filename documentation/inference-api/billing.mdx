@@ -16,7 +16,9 @@ Each model variant has a price per replica-hour. Your current endpoint rate depe
 - The selected model variant
 - The number of replicas running
 
-For example, increasing an endpoint from one replica to two increases the displayed hourly rate for that variant accordingly.
+Organization discounts apply to LLM model presets. Use the effective price after any applicable discount; a fully discounted preset has an effective rate of €0.
+
+For example, increasing an endpoint from one replica to two doubles the total hourly rate for that variant. If the effective per-replica rate is €0, the total remains €0.
 
 Before you deploy, **Review your setup** shows:
 
@@ -81,7 +83,7 @@ A terminated endpoint cannot be started again. You can later use **Clear** to re
 
 Inference API endpoints and Compute resources draw from the same organization balance.
 
-If the organization does not have enough credits, the console can block a new deployment or a restart. Running Inference API endpoints stop automatically when the organization balance reaches zero.
+If the organization does not have enough credits, the console can block a new deployment or a restart. Running Inference API endpoints with a nonzero effective cost stop automatically when the organization balance reaches zero. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
 
 Only the organization Owner can add credits or configure auto top-up. See [Billing information](/documentation/account-billing/billing-info) for payment methods, billing roles, auto top-up, and transaction history.
 

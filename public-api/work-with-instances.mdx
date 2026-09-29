@@ -20,7 +20,7 @@ Common lifecycle states include:
 | `CREATED` | The instance record exists but has not finished scheduling. |
 | `DEPLOYED` | The instance has been scheduled on a host. |
 | `STARTING` | The instance is booting. |
-| `RUNNING` | The instance is running. |
+| `RUNNING` | The instance has responded over SSH. Applications inside it may still be starting. |
 | `STOPPING` | Shutdown is in progress. |
 | `STOPPED` | The instance is stopped and can be started again. |
 | `ERRORED` | The instance entered an error state. |
@@ -142,6 +142,8 @@ curl --request GET \
   --header "Authorization: Bearer $HIVENET_API_KEY" \
   --header "Accept: application/json"
 ```
+
+For VM boot or crash issues, contact Support with the instance ID and approximate failure time. Support can review VM serial-console logs; this endpoint documents recent container output.
 
 Logs are returned **newest first**. `entries[0]` is the most recent line.
 

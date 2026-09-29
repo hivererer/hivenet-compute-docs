@@ -27,29 +27,29 @@ You should see an OpenSSH version. If not, enable it:
 
 ###  Step 2 – Create or convert your key
 
-1. **If you _don’t_ have a key yet**
-   - Open **PuTTYgen** and click **Generate**.
-   - Move your mouse until the progress bar fills.
-   - Make sure you do the key **Conversions** to**OpenSSH key ** 
-   - Import or load the new key converted.
-   - Click **Save public key** (keeps the `.pub` extension).
-   - Click **Save private key** (you’ll get a `.ppk` file).
-   - Upload the **public key** in the Compute dashboard.
-2. **If you already have an OpenSSH key**
-   - In **PuTTYgen** click **Load**, pick your existing _id_ed25519_ (or _id_rsa_).
-   - Click **Save private key** to export it as `.ppk`.
+If you already have an OpenSSH private key, use it directly with Windows OpenSSH.
 
-<Info>
-  PuTTYgen can also create a fresh key pair if you don’t have one yet.
-</Info>
+If your key is in PuTTY's `.ppk` format:
+
+1. Open PuTTYgen and load the private key.
+2. Select **Conversions → Export OpenSSH key**.
+3. Save the exported private key and use its path with `ssh -i` or `IdentityFile` below.
+
+For a new key pair, follow [Add an SSH key on Windows](/documentation/connectivity/ssh-key-windows). Add only the public key to Compute.
 
 ### Step 3 – Create a config entry (optional)
 
 In `C:\Users\<you>\.ssh\config`, add:
 
+```text
+Host hivenet
+    HostName YOUR_SSH_HOST
+    User YOUR_SSH_USER
+    IdentityFile ~/.ssh/id_ed25519
+    Port 22
 ```
-Host hivenet HostName <instance-id>.ssh.hivecompute.ai User ubuntu IdentityFile ~/.ssh/id_ed25519 ProxyCommand ssh bastion@ssh.hivecompute.ai %h
-```
+
+Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 Save, then simply:
 
@@ -61,11 +61,11 @@ ssh hivenet
 
 Without a config file, run:
 
-```
-ssh -i ~/.ssh/id_ed25519 ubuntu@<instance-id>.ssh.hivecompute.ai
+```text
+ssh -i ~/.ssh/id_ed25519 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
 
-Replace `<instance-id>` with your actual ID.
+Use the username and hostname from the console and the private key matching your uploaded public key.
 
 ##  Troubleshooting OpenSSH
 

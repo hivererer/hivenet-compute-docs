@@ -46,7 +46,7 @@ See [Choosing between a virtual machine and a container](/documentation/essentia
 
 <Steps>
   <Step title="Choose a location">
-    Select an available location for the instance.
+    Select an available location for the instance. Presets with no available location are hidden.
 
     Consider where your users, services, and data are located. A nearby location can reduce network latency. Configurations marked as sold out cannot be selected until capacity becomes available.
   </Step>
@@ -61,6 +61,8 @@ See [Choosing between a virtual machine and a container](/documentation/essentia
     - Disk space
     - Network bandwidth
     - Active price
+
+    The console offers sizes that a host can accommodate and updates availability as instances are created. Capacity can still change before your launch completes.
 
     Use the smallest configuration that meets the workload’s memory and performance needs. You can create another instance later if you need a different setup.
   </Step>
@@ -118,7 +120,7 @@ See [Choosing between a virtual machine and a container](/documentation/essentia
   <Step title="Create the instance">
     Select the button to create the container or virtual machine.
 
-    The instance appears on the **Instances** page while Compute prepares it. Wait until its status changes to **Running** before trying to connect.
+    The instance appears on the **Instances** page while Compute prepares it. Wait until its status changes to **Running** before trying to connect. This means the instance has responded over SSH; an application or notebook inside it may still be starting.
 
     <Note>
       Preparation usually takes a few minutes. Charging begins when the instance is running, rather than while the creation form is open.
@@ -142,7 +144,7 @@ A typical command looks like this:
 ssh -i /path/to/private_key username@host
 ```
 
-The exact username and address depend on the selected template or operating system. Use the private key that matches the public key supplied during creation.
+Use the username and address shown in the instance’s connection details. The login can use a configured username, so do not assume it is the image’s default user. Use the private key that matches the public key supplied during creation.
 
 <Tip>
   After a successful connection, you can add the host and identity file to `~/.ssh/config` to make later connections shorter.
