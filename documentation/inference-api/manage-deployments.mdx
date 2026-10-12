@@ -1,11 +1,9 @@
 ---
-title: "Manage an Inference API endpoint"
-sidebarTitle: "Manage endpoints"
-description: "Understand Inference API endpoint states, view endpoint details, and safely start, stop, retry, terminate, clear, or resize an endpoint."
-icon: "sliders"
+title: "Manage an Inference Service endpoint"
+description: "Understand Inference Service endpoint states, view endpoint details, and safely start, stop, retry, terminate, clear, or resize an endpoint."
 ---
 
-Use the **Deployments** section of Inference API to monitor and manage the model endpoints your organization has created.
+Use the **Deployments** section of Inference Service to monitor and manage the model endpoints your organization has created.
 
 Each row shows the endpoint status, name, model, region, replica count, request count over the last 7 days when available, and current hourly cost.
 
@@ -82,7 +80,7 @@ Retry asks Hivenet to try the failed serving replicas again. Healthy replicas ar
 
 Retry does not start an endpoint that you deliberately stopped. Use **Start** for a **Stopped** endpoint.
 
-If Retry is unavailable or repeatedly fails, see [Troubleshoot Hivenet Inference API](/documentation/inference-api/troubleshooting).
+If Retry is unavailable or repeatedly fails, see [Troubleshoot Hivenet Inference Service](/documentation/inference-api/troubleshooting).
 
 ## Change replica count
 
@@ -133,5 +131,5 @@ Clearing is only a cleanup action. It does not stop or terminate an endpoint tha
 ## Next steps
 
 - [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
-- [Understand Inference API billing](/documentation/inference-api/billing).
-- [Troubleshoot Inference API](/documentation/inference-api/troubleshooting).
+- [Understand Inference Service billing](/documentation/inference-api/billing).
+- [Troubleshoot Inference Service](/documentation/inference-api/troubleshooting).

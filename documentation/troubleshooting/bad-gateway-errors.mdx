@@ -1,9 +1,3 @@
----
-title: "Compute instance URLs and Bad Gateway errors"
-description: "Troubleshoot Bad Gateway errors on Compute with Hivenet instance URLs, including common causes tied to instance status, ports, and app startup."
-sidebarTitle: "Bad gateway errors"
----
-
 ## What these URLs are
 
 When you create a Compute instance, Hivenet generates a temporary web URL:
@@ -26,6 +20,8 @@ These are public links to help you access web interfaces like:
 - Dashboards running on port 8888
 
 ## Why you might see "Bad Gateway"
+
+**Running** means the instance has responded over SSH. Your web application may still be starting or may not be listening on the expected port.
 
 Seeing a Bad Gateway error usually means one of these:
 
@@ -60,7 +56,9 @@ Here’s how to troubleshoot:
 If you can’t get the public link working, use SSH port forwarding:
 
 ```text
-ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
+ssh -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Then open [http://localhost:8888](http://localhost:8888) in your browser. This is usually more reliable.

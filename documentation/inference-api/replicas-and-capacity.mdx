@@ -1,8 +1,5 @@
 ---
-title: "Manage replicas and Inference API capacity"
-sidebarTitle: "Replicas and capacity"
-description: "Understand fixed replicas, requested versus active capacity, live scaling limits, and how replica count affects throughput and cost."
-icon: "layer-group"
+title: "Manage replicas and Inference Service capacity"
 ---
 
 A replica is one serving copy of the model variant behind your endpoint. More replicas let the same endpoint handle more work in parallel, but each running replica adds to the hourly cost.
@@ -85,10 +82,10 @@ Each running replica contributes to the endpoint's serving cost.
 
 Increasing replicas raises the hourly rate as additional capacity comes online. Reducing replicas lowers it after the change takes effect. Stopping the endpoint tears down its replicas and pauses serving charges once it reaches **Stopped**.
 
-See [Understand Inference API billing](/documentation/inference-api/billing) for the full billing lifecycle.
+See [Understand Inference Service billing](/documentation/inference-api/billing) for the full billing lifecycle.
 
 ## Next steps
 
 - [Choose a model and variant](/documentation/inference-api/models-and-variants).
 - [Manage an endpoint](/documentation/inference-api/manage-deployments).
-- [Understand Inference API billing](/documentation/inference-api/billing).
+- [Understand Inference Service billing](/documentation/inference-api/billing).

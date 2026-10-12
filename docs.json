@@ -79,7 +79,7 @@
             ]
           },
           {
-            "group": "Inference API",
+            "group": "Inference Service",
             "icon": "sparkles",
             "pages": [
               "documentation/inference-api/overview",

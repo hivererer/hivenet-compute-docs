@@ -1,9 +1,3 @@
----
-title: "Track organization spending in real time"
-description: "Monitor your organization's credit balance, spend rate, and active resource costs in real time from the Compute console and Billing page."
-sidebarTitle: "Track organization spending"
----
-
 Compute updates spending information as your organization starts and stops resources. Owners and Admins can use the console to see the organization’s current costs and review changes to its balance.
 
 <Note>
@@ -53,7 +47,7 @@ The instance table shows the configuration and active price for each resource. U
 
 ## Understand the current spend rate
 
-The current spend rate is the total hourly price of resources running at that moment. It is a live estimate rather than the billing interval.
+The current spend rate is the total effective hourly price of resources running at that moment, including applicable organization discounts on LLM model presets. A fully discounted endpoint contributes €0 per hour. It is a live estimate rather than the billing interval.
 
 Compute charges eligible usage per second. For example, an instance priced at €0.75 per hour that runs for 30 minutes contributes approximately €0.375 before any other applicable usage.
 
@@ -62,7 +56,7 @@ The spend rate changes when:
 - Someone starts an instance
 - A new instance reaches **Running**
 - A running instance leaves the **Running** state, including while stopping or terminating
-- Hivenet Inference API usage starts or stops
+- Hivenet Inference Service usage starts or stops
 - The active configuration changes
 
 ## Understand the time-remaining estimate
@@ -84,13 +78,13 @@ Use it as a warning signal rather than a guarantee of runtime.
 When you no longer need a running resource:
 
 - **Compute instance:** Stop it if you expect to continue later, or terminate it when the work is finished and you no longer need its local data.
-- **Inference API deployment:** Stop it if you want to keep the deployment configuration for later, or terminate it when you no longer need the endpoint.
+- **Inference Service deployment:** Stop it if you want to keep the deployment configuration for later, or terminate it when you no longer need the endpoint.
 
 <Warning>
-  Terminating a Compute instance permanently deletes the instance and its local data. Terminating an Inference API deployment permanently shuts down that deployment and makes its endpoint unusable.
+  Terminating a Compute instance permanently deletes the instance and its local data. Terminating an Inference Service deployment permanently shuts down that deployment and makes its endpoint unusable.
 </Warning>
 
-For the full lifecycle explanations, see [How to stop or terminate a Compute instance](/documentation/essentials/stop-terminate-instance) and [Manage an Inference API deployment](/documentation/inference-api/manage-deployments).
+For the full lifecycle explanations, see [How to stop or terminate a Compute instance](/documentation/essentials/stop-terminate-instance) and [Manage an Inference Service deployment](/documentation/inference-api/manage-deployments).
 
 ## Investigate an unexpected charge
 
@@ -98,8 +92,8 @@ If organization spending does not match what you expected:
 
 1. Check every running instance, not only the ones you created.
 2. Review the active price and configuration of each instance.
-3. Check whether Hivenet Inference API workloads are active.
-4. Review transaction history for recent credit purchases or transfers.
+3. Check whether Hivenet Inference Service workloads are active.
+4. Review transaction history for recent credit purchases or transfers. Internal ledger entries are not displayed.
 5. Note the organization name, affected instance IDs, and approximate timeframe.
 6. Contact Support through the console if the discrepancy remains.
 

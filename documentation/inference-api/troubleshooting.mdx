@@ -1,8 +1,6 @@
 ---
-title: "Troubleshoot Hivenet Inference API"
-sidebarTitle: "Troubleshooting"
-description: "Fix common Inference API problems with location capacity, credits, endpoint states, replicas, API keys, endpoint URLs, and model identifiers."
-icon: "triangle-exclamation"
+title: "Troubleshoot Hivenet Inference Service"
+description: "Fix common Inference Service problems with location capacity, credits, endpoint states, replicas, API keys, endpoint URLs, and model identifiers."
 ---
 
 Use this page when an endpoint cannot start, is only partially running, or an API request fails.
@@ -11,9 +9,9 @@ Use this page when an endpoint cannot start, is only partially running, or an AP
 
 A location marked **Sold out** cannot accept another endpoint at that moment.
 
-If you are choosing your Inference API location for the first time, select another available location or try again later.
+If you are choosing your Inference Service location for the first time, select another available location or try again later.
 
-If your Inference API location has already been established, new endpoints inherit that location in the current production version. In that case, try another available model or variant in the same location, reduce the replica count where possible, or wait for capacity to become available.
+If your Inference Service location has already been established, new endpoints inherit that location in the current production version. In that case, try another available model or variant in the same location, reduce the replica count where possible, or wait for capacity to become available.
 
 <Info>
   Per-model location selection is not available yet. The console is the source of truth for current regional capacity.
@@ -41,7 +39,13 @@ The console can block a new deployment or restart when the organization does not
 
 Add credits when the option is available, or ask the organization Owner to top up the balance if you do not have billing permissions.
 
-Inference API and Compute resources use the same organization balance.
+Inference Service and Compute resources use the same organization balance.
+
+## An endpoint stopped when credits ran out
+
+Running endpoints with a nonzero effective cost stop automatically at zero credits. Ask the organization Owner to add credits, then start the endpoint again when capacity is available.
+
+An endpoint with an effective cost of €0 under a fully discounted contract is not stopped solely because the balance is zero. If one stops, check its state and error details and contact Support if the cause is unclear.
 
 ## The endpoint is still Starting
 
@@ -108,14 +112,14 @@ Stopping preserves the endpoint configuration, not the underlying GPU capacity. 
 
 Check that:
 
-- You are using an **Inference API key**, not a Compute public API token.
+- You are using an **API key for Inference Service**, not a Compute public API token.
 - The key is **Active**, not disabled or revoked.
 - The key belongs to the same organization as the endpoint.
 - The request sends the key as `Authorization: Bearer ...`.
 
 If the key was lost, revoked, or exposed, create a new one and update the application.
 
-See [Create and manage Inference API keys](/documentation/inference-api/api-keys).
+See [Create and manage API keys for Inference Service](/documentation/inference-api/api-keys).
 
 ## The endpoint URL does not work
 

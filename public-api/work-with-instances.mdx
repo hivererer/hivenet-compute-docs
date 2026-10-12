@@ -1,10 +1,3 @@
----
-title: "Work with instances"
-sidebarTitle: "Instances"
-description: "Manage existing Compute instances through the API: list, inspect, read logs, and start, stop, or terminate them across their lifecycle statuses."
-slug: "/public-api/instances"
----
-
 Instances are the main Compute resource exposed by the public API. You can list and inspect existing instances, read recent logs, and start, stop, or terminate them.
 
 <Note>
@@ -20,7 +13,7 @@ Common lifecycle states include:
 | `CREATED` | The instance record exists but has not finished scheduling. |
 | `DEPLOYED` | The instance has been scheduled on a host. |
 | `STARTING` | The instance is booting. |
-| `RUNNING` | The instance is running. |
+| `RUNNING` | The instance has responded over SSH. Applications inside it may still be starting. |
 | `STOPPING` | Shutdown is in progress. |
 | `STOPPED` | The instance is stopped and can be started again. |
 | `ERRORED` | The instance entered an error state. |
@@ -142,6 +135,8 @@ curl --request GET \
   --header "Authorization: Bearer $HIVENET_API_KEY" \
   --header "Accept: application/json"
 ```
+
+For VM boot or crash issues, contact Support with the instance ID and approximate failure time. Support can review VM serial-console logs; this endpoint documents recent container output.
 
 Logs are returned **newest first**. `entries[0]` is the most recent line.
 

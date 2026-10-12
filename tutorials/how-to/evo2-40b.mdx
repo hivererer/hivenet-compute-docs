@@ -1,14 +1,3 @@
----
-title: "How to serve the EVO2 40B genomic model"
-subtitle: "Deploy the EVO2 40B model using Nvidia NIM containers on Compute with Hivenet"
-description: "Archived tutorial for serving the EVO2 40B genomic foundation model with NVIDIA NIM on 4 × RTX 4090 Compute instances, pending revalidation."
-sidebarTitle: "Serve EVO2 40B"
-noindex: true
-hidden: true
-public: false
-deprecated: true
----
-
 EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence generation and analysis. This tutorial walks you through creating a custom NIM template, deploying it on a 4 × RTX 4090 instance, and running inference endpoints.
 
 **Estimated time:** 15–20 minutes (includes model download)
@@ -123,9 +112,11 @@ EVO2 40B is a 40-billion-parameter biological foundation model for DNA sequence 
 
     You can SSH into your instance to check GPU activity:
 
+    ```text
+    ssh -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
     ```
-    ssh -i ~/.ssh/id_rsa -o "ProxyCommand=ssh bastion@ssh.hivenet.com %h" nvs@<YOUR_INSTANCE_ID>.ssh.hivenet.com
-    ```
+
+    Use the username, hostname, and any additional SSH settings from the instance’s connection details. Select the private key matching your uploaded public key.
 
     Then run:
 

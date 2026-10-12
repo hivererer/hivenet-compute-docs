@@ -1,13 +1,11 @@
 ---
-title: "Choose an Inference API model and variant"
-sidebarTitle: "Models and variants"
-description: "Compare Inference API models and serving variants by capabilities, context window, latency, request capacity, and per-replica hourly cost."
-icon: "grid-2"
+title: "Choose an Inference Service model and variant"
+description: "Compare Inference Service models and serving variants by capabilities, context window, latency, request capacity, and per-replica hourly cost."
 ---
 
-Hivenet Inference API uses a curated model catalog. Each model can have one or more **variants** that define how that model is served.
+Hivenet Inference Service uses a curated model catalog. Each model can have one or more **variants** that define how that model is served.
 
-The production console is the source of truth for what you can deploy now. Model and variant availability depends on the location selected for your Inference API models.
+The production console is the source of truth for what you can deploy now. Model and variant availability depends on the location selected for your Inference Service models.
 
 ## Model versus variant
 
@@ -89,6 +87,8 @@ Some variants use quantized model weights to reduce memory use or improve servin
 
 Because Hivenet manages the serving stack, you do not choose low-level model-server or GPU settings independently after deployment. Choose the variant whose documented characteristics fit your workload.
 
+Organization discounts apply to LLM model preset prices. Review the effective price shown for your organization before deploying. See [Inference Service billing](/documentation/inference-api/billing).
+
 ## Choose replica capacity
 
 After selecting the variant, choose the fixed number of replicas to run.
@@ -123,6 +123,6 @@ GPT-OSS 20B supports OpenAI-compatible tool calls and reasoning output when you 
 
 ## Next steps
 
-- [Get started with Inference API](/documentation/inference-api/get-started).
+- [Get started with Inference Service](/documentation/inference-api/get-started).
 - [Manage replicas and capacity](/documentation/inference-api/replicas-and-capacity).
 - [Call your endpoint](/documentation/inference-api/call-your-endpoint).

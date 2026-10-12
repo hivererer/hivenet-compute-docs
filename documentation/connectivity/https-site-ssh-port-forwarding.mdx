@@ -1,9 +1,3 @@
----
-title: "Serve an HTTPS site with SSH port forwarding"
-description: "Run python -m http.server or your own web app on a Compute instance and reach it locally over an encrypted SSH tunnel, without public exposure."
-sidebarTitle: "Serve a simple HTTPS site "
----
-
 ## What this solves
 
 If your app prints something like:
@@ -55,7 +49,9 @@ If you still see "Bad Gateway":
 If HTTPS still doesn’t work or you prefer to access it directly:
 
 ```text
-ssh -L 8888:localhost:8888 ubuntu@<instance-id>.ssh.hivecompute.ai
+ssh -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
 ```
+
+Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
 
 Then open [http://localhost:8888](http://localhost:8888) on your Windows or Mac browser

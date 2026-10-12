@@ -1,9 +1,3 @@
----
-title: "Billing information"
-description: "Learn how organization credits, billing roles, payment methods, auto top-up, invoices, and transaction history work for Compute organizations."
-sidebarTitle: "Billing information"
----
-
 Compute uses prepaid credits held in an **organization balance**. Charges are deducted in real time while the organization runs Compute resources.
 
 Your role determines which billing information you can see and whether you can change payment settings.
@@ -40,7 +34,7 @@ For an explanation of the role model, see [How organizations work in Compute](/d
 
 ## How the organization balance works
 
-The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference API workloads draws from the same balance.
+The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference Service workloads draws from the same balance.
 
 The console shows:
 
@@ -79,6 +73,8 @@ Auto top-up adds credits when the balance falls below a threshold. Only the Owne
   Transferring organization ownership turns off the existing auto top-up configuration. The new Owner must review the payment details and configure auto top-up again.
 </Warning>
 
+Auto top-up is also disabled if your account is moved to another organization without you choosing to join it. Check the organization shown in the console and its payment details before the Owner enables auto top-up again.
+
 ## Review billing details and transaction history
 
 Owners and Admins can review the organization’s billing details and transaction history.
@@ -89,17 +85,19 @@ Transaction history records changes to the organization balance, including:
 - Credits transferred when someone joins the organization
 - Other recorded credit transfers
 
+Internal ledger entries are excluded from transaction history.
+
 Billing details and payment methods are managed through Stripe. Only the Owner can make changes, but Admins can view the information shown in Compute.
 
 ## How charging works
 
 - Charges begin when an instance reaches **Running** and stop as soon as it leaves the **Running** state. Time spent stopping or terminating is not charged.
-- Running Hivenet Inference API endpoints also contribute to the organization’s live spend rate. See [Understand Inference API billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
+- Running Hivenet Inference Service endpoints also contribute to the organization’s live spend rate. See [Understand Inference Service billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
 - Stopping an instance pauses compute charges while preserving it for a later start.
 - Terminating an instance permanently deletes it and its local data.
 
 <Note>
-  If your organization has a contracted discount, the instance price reflects the effective hourly rate after that discount. A 100% discount therefore appears as €0 per hour.
+  If your organization has a contracted discount, instance prices and LLM model preset prices reflect the effective hourly rate after that discount. A 100% discount therefore appears as €0 per hour.
 </Note>
 
 <Info>
@@ -108,7 +106,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 
 ## What happens when credits run low
 
-Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference API endpoints stop automatically when the organization reaches zero credit.
+Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference Service endpoints with a nonzero effective cost stop automatically when the organization reaches zero credit. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
 
 The Owner can add credits or enable auto top-up to reduce the risk of an interruption.
 
@@ -136,7 +134,7 @@ The Owner can add credits or enable auto top-up to reduce the risk of an interru
 
 ## See also
 
-- [Understand Inference API billing](/documentation/inference-api/billing)
+- [Understand Inference Service billing](/documentation/inference-api/billing)
 - [Track organization spending in real time](/documentation/account-billing/track-costs-real-time)
 - [How organizations work in Compute](/documentation/organizations/how-organizations-work)
 - [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization)
