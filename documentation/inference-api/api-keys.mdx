@@ -1,17 +1,17 @@
 ---
-title: "Create and manage Inference API keys"
+title: "Create and manage API keys for Inference Service"
 sidebarTitle: "API keys"
-description: "Create organization-scoped Inference API keys, save the one-time secret, and disable, re-enable, or revoke access without stopping your endpoints."
+description: "Create organization-scoped API keys for Inference Service, save the one-time secret, and disable, re-enable, or revoke access without stopping your endpoints."
 icon: "key"
 ---
 
-Inference API keys authenticate requests to your organization's model endpoints.
+API keys for Inference Service authenticate requests to your organization's model endpoints.
 
-Keys are managed from the **API keys** section of the Inference API page. They belong to the active organization rather than to a single endpoint, so one active key can be used with the organization's Inference API endpoints.
+Keys are managed from the **API keys** section of the Inference Service page. They belong to the active organization rather than to a single endpoint, so one active key can be used with the organization's Inference Service endpoints.
 
 ## Create a key
 
-1. Open **Inference API** in the Compute console.
+1. Open **Inference Service** in the Compute console.
 2. In **API keys**, select **New key**.
 3. Enter a unique label using lowercase letters, numbers, and hyphens.
 4. Select **Create**.
@@ -40,7 +40,7 @@ Send the key as a bearer token when calling an endpoint:
 
 The endpoint details also provide generated Python, JavaScript, and `curl` quick-start snippets.
 
-See [Call your Inference API endpoint](/documentation/inference-api/call-your-endpoint) for complete examples.
+See [Call your Inference Service endpoint](/documentation/inference-api/call-your-endpoint) for complete examples.
 
 ## Disable a key
 
@@ -105,13 +105,13 @@ If a request is rejected:
 2. Check that its status is **Active**.
 3. Confirm the request sends `Authorization: Bearer ...`.
 4. Confirm the key and endpoint belong to the same organization.
-5. Check that you are calling the endpoint URL shown by Inference API rather than the Compute public API.
+5. Check that you are calling the endpoint URL shown by Inference Service rather than the Compute public API.
 
 If the key was lost, revoked, or exposed, create a new one rather than trying to recover or reuse the old secret.
 
 ## Next steps
 
 - [Call your endpoint](/documentation/inference-api/call-your-endpoint).
-- [Get started with Inference API](/documentation/inference-api/get-started).
+- [Get started with Inference Service](/documentation/inference-api/get-started).
 - [Manage an endpoint](/documentation/inference-api/manage-deployments).
-- [Understand Inference API billing](/documentation/inference-api/billing).
+- [Understand Inference Service billing](/documentation/inference-api/billing).

@@ -26,7 +26,7 @@ No. You **only pay for compute time**. Storage attached to your on‑demand inst
 
 ### What happens if I run out of credits?
 
-As the organization balance runs low, Compute instances may stop or be terminated. Top up ahead of time or enable auto top-up. Running Inference API endpoints with a nonzero effective cost stop at zero credits; fully discounted endpoints with an effective cost of €0 are not stopped solely for that reason. See [Billing information](/documentation/account-billing/billing-info).
+As the organization balance runs low, Compute instances may stop or be terminated. Top up ahead of time or enable auto top-up. Running Inference Service endpoints with a nonzero effective cost stop at zero credits; fully discounted endpoints with an effective cost of €0 are not stopped solely for that reason. See [Billing information](/documentation/account-billing/billing-info).
 
 ### How is storage billed?
 
@@ -74,7 +74,7 @@ Yes. Your environment is preserved when you stop an instance. Termination (manua
 
 ### What operating systems and images are available?
 
-For container-based instances, choose from the templates currently shown in the console, or use a custom template. The former self-managed vLLM product flow has been retired. For managed model serving, use [Hivenet Inference API](/documentation/inference-api/overview).
+For container-based instances, choose from the templates currently shown in the console, or use a custom template. The former self-managed vLLM product flow has been retired. For managed model serving, use [Hivenet Inference Service](/documentation/inference-api/overview).
 
 For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**.
 
@@ -86,7 +86,7 @@ A [**custom template**](/documentation/essentials/custom-templates) saves your c
 
 ### Do you support an OpenAI‑compatible API?
 
-Yes. [Hivenet Inference API](/documentation/inference-api/overview) provides managed, OpenAI-compatible endpoints. Use the endpoint URL, model name, and Inference API key from your deployment’s connection details.
+Yes. [Hivenet Inference Service](/documentation/inference-api/overview) provides managed, OpenAI-compatible endpoints. Use the endpoint URL, model name, and API key for Inference Service from your deployment’s connection details.
 
 ### Can I tune inference settings?
 
@@ -96,7 +96,7 @@ Choose a model and serving variant for your workload, then set its fixed replica
 
 ### How do I expose my service?
 
-Enable the required **HTTPS**, **TCP**, or **UDP** connection option when creating your instance, then use the address in its connection details. Managed Inference API deployments have their own endpoint URLs.
+Enable the required **HTTPS**, **TCP**, or **UDP** connection option when creating your instance, then use the address in its connection details. Managed Inference Service deployments have their own endpoint URLs.
 
 ### Can I use SSH?
 
@@ -217,7 +217,7 @@ Confirm the instance is **Running**, copy its current SSH hostname and username 
 
 ## See also
 
-- [Get started with Hivenet Inference API](/documentation/inference-api/get-started)
+- [Get started with Hivenet Inference Service](/documentation/inference-api/get-started)
 - [Create and reuse custom templates](/documentation/essentials/custom-templates)
 - [Stop/Start instances: how it works](/documentation/essentials/start-stop-instances)
 - [Pricing and billing](/documentation/account-billing/billing-info)
