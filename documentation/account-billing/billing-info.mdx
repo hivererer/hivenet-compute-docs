@@ -40,7 +40,7 @@ For an explanation of the role model, see [How organizations work in Compute](/d
 
 ## How the organization balance works
 
-The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference API workloads draws from the same balance.
+The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference Service workloads draws from the same balance.
 
 The console shows:
 
@@ -98,7 +98,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 ## How charging works
 
 - Charges begin when an instance reaches **Running** and stop as soon as it leaves the **Running** state. Time spent stopping or terminating is not charged.
-- Running Hivenet Inference API endpoints also contribute to the organization’s live spend rate. See [Understand Inference API billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
+- Running Hivenet Inference Service endpoints also contribute to the organization’s live spend rate. See [Understand Inference Service billing](/documentation/inference-api/billing) for how replica charges start, change, and stop.
 - Stopping an instance pauses compute charges while preserving it for a later start.
 - Terminating an instance permanently deletes it and its local data.
 
@@ -112,7 +112,7 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 
 ## What happens when credits run low
 
-Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference API endpoints with a nonzero effective cost stop automatically when the organization reaches zero credit. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
+Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference Service endpoints with a nonzero effective cost stop automatically when the organization reaches zero credit. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
 
 The Owner can add credits or enable auto top-up to reduce the risk of an interruption.
 
@@ -140,7 +140,7 @@ The Owner can add credits or enable auto top-up to reduce the risk of an interru
 
 ## See also
 
-- [Understand Inference API billing](/documentation/inference-api/billing)
+- [Understand Inference Service billing](/documentation/inference-api/billing)
 - [Track organization spending in real time](/documentation/account-billing/track-costs-real-time)
 - [How organizations work in Compute](/documentation/organizations/how-organizations-work)
 - [Transfer ownership or delete an organization](/documentation/organizations/transfer-ownership-delete-organization)

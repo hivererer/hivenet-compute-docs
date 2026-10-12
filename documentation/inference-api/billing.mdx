@@ -1,11 +1,11 @@
 ---
-title: "Understand Inference API billing"
+title: "Understand Inference Service billing"
 sidebarTitle: "Billing"
-description: "Understand per-replica pricing, per-second billing, shared organization credits, and when Inference API charges start, change, pause, and stop."
+description: "Understand per-replica pricing, per-second billing, shared organization credits, and when Inference Service charges start, change, pause, and stop."
 icon: "credit-card"
 ---
 
-Hivenet Inference API uses the same prepaid organization credit balance as Compute.
+Hivenet Inference Service uses the same prepaid organization credit balance as Compute.
 
 You pay for the fixed model-serving capacity that is running. Pricing is shown as a **per-replica hourly rate**, but usage is billed **per second** through the organization balance.
 
@@ -76,20 +76,20 @@ Termination permanently shuts down the endpoint. Serving charges stop when termi
 A terminated endpoint cannot be started again. You can later use **Clear** to remove its terminated record from the Deployments list; clearing does not affect billing because the serving capacity has already been terminated.
 
 <Warning>
-  Disabling or revoking an Inference API key does **not** stop an endpoint. The endpoint remains provisioned and continues to incur charges until you reduce, stop, or terminate its serving capacity.
+  Disabling or revoking an API key for Inference Service does **not** stop an endpoint. The endpoint remains provisioned and continues to incur charges until you reduce, stop, or terminate its serving capacity.
 </Warning>
 
 ## Organization credits
 
-Inference API endpoints and Compute resources draw from the same organization balance.
+Inference Service endpoints and Compute resources draw from the same organization balance.
 
-If the organization does not have enough credits, the console can block a new deployment or a restart. Running Inference API endpoints with a nonzero effective cost stop automatically when the organization balance reaches zero. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
+If the organization does not have enough credits, the console can block a new deployment or a restart. Running Inference Service endpoints with a nonzero effective cost stop automatically when the organization balance reaches zero. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
 
 Only the organization Owner can add credits or configure auto top-up. See [Billing information](/documentation/account-billing/billing-info) for payment methods, billing roles, auto top-up, and transaction history.
 
 ## Monitor spend
 
-The Inference API page shows product-level usage information including **Spend (24h)** and the current **Cost /h** for active endpoints.
+The Inference Service page shows product-level usage information including **Spend (24h)** and the current **Cost /h** for active endpoints.
 
 The main Compute billing views also show the shared organization balance and current spend rate across resources.
 
