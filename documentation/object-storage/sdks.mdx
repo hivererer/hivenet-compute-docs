@@ -1,0 +1,178 @@
+---
+title: "Use SDKs with Hivenet Object Storage"
+sidebarTitle: "Python and JavaScript"
+description: "Configure boto3 or the AWS SDK for JavaScript with Hivenet credentials, endpoint, signing region, and path-style addressing."
+icon: "code"
+---
+
+Use boto3 for Python or AWS SDK for JavaScript v3 to call compatible S3 operations.
+
+The examples below run on your computer or an application server. Keep secrets out of browser code.
+
+## Before you start
+
+Create and save an [access key](/documentation/object-storage/access-keys). Set these environment variables in the process that will run your code:
+
+| Variable | Value |
+| --- | --- |
+| `HIVENET_ACCESS_KEY_ID` | Your access key ID |
+| `HIVENET_SECRET_ACCESS_KEY` | Your secret access key |
+
+These are variable names used by the examples, not credentials issued separately by Hivenet. Supply their values through your environment or secrets manager.
+
+## Python with boto3
+
+Install boto3:
+
+```bash
+python -m pip install boto3
+```
+
+Create the client and list buckets:
+
+```python
+import os
+
+import boto3
+from botocore.config import Config
+
+s3 = boto3.client(
+    "s3",
+    endpoint_url="https://eu.s3.public.hivenet.com",
+    region_name="Europe",
+    aws_access_key_id=os.environ["HIVENET_ACCESS_KEY_ID"],
+    aws_secret_access_key=os.environ["HIVENET_SECRET_ACCESS_KEY"],
+    config=Config(
+        signature_version="s3v4",
+        s3={"addressing_style": "path"},
+    ),
+)
+
+for bucket in s3.list_buckets().get("Buckets", []):
+    print(bucket["Name"])
+```
+
+Keep the client definition above when using the following examples.
+
+### List all objects in a bucket
+
+Replace `YOUR_BUCKET`:
+
+```python
+paginator = s3.get_paginator("list_objects_v2")
+
+for page in paginator.paginate(Bucket="YOUR_BUCKET"):
+    for obj in page.get("Contents", []):
+        print(obj["Key"], obj["Size"])
+```
+
+The paginator follows continuation tokens, so it can read beyond the first response.
+
+### Upload and download a file
+
+Create a bucket in the console and a small local `hello.txt` file first:
+
+```python
+s3.upload_file("hello.txt", "YOUR_BUCKET", "hello.txt")
+s3.download_file("YOUR_BUCKET", "hello.txt", "hello-downloaded.txt")
+```
+
+`upload_file` manages multipart uploads when needed. Choose an object key and a local download name that do not contain data you need to keep.
+
+For client behavior, see the [boto3 configuration guide](https://docs.aws.amazon.com/boto3/latest/guide/configuration.html) and [file upload guide](https://docs.aws.amazon.com/boto3/latest/guide/s3-uploading-files.html).
+
+## JavaScript with Node.js
+
+Install the client in your Node.js project:
+
+```bash
+npm install @aws-sdk/client-s3
+```
+
+Save this example as `hivenet-list.mjs`:
+
+```javascript
+import {
+  S3Client,
+  ListBucketsCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
+
+const accessKeyId = process.env.HIVENET_ACCESS_KEY_ID;
+const secretAccessKey = process.env.HIVENET_SECRET_ACCESS_KEY;
+
+if (!accessKeyId || !secretAccessKey) {
+  throw new Error("Set both Hivenet credential environment variables.");
+}
+
+const s3 = new S3Client({
+  endpoint: "https://eu.s3.public.hivenet.com",
+  region: "Europe",
+  forcePathStyle: true,
+  credentials: { accessKeyId, secretAccessKey },
+});
+
+try {
+  const result = await s3.send(new ListBucketsCommand({}));
+  for (const bucket of result.Buckets ?? []) {
+    console.log(bucket.Name);
+  }
+} finally {
+  s3.destroy();
+}
+```
+
+Run it:
+
+```bash
+node hivenet-list.mjs
+```
+
+### List objects with pagination
+
+To list a bucket instead, replace the contents of the `try` block above with:
+
+```javascript
+let continuationToken;
+
+do {
+  const page = await s3.send(new ListObjectsV2Command({
+    Bucket: "YOUR_BUCKET",
+    ContinuationToken: continuationToken,
+  }));
+
+  for (const object of page.Contents ?? []) {
+    console.log(object.Key, object.Size);
+  }
+
+  continuationToken = page.IsTruncated
+    ? page.NextContinuationToken
+    : undefined;
+} while (continuationToken);
+```
+
+### Upload a small object
+
+For a small test upload, replace the contents of the same `try` block with:
+
+```javascript
+await s3.send(new PutObjectCommand({
+  Bucket: "YOUR_BUCKET",
+  Key: "hello.txt",
+  Body: "Hello from Hivenet Object Storage.",
+  ContentType: "text/plain",
+}));
+```
+
+This replaces `hello.txt` if it already exists.
+
+`PutObjectCommand` sends one request. It does not automatically turn a large file into a multipart upload. For managed large-file transfers, use a multipart transfer helper or the [AWS CLI](/documentation/object-storage/aws-cli) and [rclone](/documentation/object-storage/rclone) guides.
+
+See the [AWS SDK for JavaScript S3 examples](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html) for request syntax, subject to [Hivenet's supported operation list](/documentation/object-storage/s3-compatibility).
+
+## If authentication fails
+
+Check all four settings together: the Hivenet endpoint, `Europe` signing region, path style, and the matching credential pair.
+
+Do not replace `Europe` with the display label **EU** or an AWS region name. See [Troubleshooting](/documentation/object-storage/troubleshooting).

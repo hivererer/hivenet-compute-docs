@@ -1,0 +1,99 @@
+---
+title: "Manage objects in Hivenet Object Storage"
+sidebarTitle: "Objects"
+description: "Upload files, organize object keys, download objects, and recover from partial upload or deletion failures."
+icon: "file"
+---
+
+Create an [access key](/documentation/object-storage/access-keys) of your own if you do not already have an active one. Then open a bucket in **Object Storage** and use its **Objects** tab to work with files.
+
+An object key is the full name within the bucket, including any prefix. For example, `releases/1.4.2/app.zip` is one object key.
+
+## Upload files
+
+<Steps>
+  <Step title="Choose the destination">
+    Open the bucket and select **Upload**. In an empty bucket, use the upload area shown on the **Objects** tab.
+
+    Leave **Destination** empty to upload to the bucket root, or enter a prefix such as `releases/1.4.2/`. The prefix is added to each uploaded filename.
+  </Step>
+  <Step title="Add files">
+    Select **Choose files** or drag files into the upload area. You can also drag files onto a populated object table.
+
+    Use **Upload more** to add files before starting.
+  </Step>
+  <Step title="Review the files">
+    Check the destination, names, and sizes. Resolve invalid names and oversized files.
+
+    Review any **Replaces existing** or **Duplicate name** warnings.
+  </Step>
+  <Step title="Start the upload">
+    Select the upload button for the selected files. Keep the tab open and follow the per-file progress.
+  </Step>
+  <Step title="Check the result">
+    The console retries failed uploads automatically before showing an error. Check the final result and use **Retry failed files** if some files still failed.
+
+    While failed files remain in the dialog, you cannot add more files. Retry them or close the dialog before starting another upload.
+
+    Use **Retry all** only when you intend to upload the whole selection again. Repeating successful uploads can replace objects already stored at those keys.
+  </Step>
+</Steps>
+
+Reloading the page stops all in-progress uploads. Files that finished uploading remain stored. After an interruption, check the object list and retry the files that are missing.
+
+<Warning>
+  Uploading to an existing object key replaces the old object. If files in the same selection have the same destination key, the last write wins. Do not rely on the console to recover replaced data.
+</Warning>
+
+## Choose object names
+
+For console uploads, use:
+
+- Letters and numbers.
+- `!`, `-`, `_`, `.`, `*`, `'`, `(`, and `)`.
+- `/` between prefix segments.
+
+The final object key must not start or end with `/` or contain a `..` path segment. The console allows up to 1,024 characters and rejects invalid names instead of silently changing them.
+
+The [S3 object naming specification](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html) measures key length in UTF-8 bytes. Keep client-created keys within 1,024 bytes as well; non-ASCII characters can use more than one byte. Short ASCII names are the simplest choice across clients.
+
+Objects created through an API may have names the console upload form would reject. Use the object's full, exact key when downloading, sharing, or deleting it.
+
+## File size and large transfers
+
+Hivenet Object Storage supports objects up to 5 TB through multipart uploads. A single `PutObject` request is limited to 5 GB.
+
+The console currently uses single-request uploads and does not support multipart uploads. Files larger than 5 GB cannot be uploaded through the console. For larger files or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
+
+An operation being implemented does not mean every client option is supported. Check [S3 compatibility](/documentation/object-storage/s3-compatibility) before changing transfer settings.
+
+## Download an object
+
+1. Open the object's options menu.
+2. Select **Download**.
+3. Check your browser's download list.
+
+Downloads do not show progress inside the console. Console downloads handle one object at a time. Multi-select supports deletion only.
+
+To download many objects, use a client. The [AWS CLI](/documentation/object-storage/aws-cli#download-many-objects) and [rclone](/documentation/object-storage/rclone#download-a-bucket-or-prefix) guides show commands for a bucket or prefix.
+
+## Delete objects
+
+### Delete one object
+
+Open the object's options menu, select **Delete**, review the confirmation, and confirm deletion.
+
+### Delete several objects
+
+1. Select **Select** and choose the objects.
+2. Select **Delete**.
+3. Check the selected keys and count in the confirmation.
+4. Confirm deletion and read the result.
+
+<Warning>
+  Object deletion is permanent. Check the selected objects and coordinate with other people who use them before confirming.
+</Warning>
+
+A partial result means some objects remain. Refresh the list and retry the remaining objects. A failed or interrupted operation is not proof that nothing was deleted.
+
+A request for an object that has been deleted returns a not-found response. See [Troubleshooting](/documentation/object-storage/troubleshooting) if a listed object cannot be opened.

@@ -1,0 +1,104 @@
+---
+title: "Use rclone with Hivenet Object Storage"
+sidebarTitle: "rclone"
+description: "Configure an S3 remote and copy files, buckets, or prefixes with rclone."
+icon: "folder"
+---
+
+rclone can transfer directories and download many objects from Hivenet Object Storage.
+
+## What you'll need
+
+- rclone installed.
+- Your Hivenet access key ID and secret access key.
+- A bucket created in the console.
+
+Replace `YOUR_BUCKET` in the commands below. Use a local directory that does not contain files you need to preserve unchanged.
+
+## Configure a remote
+
+Run `rclone config` to create a remote named `hivenet`. Choose the **S3** storage type and the **Other** provider.
+
+This example reads credentials from your process environment. Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to your Hivenet credential pair, then configure the remote as follows:
+
+```ini
+[hivenet]
+type = s3
+provider = Other
+env_auth = true
+region = Europe
+endpoint = https://eu.s3.public.hivenet.com
+force_path_style = true
+```
+
+Leave the remote's `access_key_id` and `secret_access_key` fields empty when using environment authentication. Do not add an ACL or a bucket-policy setting.
+
+The `AWS_` environment variable names are the names rclone expects. Their values must be your Hivenet credentials. Use a separate shell or process if you also work with AWS.
+
+The signing region is `Europe`; the console's display label is **EU**. Path-style addressing must remain explicitly enabled.
+
+See the [rclone S3 configuration reference](https://rclone.org/s3/) for where to store the remote configuration and how environment authentication works.
+
+## Test the connection
+
+List buckets:
+
+```bash
+rclone lsd hivenet:
+```
+
+List object keys in your bucket:
+
+```bash
+rclone lsf "hivenet:YOUR_BUCKET" --recursive
+```
+
+## Upload a directory
+
+Preview a copy:
+
+```bash
+rclone copy "./upload/" "hivenet:YOUR_BUCKET/uploads" --dry-run
+```
+
+After checking the destination, run:
+
+```bash
+rclone copy "./upload/" "hivenet:YOUR_BUCKET/uploads" --progress
+```
+
+The directory's contents are copied under the `uploads/` prefix. Objects at matching keys can be replaced.
+
+## Download a bucket or prefix
+
+Preview the transfer:
+
+```bash
+rclone copy "hivenet:YOUR_BUCKET" "./hivenet-download/" --dry-run
+```
+
+Then download:
+
+```bash
+rclone copy "hivenet:YOUR_BUCKET" "./hivenet-download/" --progress
+```
+
+For one prefix, use:
+
+```bash
+rclone copy "hivenet:YOUR_BUCKET/reports" "./reports-download/" --progress
+```
+
+These examples use `copy`, which does not remove destination files that are absent from the source. It can still replace destination files. See the [rclone copy reference](https://rclone.org/commands/rclone_copy/).
+
+## Retry an interrupted transfer
+
+Run the same copy command again. rclone compares the source and destination to decide what still needs transferring.
+
+Check the output for failures and verify the resulting files before treating the transfer as complete.
+
+## If the remote fails
+
+Check the endpoint, exact region value, and `force_path_style` setting. Confirm that the environment contains a complete, active Hivenet credential pair.
+
+Avoid adding optional S3 features based only on another provider's example. See [S3 compatibility](/documentation/object-storage/s3-compatibility) and [Troubleshooting](/documentation/object-storage/troubleshooting).

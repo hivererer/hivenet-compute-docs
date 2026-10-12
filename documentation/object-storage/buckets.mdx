@@ -1,0 +1,85 @@
+---
+title: "Manage Hivenet Object Storage buckets"
+sidebarTitle: "Buckets"
+description: "Create buckets, understand organization access, and safely empty or delete a bucket."
+icon: "bucket"
+---
+
+A bucket holds objects for your organization. Buckets and objects are shared across its members.
+
+You need an active [access key](/documentation/object-storage/access-keys) of your own to use bucket actions. Without one, the bucket list remains visible, but its actions and options menus are disabled.
+
+## Create a bucket
+
+1. Open **Object Storage** and confirm the active organization.
+2. In **Buckets**, select **New bucket**.
+3. Enter a bucket name.
+4. Review the region, organization access, and server-side encryption.
+5. Select **Create bucket**.
+
+The console accepts names that:
+
+- Contain 3–63 characters.
+- Use lowercase letters, numbers, and hyphens.
+- Start and end with a letter or number.
+- Contain no dots.
+- Are available in the selected region.
+
+The no-dots rule is a console restriction. Use the same naming rules for buckets created with a client to keep names consistent across tools.
+
+<Note>
+  A bucket belongs to the organization, including when you create it yourself. It is not private to its creator.
+</Note>
+
+## Open a bucket
+
+Select **View** in the bucket's row.
+
+- **Objects** lists object keys, sizes, and last-modified times. It also provides upload, download, share, and delete actions.
+- **Settings** shows the region, organization access, encryption, and creation date.
+
+The region is displayed as **EU**. Server-side encryption is always on and labeled **AES-256**.
+
+Object keys are listed in ascending lexicographic order. Use pagination to move through a long list.
+
+See [Manage objects](/documentation/object-storage/objects) for file operations.
+
+## Empty or delete a bucket
+
+Emptying removes the objects and leaves the bucket. Deleting removes the bucket itself. A bucket must be empty before it can be deleted.
+
+<Warning>
+  Emptying a bucket permanently deletes its objects. Deleting the bucket also makes its location unavailable to applications. Save any data you need and coordinate the change with other organization members before continuing.
+</Warning>
+
+### Delete an empty bucket
+
+1. Open the bucket's options menu and select **Delete**, or open **Settings > Delete bucket**.
+2. Review the consequences and select the acknowledgment checkboxes.
+3. Select **Delete bucket**.
+4. Check that the console confirms deletion and the bucket disappears from the list.
+
+### Delete a bucket that contains objects
+
+1. Open the bucket and review the objects it contains.
+2. Start the delete flow. When prompted to empty the bucket, review and confirm the permanent object deletion.
+3. Keep the browser tab open while the console empties the bucket.
+4. Wait for the console to empty the bucket and delete it.
+5. If the operation stops or fails, review the remaining objects and retry against that list.
+6. Verify that the bucket is gone.
+
+The console empties buckets in batches. This work depends on the browser tab staying open.
+
+### If emptying is interrupted
+
+**Stop emptying** lets the running batch finish and stops before another batch starts. Wait for the stop result and check the remaining object count. Objects deleted by completed batches stay deleted.
+
+After a stopped operation, connection loss, or a partial failure, reopen the bucket and refresh its contents. Retry against the objects that remain. Do not assume an interrupted request left every object unchanged.
+
+If you only want to remove the objects, use **Empty bucket** and keep the empty bucket.
+
+## Bucket names after deletion
+
+A deleted bucket's name becomes available again in the region. Availability does not reserve it for you, so another user may create a bucket with that name.
+
+If deletion reports `BucketNotEmpty`, objects remain. Refresh the list, empty the bucket, and retry. See [Troubleshooting](/documentation/object-storage/troubleshooting).
