@@ -14,6 +14,8 @@ The AWS CLI can call Hivenet Object Storage through the Hivenet S3 endpoint. Use
 - A bucket created in [Object Storage](/documentation/object-storage/buckets).
 - A small local test file, such as `hello.txt`.
 
+For self-service storage, uploads require a positive organization credit balance. At zero credits, you can still list and download objects. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+
 These commands use the profile name `hivenet`. Replace `YOUR_BUCKET` with your bucket's name.
 
 ## Configure the profile
@@ -49,7 +51,7 @@ aws configure set s3.signature_version s3v4 --profile hivenet
 List buckets:
 
 ```bash
-aws s3api list-buckets --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3api list-buckets --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 An empty bucket list is a valid response if your organization has no buckets.
@@ -57,7 +59,7 @@ An empty bucket list is a valid response if your organization has no buckets.
 List objects in a bucket:
 
 ```bash
-aws s3 ls "s3://YOUR_BUCKET/" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3 ls "s3://YOUR_BUCKET/" --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 Every command in this guide includes the Hivenet endpoint. Omitting it can send the request to AWS.
@@ -67,7 +69,7 @@ Every command in this guide includes the Hivenet endpoint. Omitting it can send 
 Choose an object key that does not already contain data you need to keep:
 
 ```bash
-aws s3 cp "./hello.txt" "s3://YOUR_BUCKET/hello.txt" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3 cp "./hello.txt" "s3://YOUR_BUCKET/hello.txt" --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 Uploading to an existing key replaces that object.
@@ -79,7 +81,7 @@ The high-level `aws s3 cp` command manages multipart transfers when needed. A ra
 Use a new local filename to avoid replacing a file you need:
 
 ```bash
-aws s3 cp "s3://YOUR_BUCKET/hello.txt" "./hello-downloaded.txt" --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3 cp "s3://YOUR_BUCKET/hello.txt" "./hello-downloaded.txt" --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 ## Download many objects
@@ -87,13 +89,13 @@ aws s3 cp "s3://YOUR_BUCKET/hello.txt" "./hello-downloaded.txt" --profile hivene
 First preview a copy of the bucket into a local directory:
 
 ```bash
-aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --dryrun --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --dryrun --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 Check the source and destination, then run it without `--dryrun`:
 
 ```bash
-aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --profile hivenet --endpoint-url https://eu.s3.public.hivenet.com
+aws s3 cp "s3://YOUR_BUCKET/" "./hivenet-download/" --recursive --profile hivenet --endpoint-url https://eu.s3.hivenet.com
 ```
 
 To copy only a prefix, use a source such as `s3://YOUR_BUCKET/reports/`.

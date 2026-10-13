@@ -9,7 +9,7 @@ Start with the organization, endpoint, and credential pair. Then use the section
 
 ## Object Storage is missing
 
-Check the organization selected in the console. Hivenet Object Storage is visible only for enabled business organizations.
+Check the organization selected in the console. Hivenet Object Storage is in beta, with access opening to all organizations.
 
 Ask your Hivenet contact to check access if Object Storage is missing from the expected organization.
 
@@ -23,9 +23,11 @@ If you previously activated storage and left the credentials screen, activation 
 
 You need an active key of your own to use bucket and object actions in the console. Joining an organization does not create one for you.
 
-If **My keys** is empty, select **New key**, save both credential values, and confirm that you have saved them. Creating the key enables bucket actions and options menus.
+If **My keys** is empty, select **New key**, save both credential values, and confirm that you have saved them. An active key is required, but your organization's access mode can still restrict actions.
 
-See [Access keys](/documentation/object-storage/access-keys).
+For self-service storage, also check for an **Add credits** warning. At zero or negative balance, writes are blocked and the console's bucket view is locked. Listing and downloads remain available through a configured S3 client. Add enough credits to clear outstanding debt and leave a positive balance, or ask the organization Owner to do so.
+
+If support has set the organization to **Disabled**, contact support; this is separate from a credit-related restriction. See [Usage and billing](/documentation/object-storage/usage-and-billing#when-credits-run-out) and [Access keys](/documentation/object-storage/access-keys).
 
 ## You cannot create or revoke a key
 
@@ -39,12 +41,16 @@ See [Access keys](/documentation/object-storage/access-keys) for the full rotati
 
 For `InvalidAccessKeyId`, `SignatureDoesNotMatch`, or access errors:
 
-1. Confirm the endpoint is `https://eu.s3.public.hivenet.com`.
+1. Confirm the endpoint is `https://eu.s3.hivenet.com`.
 2. Set the signing region to `Europe`, with the same capitalization.
 3. Explicitly enable path-style addressing.
 4. Use the matching access key ID and secret from the intended organization.
 5. Check for truncated values, extra whitespace, or an old credential in the application's environment or profile.
 6. Confirm that the key has not been revoked.
+
+The old `eu.s3.public.hivenet.com` endpoint is deprecated. Use the current EU endpoint above and confirm that the expected buckets are listed. US access is planned separately; see [Connection settings](/documentation/object-storage/connection-settings#endpoint-changes-and-regions).
+
+If reads work but uploads or deletes fail, check the credit balance and access mode before replacing credentials.
 
 For time-related signature errors, check that the client machine's clock is correct.
 
@@ -67,11 +73,13 @@ Set path style explicitly:
 | JavaScript SDK v3 | `forcePathStyle: true` |
 | rclone | `force_path_style = true` |
 
-Use the Hivenet base endpoint and pass the bucket separately. Include `--endpoint-url https://eu.s3.public.hivenet.com` on AWS CLI requests.
+Use the Hivenet base endpoint and pass the bucket separately. Include `--endpoint-url https://eu.s3.hivenet.com` on AWS CLI requests.
 
 See [Connection settings](/documentation/object-storage/connection-settings).
 
 ## Bucket creation fails
+
+For self-service storage, check that the organization has a positive balance and full access. Bucket creation is blocked in read-only mode.
 
 Use 3–63 lowercase letters, numbers, and hyphens. Start and end with a letter or number, and do not use dots.
 
@@ -83,6 +91,7 @@ Do not assume bucket names are available because your organization has not used 
 
 Check the file's name and size before retrying.
 
+- **Out of credits:** Uploads are blocked in read-only mode. [Add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access) to restore full access.
 - **Invalid name:** Follow the [object naming rules](/documentation/object-storage/objects#choose-object-names).
 - **File too large:** The console currently uses single-request uploads, which have a 5 GB limit. For larger files, use a client with multipart support, up to the 5 TB per-object limit. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers).
 - **Only some files uploaded:** Use **Retry failed files** and check the resulting object list.
@@ -99,17 +108,23 @@ Copy the exact object key, including its prefix and capitalization. Check that i
 
 A deleted object returns a not-found response. If the console list is stale, refresh it.
 
+Running out of credits does not block S3 client downloads, although the console's bucket view is locked. Download through a configured client while the data is still stored. A separate **Disabled** mode blocks authenticated object reads; contact support if that applies.
+
 For console downloads, check the browser's download list. Use [AWS CLI](/documentation/object-storage/aws-cli) or [rclone](/documentation/object-storage/rclone) for multiple objects.
 
 ## A share link fails
 
 Check that the URL was copied in full, that it has not expired, and that the object still exists.
 
+An access-mode change, including running out of credits, does not revoke an existing link.
+
 If you are authorized to share the object, generate a new link with an appropriate expiry. See [Share objects](/documentation/object-storage/share-objects).
 
 Do not include the complete share URL in a public issue or support screenshot.
 
 ## A bucket will not delete
+
+In read-only mode, you cannot delete stored data. Restore full access before trying to empty or delete a bucket.
 
 `BucketNotEmpty` means objects remain.
 
@@ -121,9 +136,11 @@ See [Empty or delete a bucket](/documentation/object-storage/buckets#empty-or-de
 
 ## Usage or cost looks unexpected
 
-Check the billing period, your organization's rate, and the €50 monthly minimum. Distinguish the actual cost so far from the end-of-month estimate.
+Check the billing period and your organization's rate. Self-service storage draws hourly from the same balance as Compute and inference. The €50 monthly minimum applies only to invoiced customers.
 
-**Total storage** measures the current amount stored. GiB-hours measure accumulated usage over time; they are not a current storage size.
+Storage continues to accrue charges while read only, so a zero balance can become negative. A top-up first pays that outstanding amount. Distinguish actual cost so far from the end-of-month estimate.
+
+**Storage used** measures the current amount stored. GiB-hours measure accumulated usage over time; they are not a current storage size.
 
 Transfer data is aggregated hourly. It is not a real-time activity log.
 

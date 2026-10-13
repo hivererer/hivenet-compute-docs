@@ -11,7 +11,7 @@ Use these settings when connecting an S3-compatible client to Hivenet Object Sto
 
 | Setting | Value |
 | --- | --- |
-| Endpoint URL | `https://eu.s3.public.hivenet.com` |
+| Endpoint URL | `https://eu.s3.hivenet.com` |
 | Signing region | `Europe` |
 | Addressing style | Path style, explicitly enabled |
 | Authentication | AWS Signature Version 4 with your Hivenet access key ID and secret access key |
@@ -21,18 +21,26 @@ The signing region is case-sensitive. Use `Europe`, even though the console disp
 
 Use your credential pair from **Object Storage > My keys**. An AWS account is not required to use the AWS CLI or AWS SDKs with the Hivenet endpoint.
 
+## Endpoint changes and regions
+
+The EU endpoint is now `https://eu.s3.hivenet.com`. The previous endpoint, `https://eu.s3.public.hivenet.com`, is deprecated. Update the endpoint in existing client profiles and application configurations, and check that the expected buckets are listed before writing data.
+
+The console and the examples in these guides use EU storage. US access through SDKs and the CLI is planned for release 1.39, using `https://us.s3.hivenet.com` and signing region `NorthAmerica`. Do not treat that planned rollout as confirmation that US access is available to your organization.
+
+The regional clusters have separate bucket and object listings. Credentials can be used across the clusters when access is available, but selecting another endpoint does not move or replicate data.
+
 ## Path-style addressing
 
 Hivenet uses one endpoint for the region. The bucket name goes in the URL path:
 
 ```text
-https://eu.s3.public.hivenet.com/BUCKET_NAME/OBJECT_KEY
+https://eu.s3.hivenet.com/BUCKET_NAME/OBJECT_KEY
 ```
 
 For example, the object `reports/report.csv` in `my-app-bucket` has this path:
 
 ```text
-https://eu.s3.public.hivenet.com/my-app-bucket/reports/report.csv
+https://eu.s3.hivenet.com/my-app-bucket/reports/report.csv
 ```
 
 This illustrates the address format; it is not an unauthenticated download link.

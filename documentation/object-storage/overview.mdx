@@ -8,7 +8,7 @@ icon: "database"
 Hivenet Object Storage stores files as objects in buckets. You can manage them in the console or connect an application, backup tool, or script through compatible Amazon S3 APIs.
 
 <Info>
-  Access is available to business organizations enabled by Hivenet. If **Object Storage** is missing from your console, check the active organization and ask your Hivenet contact to confirm access.
+  Hivenet Object Storage is in beta, with access opening to all organizations. If **Object Storage** is missing from your console, check the active organization and ask your Hivenet contact to confirm availability.
 </Info>
 
 ## Buckets, objects, and keys
@@ -21,13 +21,13 @@ An object key names data. An access key authenticates a client.
 
 ## Who can access your data
 
-Buckets and objects are shared across your organization. All members can see the bucket list, but you need an active key of your own to use bucket and object actions in the console. Creating a bucket does not make it private to its creator.
+Buckets and objects are shared across your organization. All members can see the bucket list, but you need an active key of your own to use bucket and object actions in the console. Creating a bucket does not make it private to its creator. Your organization's [access mode](/documentation/object-storage/usage-and-billing#when-credits-run-out) also determines which actions are available.
 
 Access keys belong to individual users within the organization. **My keys** shows your own keys, including when you are an organization owner or administrator. You can have up to two keys.
 
 Objects use server-side encryption. The console shows **AES-256** as always on. The available storage region is displayed as **EU**.
 
-Storage currently operates in one EU region, with no failover to another region if it becomes unavailable.
+The console manages EU storage. US availability is planned for a later release. Cross-region replication and automatic failover are not available.
 
 ## Choose how to work
 
@@ -39,7 +39,7 @@ Storage currently operates in one EU region, with no failover to another region 
 | Upload, download, or delete objects | [Objects](/documentation/object-storage/objects) |
 | Give someone temporary download access | [Share objects](/documentation/object-storage/share-objects) |
 | Connect a script or transfer many files | [Connection settings](/documentation/object-storage/connection-settings) |
-| Understand usage and invoices | [Usage and billing](/documentation/object-storage/usage-and-billing) |
+| Understand usage, credits, and invoices | [Usage and billing](/documentation/object-storage/usage-and-billing) |
 
 Use a desktop browser for console tasks. The console supports multiple-file uploads and deletion, with downloads handled one object at a time. Use the AWS CLI or rclone to download many objects.
 
@@ -51,7 +51,9 @@ Clients must use the Hivenet endpoint, the signing region `Europe`, and explicit
 
 ## Billing
 
-Storage is invoiced monthly after use, separately from your Compute credit balance. Rates are set for your organization, and a monthly minimum applies. Read [Usage and billing](/documentation/object-storage/usage-and-billing) before activating storage.
+Self-service organizations pay from the same prepaid credit balance used by Compute and Hivenet Inference Service. Storage charges are deducted hourly. Direct customers with an invoicing agreement continue to receive monthly invoices after use; the €50 monthly minimum applies only to that arrangement.
+
+At zero credits, self-service storage becomes read only and continues to accrue charges. Read [Usage and billing](/documentation/object-storage/usage-and-billing) for access restrictions, top-ups, and the seven-day deletion eligibility policy.
 
 <Warning>
   Uploading to an existing object key replaces the stored object. Treat replacement and deletion as permanent, and keep a separate copy of data you need to recover.

@@ -9,12 +9,14 @@ This guide takes you from activation to your first stored object and a client co
 
 ## What you'll need
 
-- Access to a business organization enabled for Hivenet Object Storage.
+- A Hivenet organization with **Object Storage** available in the console.
 - A desktop browser.
 - A secure place to save your access key ID and secret.
 - A small test file with a simple name, such as `hello.txt`.
 
-Confirm your organization's agreed storage rate and monthly minimum before activating. Storage uses [monthly invoicing](/documentation/object-storage/usage-and-billing).
+Confirm your organization's [billing arrangement](/documentation/object-storage/usage-and-billing). For self-service storage, add enough credits to keep the shared organization balance positive before creating a bucket or uploading files. If you cannot add credits, ask the organization Owner.
+
+Direct customers with an invoicing agreement follow their contract instead.
 
 <Steps>
   <Step title="Open Object Storage">
@@ -69,7 +71,7 @@ Confirm your organization's agreed storage rate and monthly minimum before activ
 ## If a step fails
 
 - **Object Storage is missing:** Confirm the organization and ask your Hivenet contact to check access.
-- **Buckets are visible but actions are disabled:** Create and save your own key in **My keys** to enable the actions.
+- **Buckets are visible but actions are disabled:** Check that you have your own active key in **My keys**. For self-service storage, also check the organization's credit balance. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
 - **The bucket name is taken:** Choose another name.
 - **You lost the secret:** Create a replacement key and update your client before revoking the old key.
 - **The client cannot connect:** Check the endpoint, signing region, and path-style setting in [Connection settings](/documentation/object-storage/connection-settings).

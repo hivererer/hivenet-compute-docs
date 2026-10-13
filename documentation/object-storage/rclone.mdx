@@ -13,6 +13,8 @@ rclone can transfer directories and download many objects from Hivenet Object St
 - Your Hivenet access key ID and secret access key.
 - A bucket created in the console.
 
+For self-service storage, uploads require a positive organization credit balance. At zero credits, listing and downloads remain available. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+
 Replace `YOUR_BUCKET` in the commands below. Use a local directory that does not contain files you need to preserve unchanged.
 
 ## Configure a remote
@@ -27,7 +29,7 @@ type = s3
 provider = Other
 env_auth = true
 region = Europe
-endpoint = https://eu.s3.public.hivenet.com
+endpoint = https://eu.s3.hivenet.com
 force_path_style = true
 ```
 

@@ -11,12 +11,27 @@ Use the [AWS S3 API reference](https://docs.aws.amazon.com/AmazonS3/latest/API/A
 
 ## Connection requirements
 
-- Endpoint: `https://eu.s3.public.hivenet.com`.
+- Endpoint: `https://eu.s3.hivenet.com`.
 - Signing region: `Europe`.
 - Authentication: AWS Signature Version 4 with a Hivenet access key ID and secret.
 - Addressing: path style, explicitly enabled.
 
-See [Connection settings](/documentation/object-storage/connection-settings) for client-specific options.
+These settings target EU storage. See [Connection settings](/documentation/object-storage/connection-settings) for client-specific options, the deprecated endpoint, and the planned US rollout.
+
+## Organization access modes
+
+Operation support does not override an organization's access mode. Self-service organizations move to **Read only** when the shared credit balance reaches zero. **Disabled** is a separate support-controlled restriction; it is not the automatic billing state.
+
+| Operation | Full access | Read only | Disabled |
+| --- | --- | --- | --- |
+| List bucket names | Yes | Yes | Yes |
+| List objects and read or download data | Yes | Yes | No |
+| Upload or modify objects | Yes | No | No |
+| Delete objects or create buckets | Yes | No | No |
+
+Changing modes does not itself delete objects or keys. Storage continues to accrue charges while read only. Existing presigned share links remain valid until expiry regardless of mode, provided the object still exists.
+
+See [Usage and billing](/documentation/object-storage/usage-and-billing#when-credits-run-out) for restoring access and deletion eligibility after seven days without funds.
 
 ## Documented operations
 

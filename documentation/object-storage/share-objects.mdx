@@ -13,7 +13,7 @@ A share link gives someone temporary download access to one object without a Hiv
 
 ## Create a share link
 
-You need an active [access key](/documentation/object-storage/access-keys) of your own to create a link in the console. The recipient does not need a key.
+You need an active [access key](/documentation/object-storage/access-keys) of your own to create a link in the console. The recipient does not need a key. If the console's bucket view is locked because your organization is out of credits, [restore access](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access) before creating a link there.
 
 1. Open **Object Storage**, then open the bucket.
 2. In **Objects**, open the object's options menu.
@@ -33,6 +33,7 @@ The link is a presigned URL: it includes a signature and an expiry. The recipien
 - Copying or forwarding it gives another person the same download access.
 - Creating a link does not change the bucket's organization access.
 - Expiry stops future requests using that link. It does not remove copies someone has already downloaded.
+- Existing links remain valid until expiry when the organization's access mode changes, including read-only or disabled mode. A mode change is not a way to revoke a link.
 
 The console offers fixed expiry choices and no separate per-link revoke control. Do not use access-key rotation as a way to manage a link's lifetime.
 
@@ -46,6 +47,6 @@ Check that:
 2. The selected expiry has not passed.
 3. The object still exists at the same key.
 
-A link may stop working before its selected expiry if the object is removed or access changes. If you are still authorized to share the object, create a new link and send the replacement.
+A link cannot download an object that has been removed. If the object still exists and you are authorized to share it, create a new link and send the replacement.
 
 For signed URLs created by your own application, use the Hivenet client settings in [Connection settings](/documentation/object-storage/connection-settings) and the compatible operations in [S3 compatibility](/documentation/object-storage/s3-compatibility).

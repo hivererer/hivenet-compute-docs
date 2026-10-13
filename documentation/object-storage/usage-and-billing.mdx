@@ -1,66 +1,95 @@
 ---
 title: "Understand Hivenet Object Storage usage and billing"
 sidebarTitle: "Usage and billing"
-description: "Understand storage metering, organization rates, monthly invoices, and the difference between costs and estimates."
+description: "Understand shared credits, hourly storage charges, access when funds run out, and monthly invoicing for direct customers."
 icon: "receipt"
 ---
 
-Hivenet Object Storage is billed after use through a monthly invoice. Storage charges are separate from your Compute credit balance.
+Hivenet Object Storage has two billing arrangements. Self-service organizations use prepaid credits shared with Compute and Hivenet Inference Service. Direct customers with an invoicing agreement receive a monthly invoice after use.
 
 ## Your organization's price
 
-The list price is **€9.99 per TB per month**. Your organization may have an agreed rate or discount.
+The list price is **€9.99 per TB per month**. Your organization may have an agreed rate or discount. Egress and API operations are included.
 
-A **€50 monthly minimum** applies. Use your organization's agreement and invoice to confirm the applicable charges.
+- **Self-service:** Storage charges are deducted from the shared organization balance each hour. The €50 monthly invoice minimum does not apply. Credit purchases have the minimum shown in the payment dialog.
+- **Invoiced customers:** A **€50 monthly minimum** applies. Payment terms follow your organization's contract.
 
-Egress and API operations are included in the storage price. You do not buy Compute credits to pay for Object Storage.
+Changes to your rate do not alter charges for a previous billing period.
 
 ## How storage is metered
 
-Charges depend on both the amount stored and how long it is stored. Changes in stored data affect metered usage over time.
+Charges depend on both the amount stored and how long it is stored. Changes in stored data affect metered usage over time. There is no minimum storage duration for an individual upload.
 
-The usage API records **GiB-hours**. For example, storing 1 GiB for one hour contributes 1 GiB-hour. This is a measure of storage over time, not the current size of a bucket.
+For self-service billing, each hourly charge reflects the stored GB and your organization's price per TB per month, divided by 1,000 and the number of hours in that month. A full month at an average of 1 TB costs €9.99 at the list rate.
 
-There is no minimum storage duration for an individual upload. The monthly invoice minimum still applies.
+Month-to-date charges are calculated at full precision. Each hourly deduction applies the change in the rounded total, so rounding does not accumulate across hourly charges.
 
-Deleting objects ends their contribution to future stored usage. It does not remove charges for the time they were stored.
+The usage API records **GiB-hours**, a measure of storage over time. This is different from the current size of your data. Use the cost shown for your organization rather than applying a decimal GB price directly to the raw GiB-hours value.
+
+Deleting objects ends their contribution to future storage usage. It does not remove charges already incurred. Storage continues to accrue charges when access is read only.
+
+## When credits run out
+
+For self-service organizations, a zero balance changes storage to **Read only**. Reaching zero does not immediately delete data or revoke access keys.
+
+| Action | Positive balance and full access | Zero or negative balance and read-only access |
+| --- | --- | --- |
+| List bucket names | Available | Available |
+| List and download existing objects through an S3 client | Available | Available |
+| Upload or modify objects | Available | Blocked |
+| Delete objects or create buckets | Available | Blocked |
+
+The console's bucket view is locked while the organization is out of credits. Use a configured [AWS CLI](/documentation/object-storage/aws-cli), [SDK](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone) client to list or download data while access is read only.
+
+Stored data continues to incur charges, so the balance can become negative. Adding credits first pays that outstanding amount. For example, adding €10 to a balance of −€2 leaves €8 for further usage.
+
+<Warning>
+  After seven days without funds, stored data becomes eligible for deletion. Add enough credits to clear any outstanding balance and cover continued storage.
+</Warning>
+
+Existing [share links](/documentation/object-storage/share-objects) remain valid until expiry even when the access mode changes, as long as the object still exists.
+
+**Disabled** is a separate restriction applied by support, not the automatic result of running out of credits. In that mode, only bucket names remain listable through authenticated S3 requests; object listing and downloads are blocked. Contact support if your organization is disabled.
+
+## Add credits and restore access
+
+The organization **Owner** manages payments. If you cannot add credits, ask the Owner to do so.
+
+1. Open **Object Storage** and select **Add credits** in the warning banner.
+2. Enter an amount or choose a credit bundle. Follow the minimum shown in the dialog.
+3. If an outstanding balance is shown, add enough to clear it and leave a positive balance for continued usage.
+4. Select **Continue to payment** and complete the Stripe checkout.
+5. Return to the console and check the balance and restored access.
+
+A payment that leaves the balance at zero or below does not restore full access. Once the payment leaves a positive balance, read-only restrictions are lifted. If the balance has updated but the page remains locked, refresh it and contact support if the problem continues.
+
+The Owner can also use **Billing** to add credits or configure auto top-up. See [Billing information](/documentation/account-billing/billing-info#add-credits). Compute, inference, and self-service storage draw from the same balance, so account for their combined usage.
 
 ## How monthly invoicing works
 
-After each month ends, Hivenet reviews your organization's metered storage usage and agreed rate, applies the €50 monthly minimum, and issues a formal invoice. Payment terms follow your organization's contract.
+For direct customers with an invoicing agreement, storage is billed externally instead of drawing from the prepaid balance. The prepaid-credit warnings and lockouts above do not apply to this arrangement.
 
-The console and invoice use your organization's configured rate and metered usage. Changes to your rate do not alter charges for a previous billing period.
+After each month ends, Hivenet reviews the organization's metered storage usage and agreed rate, applies the €50 monthly minimum, and issues a formal invoice. Follow the payment terms in your contract.
 
 ## Read the cost cards
 
-Open **Object Storage** to review the current billing period.
+Open **Object Storage** to review usage and the displayed billing period.
 
 | Card | How to read it |
 | --- | --- |
-| **Total storage** | The current amount of data stored across your organization. This measures stored size, not accumulated usage over time. |
-| **Cost this month** | The actual storage cost accumulated so far in the displayed period, using your organization's configured rate. |
+| **Storage used** | The current amount of data stored across your organization, not accumulated usage over time. |
+| **Cost this month** | Storage cost accumulated so far in the displayed period, using your organization's configured rate. |
 | **Estimated cost this month** | A projection to the end of the month. It can change when you upload or delete data. |
-| **Estimated egress savings** | Your organization's outbound traffic multiplied by the AWS comparison rate named in the tooltip, displayed as “up to €X saved.” This is an estimate, not a credit or payment. |
+| **Estimated egress savings** | Outbound traffic multiplied by the AWS comparison rate named in the tooltip, displayed as “up to €X saved.” This is an estimate, not a credit or payment. |
 
-The final invoice can differ from the current usage-based amount because more usage may accrue and the monthly minimum applies.
+These cards describe storage usage. The shared prepaid balance also reflects charges from other products and any credit purchases. For invoiced customers, the console does not collect payment; use the formal invoice and contract to confirm what is due.
 
-Transfer data is aggregated hourly, so the egress comparison is not a real-time meter. It is shown for the organization, not for individual buckets.
+Transfer data is aggregated hourly, so the egress comparison is not a real-time meter. It is shown for the organization, not individual buckets.
 
-## Storage size and usage
+## Review a billing question
 
-**Total storage** shows the current size across your organization. An individual object's size is shown in its bucket's object list.
+Check the organization, billing period, configured rate, and changes in stored data. For prepaid billing, also check the outstanding balance and credit purchases. For invoiced billing, check the monthly minimum and invoice reference.
 
-Do not treat cumulative GiB-hours as a current byte count or convert them to a monthly charge using an assumed rate formula. Billing uses your organization's configured rate and the billing period.
-
-## Review an invoice question
-
-Compare:
-
-1. The organization and billing period.
-2. The agreed storage rate or discount.
-3. Changes in stored data during that period.
-4. The monthly minimum.
-
-If you need help, ask your Hivenet contact or use **Chat with us** in the console. Include the organization, billing period, and invoice reference. Do not send credentials.
+If you need help, ask your Hivenet contact or use **Chat with us** in the console. Include those details without sending credentials.
 
 See [Manage objects](/documentation/object-storage/objects) to review or remove stored data.

@@ -20,6 +20,8 @@ Create and save an [access key](/documentation/object-storage/access-keys). Set 
 
 These are variable names used by the examples, not credentials issued separately by Hivenet. Supply their values through your environment or secrets manager.
 
+For self-service storage, writes require a positive organization credit balance. Listing and downloads remain available at zero credits. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+
 ## Python with boto3
 
 Install boto3:
@@ -38,7 +40,7 @@ from botocore.config import Config
 
 s3 = boto3.client(
     "s3",
-    endpoint_url="https://eu.s3.public.hivenet.com",
+    endpoint_url="https://eu.s3.hivenet.com",
     region_name="Europe",
     aws_access_key_id=os.environ["HIVENET_ACCESS_KEY_ID"],
     aws_secret_access_key=os.environ["HIVENET_SECRET_ACCESS_KEY"],
@@ -107,7 +109,7 @@ if (!accessKeyId || !secretAccessKey) {
 }
 
 const s3 = new S3Client({
-  endpoint: "https://eu.s3.public.hivenet.com",
+  endpoint: "https://eu.s3.hivenet.com",
   region: "Europe",
   forcePathStyle: true,
   credentials: { accessKeyId, secretAccessKey },
