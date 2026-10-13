@@ -177,10 +177,10 @@
         ]
       },
       {
-        "tab": "Public API",
+        "tab": "Compute API",
         "pages": [
           {
-            "group": "Public API",
+            "group": "Guides",
             "pages": [
               "public-api/get-started-with-the-compute-api",
               "public-api/make-your-first-api-request",
