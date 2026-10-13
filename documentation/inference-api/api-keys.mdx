@@ -93,7 +93,9 @@ After revocation:
 
 ## Keys and organizations
 
-Keys belong to the organization in which they were created.
+Keys belong to the organization in which they were created. They also remain associated with the person who created them.
+
+When that person is removed from the organization, their API keys for Inference Service are revoked. This does not by itself stop the organization's endpoints, but requests using those keys fail. Have someone who will remain in the organization create replacement keys and update dependent applications before removing the person.
 
 If you work with more than one Compute organization, confirm the active organization before creating a key or troubleshooting authentication. Use a key from the same organization as the endpoint you are calling.
 

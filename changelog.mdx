@@ -4,6 +4,43 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="October 13, 2026" description="v1.37">
+  > ## Instance reliability, disk recovery, and Inference Service permissions
+
+  #### Instances and virtual machines
+
+  - VM boots and restarts are faster, with improved networking for multicore VMs.
+  - Rebuilding an instance now shows **Starting** while it restarts.
+  - Fixed instances getting stuck while stopping or terminating, containers failing to return after a restart, and VM root disks being deleted during a plan change.
+  - Updated Ubuntu GPU images keep NVIDIA driver packages on hold so a normal `apt upgrade` does not replace only part of the driver.
+  - Offline locations are shown as sold out.
+  - **Ubuntu 22.04 LTS** is available again for CPU and GPU VMs.
+
+  See [Create an instance](/documentation/essentials/create-instance) and [Start and stop instances](/documentation/essentials/start-stop-instances).
+
+  #### Disk recovery
+
+  Support can now help recover files from a terminated instance when a completed disk backup is available. Recovery does not restart the terminated instance and is not guaranteed. Keep your own backups.
+
+  See [Ask about disk recovery](/documentation/essentials/stop-terminate-instance#ask-about-disk-recovery).
+
+  #### Inference Service
+
+  - Owners and Admins can manage all organization endpoints. Members can manage only their own.
+  - When a member is removed, ownership of their endpoints transfers to the administrator removing them, and their API keys for Inference Service are revoked.
+
+  Update applications with replacement keys before removing a member. See [Manage endpoints](/documentation/inference-api/manage-deployments) and [API keys](/documentation/inference-api/api-keys).
+
+  #### Security and console fixes
+
+  - Improved tenant isolation for container logs and monitoring, encrypted internal platform messaging, and added checks to reduce personal data in platform logs.
+  - Fixed console issues affecting the first-login menu, Safari, endpoint creation, and access-key dialogs.
+
+  #### Object Storage availability
+
+  Object Storage is available through enterprise onboarding. Public beta access and full self-service are not part of this release.
+</Update>
+
 <Update label="September 2026" description="v1.36">
   > ## More reliable instance starts, SSH connections, and billing.
 

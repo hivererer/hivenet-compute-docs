@@ -5,13 +5,15 @@ sidebarTitle: "Stop/terminate an instance"
 icon: "circle-stop"
 ---
 
-On your **Instances** page, the three-dot menu (`⋮`) next to each instance offers two choices: **Stop** or **Terminate**. Seeing them side-by-side can be confusing, especially when one of those buttons can wipe an instance for good.
+On your **Instances** page, the three-dot menu (`⋮`) next to each instance offers **Stop** and **Terminate**. Stop preserves the instance temporarily so you can start it again. Terminate permanently deletes the instance and its local data.
 
-They might seem similar, but the results couldn’t be more different. One pauses your instance and keeps it around. The other deletes it entirely, no undo.
-
-This short guide breaks down what each option does, when to use it, and how to run the action step-by-step.
+This guide explains what each action keeps or deletes and how to ask about recovering files from an available backup.
 
 ## Where to find these actions
+
+<Warning>
+  Download important files before terminating an instance. You cannot restart it after termination. Support may be able to recover files from a backup, but recovery is not guaranteed and does not replace your own backups.
+</Warning>
 
 1. Go to **Compute → Instances**
 2. Find the instance you want to manage
@@ -30,13 +32,9 @@ You’ll need to tick some boxes before confirming Terminate, just to be sure yo
 
 ## ⚠️ Stopped instances are not forever
 
-Stopping an instance pauses it, but only temporarily. If you don’t restart it within **10 days**, it will be **automatically terminated**, and that means:
+Stopping an instance preserves it temporarily. If you don’t restart it within **10 days**, it is **automatically terminated**. The instance and its local data are deleted, and you cannot start it again.
 
-- The instance is deleted
-- All data is lost
-- There’s no recovery option
-
-This includes anything stored on the system disk. If it’s stopped and you forget about it, it will be gone.
+Keep your own backups of anything you need from the system disk. If the instance has already been terminated, [ask Support about disk recovery](#ask-about-disk-recovery).
 
 ## When to use **Stop**
 
@@ -62,7 +60,15 @@ Before the instance is deleted, you’ll be asked to confirm that:
 - All data will be wiped
 - This cannot be undone
 
-Once terminated, the instance disappears from your dashboard and cannot be recovered.
+Once terminated, the instance disappears from your dashboard and cannot be restarted.
+
+## Ask about disk recovery
+
+If you need files from a terminated instance, contact Support promptly through **Chat with us** in the console or email [support@hivenet.com](mailto:support@hivenet.com). Include the [instance ID](/documentation/troubleshooting/get-instance-id) and approximate termination time.
+
+Support can check whether a completed disk backup is available. If it is, the operations team may be able to recover files from that backup. Files changed after the backup will not be included.
+
+This process does not restart the terminated instance, and it is not a self-service restore. A usable backup may not be available. Keep your own backups and do not rely on recovery when deciding to terminate an instance.
 
 ## Manage instances through the API
 

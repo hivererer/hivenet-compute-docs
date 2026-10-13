@@ -47,7 +47,7 @@ You can choose. Compute instances are not limited to a single runtime type. Depe
 Yes. You can [**stop an instance and start it again**](/documentation/essentials/start-stop-instances) without losing your environment. Your files, packages, and configuration remain intact. Stopping releases the underlying capacity back to the pool. When you start again, availability depends on demand, and you may be placed on different hardware.
 
 <Warning>
-  **Important:** Stopped instances are not kept indefinitely.<br />If an instance remains stopped for more than 10 days, it is automatically terminated. Once terminated, the instance and its data cannot be recovered.
+  **Important:** Stopped instances are not kept indefinitely.<br />If an instance remains stopped for more than 10 days, it is automatically terminated. A terminated instance cannot be restarted. [Disk recovery through Support](/documentation/essentials/stop-terminate-instance#ask-about-disk-recovery) may be possible from an available backup, but is not guaranteed.
 </Warning>
 
 <Note>
@@ -76,7 +76,7 @@ Yes. Your environment is preserved when you stop an instance. Termination (manua
 
 For container-based instances, choose from the templates currently shown in the console, or use a custom template. The former self-managed vLLM product flow has been retired. For managed model serving, use [Hivenet Inference Service](/documentation/inference-api/overview).
 
-For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**.
+For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**. **Ubuntu 22.04 LTS** is available for CPU and GPU VMs that need this older Ubuntu version.
 
 ### What are custom templates?
 
@@ -153,7 +153,7 @@ We can provide current security and privacy docs on request. If you require form
 
 ### What happens to my data after termination—any data remanence guarantees?
 
-Terminating an instance ends the session and detaches its storage. For sensitive projects, store data in encrypted volumes you control and wipe/rotate credentials at the end of a run.
+Terminating an instance deletes it and its local data, but a disk backup may remain available for [Support-assisted file recovery](/documentation/essentials/stop-terminate-instance#ask-about-disk-recovery). Termination is not a guarantee of immediate backup erasure. Contact Support for current backup retention and deletion details. For sensitive projects, use encryption you control and revoke credentials when they are no longer needed.
 
 ### How do I report a security issue or incident?
 

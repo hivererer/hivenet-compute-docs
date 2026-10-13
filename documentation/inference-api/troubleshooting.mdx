@@ -89,7 +89,7 @@ Wait for the state to settle. A successful retry returns the endpoint to **Runni
 
 ## Retry is unavailable or keeps failing
 
-The **Retry** action appears only when it applies to the current endpoint state.
+The **Retry** action appears only when it applies to the current endpoint state and your role allows you to manage the endpoint. Owners and Admins can manage all organization endpoints; Members can manage only their own.
 
 Retry does not start a deliberately stopped endpoint. Use **Start** for an endpoint that is **Stopped**.
 
@@ -118,6 +118,8 @@ Check that:
 - The key is **Active**, not disabled or revoked.
 - The key belongs to the same organization as the endpoint.
 - The request sends the key as `Authorization: Bearer ...`.
+
+If the person who created the key was removed from the organization, the key is revoked even if the endpoint is still running. Create a replacement key and update the application.
 
 If the key was lost, revoked, or exposed, create a new one and update the application.
 

@@ -9,6 +9,12 @@ Use the **Deployments** section of Inference Service to monitor and manage the m
 
 Each row shows the endpoint status, name, model, region, replica count, request count over the last 7 days when available, and current hourly cost.
 
+## Check your permissions
+
+Owners and Admins can manage all endpoints in the organization. Members can manage only their own endpoints. The actions available also depend on the endpoint's state.
+
+If a member is removed from the organization, ownership of their endpoints transfers to the administrator removing them. Their API keys for Inference Service are revoked, so update dependent applications with replacement keys before removal. See [Keys and organizations](/documentation/inference-api/api-keys#keys-and-organizations).
+
 ## Open endpoint details
 
 Open an endpoint's options menu and select **Details**.
