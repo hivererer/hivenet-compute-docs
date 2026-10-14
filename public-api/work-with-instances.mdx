@@ -19,7 +19,7 @@ Common lifecycle states include:
 | :-- | :-- |
 | `CREATED` | The instance record exists but has not finished scheduling. |
 | `DEPLOYED` | The instance has been scheduled on a host. |
-| `STARTING` | The instance is booting. |
+| `STARTING` | The instance is booting or restarting during a rebuild. |
 | `RUNNING` | The instance has responded over SSH. Applications inside it may still be starting. |
 | `STOPPING` | Shutdown is in progress. |
 | `STOPPED` | The instance is stopped and can be started again. |
@@ -120,7 +120,7 @@ Poll the instance until it reaches `STOPPED`. The stop endpoint returns `409 Con
 Use [`POST /instances/{id}/terminate`](/public-api/endpoints/terminate-instance) to permanently terminate an instance.
 
 <Danger>
-  Termination is irreversible. A terminated instance can't be restarted, and its data is deleted.
+  A terminated instance can't be restarted, and its local data is deleted. Download important files before terminating it. [Support-assisted disk recovery](/documentation/essentials/stop-terminate-instance#ask-about-disk-recovery) depends on an available backup and is not guaranteed.
 </Danger>
 
 ```bash

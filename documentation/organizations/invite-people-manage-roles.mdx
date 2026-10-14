@@ -44,6 +44,7 @@ Admins can use organization resources and help manage the organization. They can
 - Remove Admins and Members
 - Rename the organization
 - See all organization instances
+- Manage all organization Inference Service endpoints
 - View billing and usage details
 
 Admins cannot add credits, manage payment methods, configure auto top-up, transfer ownership, or delete the organization.
@@ -52,7 +53,7 @@ Admins cannot add credits, manage payment methods, configure auto top-up, transf
 
 Members can create and use organization resources. Instances they create use the shared organization balance.
 
-Members cannot manage people, organization settings, or billing. They see the instances they created rather than every instance in the organization.
+Members cannot manage people, organization settings, or billing. They see the instances they created rather than every instance in the organization. They can manage only their own Inference Service endpoints.
 
 ## Manage pending invitations
 
@@ -95,6 +96,10 @@ The person can then manage people and organization settings, see all organizatio
 
 Owners and Admins can remove other Admins and Members.
 
+<Danger>
+  Save important files from the person's virtual machines and containers before removing them. Those instances will be terminated, deleting their local data. Replace any API keys for Inference Service they created and update dependent applications before removal, because those keys will be revoked.
+</Danger>
+
 1. Open the organization page.
 2. Find the person you want to remove.
 3. Open the menu next to their name.
@@ -105,12 +110,10 @@ Owners and Admins can remove other Admins and Members.
 Removing someone has an immediate effect:
 
 - They lose access to the organization.
-- Their running and stopped instances in the organization are terminated.
+- Their running and stopped virtual machines and containers in the organization are terminated.
+- Ownership of their Inference Service endpoints transfers to the administrator removing them.
+- Their API keys for Inference Service are revoked. Requests using those keys fail, even if the endpoints remain running.
 - They need a new invitation to rejoin.
-
-<Danger>
-  Terminating an instance permanently deletes its local data. Make sure the person has saved anything important before you remove them.
-</Danger>
 
 ## Manage the Owner role
 

@@ -39,7 +39,7 @@ Billing stops as soon as the instance leaves **Running**. The status then update
 
   When an instance is stopped, it isn’t kept indefinitely.<br />If an instance remains stopped for more than 10 days, it is automatically terminated.
 
-  Once terminated, the instance and its data can’t be recovered. To keep an instance, make sure to start it again within that time window.
+  A terminated instance cannot be restarted. To keep an instance, make sure to start it again within that time window. If you need files from a terminated instance, [ask Support about disk recovery](/documentation/essentials/stop-terminate-instance#ask-about-disk-recovery). Recovery depends on an available backup and is not guaranteed.
 
   If an instance was stopped for more than 10 days, it may have already been terminated and won’t be available to start.
 </Warning>
@@ -61,6 +61,8 @@ Review the configuration details, then click **Start instance** to confirm.
 The instance returns to **Running** after it responds over SSH, and billing resumes. Disk preparation finishes before startup proceeds. An application inside the instance may still need time to become ready.
 
 ![Start Stop Instances 5 Pn](/images/start-stop-instances-5.png)
+
+During a Support-assisted rebuild, the instance shows **Starting** while it restarts, then returns to **Running** when ready.
 
 ## If resources aren't available
 

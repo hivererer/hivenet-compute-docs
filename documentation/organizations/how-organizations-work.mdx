@@ -109,6 +109,12 @@ Owners and Admins can see all instances created within the organization. This he
 
 Members see only the instances they created. They can continue to create and use resources, but they do not see other people's instances or organization-wide billing information.
 
+## Inference Service permissions
+
+Owners and Admins can manage all Inference Service endpoints in the organization. Members can manage only their own endpoints.
+
+When a member is removed, ownership of their Inference Service endpoints transfers to the administrator removing them, and their API keys for Inference Service are revoked. Update applications that use those keys before removing the member. See [Invite people and manage roles](/documentation/organizations/invite-people-manage-roles#remove-someone-from-the-organization).
+
 ## Invitations and membership changes
 
 Owners and Admins can invite people by email and choose whether each person joins as an Admin or Member. Pending invitations can be resent or canceled from the organization page.
