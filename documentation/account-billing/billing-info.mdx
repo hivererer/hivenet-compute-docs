@@ -40,7 +40,7 @@ For an explanation of the role model, see [How organizations work in Compute](/d
 
 ## How the organization balance works
 
-The balance belongs to the organization rather than to an individual person. Usage from running instances and Hivenet Inference Service workloads draws from the same balance.
+The balance belongs to the organization rather than to an individual person. Usage from running instances, Hivenet Inference Service workloads, and self-service Hivenet Object Storage draws from the same balance. Object Storage deducts charges hourly; direct customers with a storage invoicing agreement are billed separately. See [Object Storage usage and billing](/documentation/object-storage/usage-and-billing).
 
 The console shows:
 
@@ -113,6 +113,8 @@ Billing details and payment methods are managed through Stripe. Only the Owner c
 ## What happens when credits run low
 
 Compute prevents workloads from starting without enough credits. As the organization balance approaches zero, running workloads may stop or be terminated to prevent a negative balance. Running Hivenet Inference Service endpoints with a nonzero effective cost stop automatically when the organization reaches zero credit. Endpoints with an effective cost of €0 under a fully discounted contract are not stopped solely because the balance is zero.
+
+Self-service Hivenet Object Storage becomes read only at zero credits and continues to accrue storage charges, so the shared balance can become negative. New credits first cover the outstanding amount. Storage has its own [access and deletion policy](/documentation/object-storage/usage-and-billing#when-credits-run-out).
 
 The Owner can add credits or enable auto top-up to reduce the risk of an interruption.
 
