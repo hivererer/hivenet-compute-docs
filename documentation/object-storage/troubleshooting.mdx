@@ -140,7 +140,7 @@ Check the billing period and your organization's rate. Self-service storage draw
 
 Storage continues to accrue charges while read only, so a zero balance can become negative. A top-up first pays that outstanding amount. Distinguish actual cost so far from the end-of-month estimate.
 
-**Storage used** measures the current amount stored. GiB-hours measure accumulated usage over time; they are not a current storage size.
+**Storage used** measures the current amount stored. The usage API reports KiB-hours, which measure accumulated storage usage over time. Billing converts this meter to decimal TB-hours and uses the actual hours in the calendar month. See [How storage is metered](/documentation/object-storage/usage-and-billing#how-storage-is-metered) for units and rounding.
 
 Transfer data is aggregated hourly. It is not a real-time activity log.
 
