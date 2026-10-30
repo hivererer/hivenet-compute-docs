@@ -43,13 +43,14 @@ API keys are currently issued manually. Contact [support@hivenet.com](mailto:sup
 
 ## Current API surface
 
-This release contains eight public endpoints:
+The public API provides these endpoints:
 
 | Method | Endpoint | Use it to |
 | :-- | :-- | :-- |
 | `GET` | [`/instances`](/public-api/endpoints/list-instances) | List your instances. |
 | `GET` | [`/instances/{id}`](/public-api/endpoints/get-instance) | Get one instance. |
 | `GET` | [`/instances/{id}/logs`](/public-api/endpoints/get-instance-logs) | Read recent logs. |
+| `GET` | [`/instances/{id}/metrics`](/public-api/endpoints/get-instance-metrics) | Read instance usage metrics for a selected time range. |
 | `POST` | [`/instances/{id}/start`](/public-api/endpoints/start-instance) | Start a stopped instance. |
 | `POST` | [`/instances/{id}/stop`](/public-api/endpoints/stop-instance) | Stop a running instance. |
 | `POST` | [`/instances/{id}/terminate`](/public-api/endpoints/terminate-instance) | Permanently terminate an instance. |

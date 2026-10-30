@@ -43,7 +43,9 @@ Use a different Host alias for each instance.
 
 Compute instances present signed SSH host certificates. A host certificate identifies the server; your own SSH key identifies you. These are separate checks.
 
-Certificate verification depends on your SSH client trusting the signing certificate authority. Use the SSH configuration supplied by Compute. If you need certificate-authority details that are not shown there, ask Support for the trusted configuration.
+Configure your SSH client to trust Hivenet's signing certificate authority using the instructions supplied by Compute. You do this once for that client; new VMs with valid certificates signed by the trusted authority do not need a separate host-key acceptance prompt. This does not replace your own SSH key.
+
+Use the trusted configuration supplied by the console. If the certificate-authority details are missing, ask Support for them.
 
 If your client asks you to accept a host identity, verify it using trusted information from Hivenet before accepting. Do not disable host checking to get past a warning.
 

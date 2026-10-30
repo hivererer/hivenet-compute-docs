@@ -52,7 +52,7 @@ ssh -i /path/to/your-key.pem YOUR_SSH_USER@YOUR_SSH_HOST
 
 ## Step 5: Verify the server identity
 
-Compute instances present signed SSH host certificates. Use the SSH configuration supplied by the console. If your client asks you to accept a host identity, verify it with trusted information from Hivenet first.
+Compute instances present signed SSH host certificates. Follow the console's instructions to trust Hivenet's signing authority once in your SSH client. New VMs with valid certificates from that authority do not require a separate host-key acceptance prompt. If your client still asks you to accept a host identity, verify it with trusted information from Hivenet first.
 
 For certificate trust and changed-host warnings, see [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 

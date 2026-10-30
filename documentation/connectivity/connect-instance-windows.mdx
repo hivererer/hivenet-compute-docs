@@ -49,7 +49,7 @@ ssh hivenet
 
 ## Step 3 – Verify the server identity
 
-Compute instances present signed SSH host certificates. Use the SSH configuration supplied by the console, including any additional connection settings it requires. Only add a proxy or jump host when those instructions specify one.
+Compute instances present signed SSH host certificates. Follow the console's instructions to trust Hivenet's signing authority once in your SSH client. New VMs with valid certificates from that authority do not require a separate host-key acceptance prompt. Include the connection settings supplied by the console, and add a proxy or jump host only when those instructions specify one.
 
 If the client asks you to accept a host identity or reports that it has changed, verify it before continuing. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 

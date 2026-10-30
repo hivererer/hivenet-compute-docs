@@ -165,6 +165,12 @@ A shortened response looks like this:
 }
 ```
 
+## Read instance usage metrics
+
+Call [`GET /instances/{id}/metrics`](/public-api/endpoints/get-instance-metrics) with a required `range` of `1h`, `6h`, `24h`, or `7d`. Use an API key tied to the user who owns the instance.
+
+The response includes time series and a status for each metric group. Data availability depends on the instance's runtime and hardware. Treat missing samples as missing data, rather than zero usage.
+
 ## Suggested workflow
 
 <Steps>

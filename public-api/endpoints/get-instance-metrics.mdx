@@ -1,0 +1,63 @@
+---
+title: "Get instance metrics"
+sidebarTitle: "Get instance metrics"
+api: "GET https://api.hivecompute.ai/v1/instances/{id}/metrics"
+authMethod: "bearer"
+playground: "none"
+description: "Read Compute instance usage metrics through the public API, choose a time range, check ownership permissions, and handle missing data and errors."
+keywords: ["Compute API", "instance metrics", "CPU", "GPU", "memory", "usage"]
+---
+
+Use `GET /instances/{id}/metrics` to read usage time series for an instance you own. Metrics can include CPU, memory, disk, network, and GPU data, depending on the runtime, hardware, and available measurements.
+
+Instance usage metrics are available through the API. The console metrics view is not available in this release.
+
+## Request
+
+The production base URL is `https://api.hivecompute.ai/v1`. Use a [Compute API key](/public-api/authenticate-api-requests), which is separate from an Inference Service API key.
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/instances/YOUR_INSTANCE_ID/metrics?range=1h" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+Replace `YOUR_INSTANCE_ID` with the instance ID. Set `HIVENET_API_KEY` securely in your environment before making the request.
+
+| Parameter | Location | Required | Value |
+| --- | --- | --- | --- |
+| `id` | Path | Yes | The instance ID. |
+| `range` | Query | Yes | `1h`, `6h`, `24h`, or `7d`. Values are case-insensitive. |
+
+There is no default range. A missing, empty, or unsupported `range` returns `400`.
+
+## Access to metrics
+
+A user-bound API key can read metrics only for instances owned by that user. Being an organization Owner or Admin does not grant that key access to another user's instance metrics.
+
+Requests for another user's instance return `404`, the same response as a missing instance.
+
+## Read the response
+
+The response is JSON containing time series and a status for each metric group. Status values are strings, timestamps use ISO format, and unavailable values can be explicit `null` values.
+
+- Check each metric group's status before using its values.
+- Treat missing samples as missing data. Do not replace them with zero usage.
+- GPU data depends on the instance's GPU hardware and available measurements.
+- Historical data may include gaps while an instance is stopped or terminated. A successful metrics response does not mean the instance is currently running; check its [current state](/public-api/endpoints/get-instance).
+
+This page documents the metrics request and response handling. The downloadable OpenAPI file has not yet been updated with the full metrics response schema.
+
+## Errors
+
+| Status | What to check |
+| --- | --- |
+| `400` | Check the instance ID format and the required `range`. |
+| `401` | Supply a valid, active Compute API key. |
+| `403` | Check whether the account is suspended or access is restricted. |
+| `404` | Check the instance ID and whether the key's user owns that instance. |
+| `429` | Respect the `Retry-After` response header before retrying. |
+| `503` | The metrics service is unavailable. Retry later; contact Support if it persists. |
+
+See [Handle errors and rate limits](/public-api/handle-errors-and-rate-limits) for general API error handling.

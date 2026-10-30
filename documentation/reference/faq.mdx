@@ -18,7 +18,7 @@ Have at least **one hour** of credit for your chosen configuration. If your bala
 
 ### Are there hidden fees?
 
-No. You **only pay for compute time**. Storage attached to your on‑demand instance and network traffic are included.
+Storage attached to your on-demand instance and network traffic are included in the instance price. Hivenet Object Storage is a separate service with its own storage charges.
 
 <Note>
   Auto top‑up is available after your first purchase. Set a threshold and amount so your balance refills before it hits zero.
@@ -30,7 +30,7 @@ As the organization balance runs low, Compute instances may stop or be terminate
 
 ### How is storage billed?
 
-For on‑demand instances, storage is included with your instance. All storage is **NVMe SSD**. If you need more space or options, contact support.
+For on-demand instances, the included local disk is NVMe SSD storage. Hivenet Object Storage is separate: self-service usage draws from the shared prepaid balance, while customers with an invoicing agreement receive monthly invoices. See [Billing information](/documentation/account-billing/billing-info).
 
 ### Where can I find invoices and payment history?
 
@@ -76,13 +76,19 @@ Yes. Your environment is preserved when you stop an instance. Termination (manua
 
 For container-based instances, choose from the templates currently shown in the console, or use a custom template. The former self-managed vLLM product flow has been retired. For managed model serving, use [Hivenet Inference Service](/documentation/inference-api/overview).
 
-For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, or **Debian**. **Ubuntu 22.04 LTS** is available for CPU and GPU VMs that need this older Ubuntu version.
+For virtual machine instances, you can choose a full operating system image such as **Ubuntu**, **Fedora**, **Debian**, or **AlmaLinux 10**. AlmaLinux 10 and Ubuntu 22.04 LTS are available for CPU and GPU VMs.
+
+Updated Fedora GPU VM images retain the NVIDIA driver during a normal `dnf upgrade`. Updated Ubuntu GPU images hold NVIDIA driver packages during `apt upgrade`.
 
 ### What are custom templates?
 
 A [**custom template**](/documentation/essentials/custom-templates) saves your configured environment (OS, packages, dependencies, and settings) so you can relaunch the same stack quickly. It’s ideal for repeatable experiments or team workflows.
 
 ## Inference and APIs
+
+### Can I read instance usage metrics?
+
+Use [`GET /instances/{id}/metrics`](/public-api/endpoints/get-instance-metrics) with a Compute API key. The console metrics view is not available in this release.
 
 ### Do you support an OpenAI‑compatible API?
 
