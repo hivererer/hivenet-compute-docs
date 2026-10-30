@@ -4,6 +4,43 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="October 29, 2026" description="v1.38">
+  > ## Self-service Object Storage, AlmaLinux 10, and instance metrics
+
+  #### Object Storage
+
+  Object Storage is generally available to all organizations through the console.
+
+  - Self-service storage uses the same prepaid organization balance as Compute instances and Hivenet Inference Service.
+  - At zero credits, new buckets and uploads are blocked. The console explains the seven-day deletion policy and offers **Add credits**. If you cannot add credits, contact your organization's billing administrator.
+  - Enterprise customers with an invoicing agreement continue to receive monthly invoices. Prepaid-credit restrictions do not apply to that arrangement.
+
+  #### Console and SSH
+
+  - New accounts have a guided first-time experience.
+  - The sidebar can be collapsed, and the Enterprise tier is visible in the console.
+  - Instance creation has one fewer step, and every instance type shows a monthly price.
+  - You can configure your SSH client to trust Hivenet's signing authority once, avoiding repeated host-key prompts for new VMs with valid signed certificates.
+
+  See [Create an instance](/documentation/essentials/create-instance) and [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+
+  #### Instances
+
+  - **AlmaLinux 10** is available for CPU and GPU virtual machines.
+  - Updated Fedora GPU VM images retain the NVIDIA driver after a normal `dnf upgrade`.
+  - Instance usage metrics are available through the public Compute API. The console metrics view is not part of this release.
+
+  See [Get instance metrics](/public-api/endpoints/get-instance-metrics).
+
+  #### Inference Service
+
+  - Search and filters help you find deployments.
+  - The model picker includes license, latency, output speed, and monthly price information.
+  - **Copy URL** copies an endpoint's address for use in your application.
+
+  See [Manage endpoints](/documentation/inference-api/manage-deployments) and [Choose a model and variant](/documentation/inference-api/models-and-variants).
+</Update>
+
 <Update label="October 13, 2026" description="v1.37">
   > ## Instance reliability, disk recovery, and Inference Service permissions
 

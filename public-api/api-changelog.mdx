@@ -17,9 +17,17 @@ Staging base URL:
 
 `https://staging-api.hivecompute.ai/v1`
 
-The current release contains eight public endpoints. The endpoint reference shows the current request and response details.
+The endpoint reference covers instance lifecycle, logs, usage metrics, regions, and hardware presets.
 
 ## Latest changes
+
+<Update label="October 29, 2026" description="Compute v1.38">
+  ## Instance usage metrics
+
+  Added [`GET /instances/{id}/metrics`](/public-api/endpoints/get-instance-metrics) for instance usage time series. The `range` parameter is required and accepts `1h`, `6h`, `24h`, or `7d`, without case sensitivity.
+
+  A user-bound API key can read metrics only for instances owned by that user. Requests for another user's instance return `404`, as requests for a missing instance do.
+</Update>
 
 <Update label="08/10/2026">
   ## API surface finalized for release
@@ -53,6 +61,7 @@ The current release contains eight public endpoints. The endpoint reference show
 - [`GET /instances`](/public-api/endpoints/list-instances)
 - [`GET /instances/{id}`](/public-api/endpoints/get-instance)
 - [`GET /instances/{id}/logs`](/public-api/endpoints/get-instance-logs)
+- [`GET /instances/{id}/metrics`](/public-api/endpoints/get-instance-metrics)
 - [`POST /instances/{id}/start`](/public-api/endpoints/start-instance)
 - [`POST /instances/{id}/stop`](/public-api/endpoints/stop-instance)
 - [`POST /instances/{id}/terminate`](/public-api/endpoints/terminate-instance)
