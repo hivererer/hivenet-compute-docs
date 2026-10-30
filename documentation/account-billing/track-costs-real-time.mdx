@@ -65,6 +65,12 @@ The spend rate changes when:
 - Hivenet Inference Service usage starts or stops
 - The active configuration changes
 
+## Review Object Storage charges
+
+Self-service Hivenet Object Storage uses the same prepaid balance as Compute and Inference Service, with storage charges deducted hourly. Open **Object Storage** to review **Storage used**, **Cost this month**, and **Estimated cost this month** when reconciling changes to the shared balance.
+
+Stored objects continue to incur charges when instances and inference endpoints are stopped, including when storage access becomes read only at zero credits. Customers with a storage invoicing agreement receive monthly invoices instead of prepaid deductions. See [Object Storage usage and billing](/documentation/object-storage/usage-and-billing).
+
 ## Understand the time-remaining estimate
 
 The sidebar may show an estimated **Time remaining** based on the organization’s current balance and spend rate.
@@ -98,7 +104,7 @@ If organization spending does not match what you expected:
 
 1. Check every running instance, not only the ones you created.
 2. Review the active price and configuration of each instance.
-3. Check whether Hivenet Inference Service workloads are active.
+3. Check whether Hivenet Inference Service workloads are active and whether self-service Object Storage has incurred storage charges.
 4. Review transaction history for recent credit purchases or transfers. Internal ledger entries are not displayed.
 5. Note the organization name, affected instance IDs, and approximate timeframe.
 6. Contact Support through the console if the discrepancy remains.
