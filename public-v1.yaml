@@ -345,7 +345,12 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted. Returns the current instance state in
+            the same shape as `GET /instances/{id}`. If the instance could not
+            be read immediately after the action, returns only `instance_id`.
+            The action was accepted; poll `GET /instances/{id}` instead of
+            repeating the action.
           content:
             application/json:
               schema:
@@ -391,7 +396,12 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted. Returns the current instance state in
+            the same shape as `GET /instances/{id}`. If the instance could not
+            be read immediately after the action, returns only `instance_id`.
+            The action was accepted; poll `GET /instances/{id}` instead of
+            repeating the action.
           content:
             application/json:
               schema:
@@ -444,7 +454,12 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted. Returns the current instance state in
+            the same shape as `GET /instances/{id}`. If the instance could not
+            be read immediately after the action, returns only `instance_id`.
+            The action was accepted; poll `GET /instances/{id}` instead of
+            repeating the action.
           content:
             application/json:
               schema:
@@ -656,7 +671,11 @@ components:
             - TERMINATED
             - STOPPING
             - STOPPED
-          description: Current lifecycle state.
+            - PAUSED
+          description: |
+            Current lifecycle state. `PAUSED` means a running instance's host
+            is experiencing an outage. Billing is suspended until the host
+            returns. This is distinct from stopping the instance.
         region:
           type: string
           description: |
@@ -715,23 +734,46 @@ components:
           type: string
           format: date-time
           nullable: true
-          description: When the instance last entered `RUNNING`.
+          description: |
+            When the instance last entered `RUNNING`, as an ISO 8601 timestamp.
+            Returns `null` when unset.
         terminated_at:
           type: string
           format: date-time
           nullable: true
-          description: When the instance was terminated, if it has been.
+          description: |
+            When the instance was terminated, as an ISO 8601 timestamp.
+            Returns `null` when unset.
         termination_reason:
           type: string
           nullable: true
-          description: Why the instance was terminated, if it has been.
+          enum:
+            - USER_INITIATED
+            - CREDIT_EXHAUSTION
+            - UNKNOWN
+            - null
+          description: |
+            Why the instance is being or was terminated. `USER_INITIATED`
+            means a terminate call was made. `CREDIT_EXHAUSTION` means the
+            organization ran out of credits. `UNKNOWN` means the platform
+            cannot determine the reason, including a failed instance.
+            Returns `null` unless the instance is `TERMINATING` or `TERMINATED`.
         guest_ready:
           type: string
-          description: Whether the guest OS has finished booting and is reachable.
+          enum:
+            - READY
+            - DEGRADED
+            - UNKNOWN
+          description: |
+            Whether the guest OS inside a VM has booted and responds to its
+            agent. `READY` means it responds. `DEGRADED` means the VM is up but
+            the agent is silent. `UNKNOWN` means no readiness has been reported;
+            containers always return `UNKNOWN`. This field is informational
+            and does not change `status` or billing.
         guest_ready_reason:
           type: string
           nullable: true
-          description: Explanation when the guest is not ready.
+          description: Explanation when the guest is not ready, or `null` when no explanation is available.
 
     InstanceAction:
       type: object
