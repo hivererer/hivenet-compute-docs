@@ -21,6 +21,7 @@ Common lifecycle states include:
 | `DEPLOYED` | The instance has been scheduled on a host. |
 | `STARTING` | The instance is booting or restarting during a rebuild. |
 | `RUNNING` | The instance has responded over SSH. Applications inside it may still be starting. |
+| `PAUSED` | The running instance's host is experiencing an outage. Billing is suspended until the host returns. |
 | `STOPPING` | Shutdown is in progress. |
 | `STOPPED` | The instance is stopped and can be started again. |
 | `ERRORED` | The instance entered an error state. |
@@ -28,6 +29,18 @@ Common lifecycle states include:
 | `TERMINATED` | The instance has been permanently terminated. |
 
 Start, stop, and terminate actions are asynchronous. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the instance reaches the expected state.
+
+## Check VM guest readiness
+
+The `guest_ready` field reports whether the guest OS inside a VM has booted and responds to its agent:
+
+| Value | What it means |
+| :-- | :-- |
+| `READY` | The guest OS responds to its agent. |
+| `DEGRADED` | The VM is up, but its agent is silent. |
+| `UNKNOWN` | No readiness has been reported. Containers always return this value. |
+
+Guest readiness is informational and does not change `status` or billing. It does not establish whether your application is ready to serve requests. The `guest_ready_reason` field provides an explanation when available, or `null` otherwise.
 
 ## List instances
 
@@ -86,6 +99,32 @@ curl --request GET \
   --header "Authorization: Bearer $HIVENET_API_KEY" \
   --header "Accept: application/json"
 ```
+
+## Read instance timestamps and termination reasons
+
+`started_at` and `terminated_at` are ISO 8601 timestamps, or `null` when unset. `started_at` records when the instance last entered `RUNNING`; `terminated_at` records when it was terminated.
+
+The `termination_reason` field is `null` unless the instance is `TERMINATING` or `TERMINATED`. Once termination begins, it reports:
+
+| Value | What it means |
+| :-- | :-- |
+| `USER_INITIATED` | A terminate call was made. |
+| `CREDIT_EXHAUSTION` | The organization ran out of credits. |
+| `UNKNOWN` | The platform cannot determine the reason, including when an instance failed. |
+
+## Handle accepted actions
+
+A successful start, stop, or terminate request returns `201`. It normally includes the current instance details in the same shape as [`GET /instances/{id}`](/public-api/endpoints/get-instance).
+
+If those details cannot be read immediately after the action, the successful response contains only `instance_id`. For example:
+
+```json
+{
+  "instance_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
+```
+
+The action has been accepted. Use the returned ID to poll `GET /instances/{id}` for its current state. Don't repeat the action because the response lacks `status` or other instance details. A `201` response does not mean the lifecycle transition has finished.
 
 ## Start an instance
 
