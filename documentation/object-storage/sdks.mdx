@@ -20,7 +20,7 @@ Create and save an [access key](/documentation/object-storage/access-keys). Set 
 
 These are variable names used by the examples, not credentials issued separately by Hivenet. Supply their values through your environment or secrets manager.
 
-For self-service storage, writes require a positive organization credit balance. Listing and downloads remain available at zero credits. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+For self-service storage, writes require a positive organization credit balance. At a zero or negative balance, your organization's configuration determines whether storage becomes **Read only** or **Disabled**. Object listing and downloads remain available in **Read only** mode and are blocked in **Disabled** mode. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
 
 ## Python with boto3
 

@@ -14,7 +14,7 @@ The AWS CLI can call Hivenet Object Storage through the Hivenet S3 endpoint. Use
 - A bucket created in [Object Storage](/documentation/object-storage/buckets).
 - A small local test file, such as `hello.txt`.
 
-For self-service storage, uploads require a positive organization credit balance. At zero credits, you can still list and download objects. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+For self-service storage, uploads require a positive organization credit balance. At a zero or negative balance, your organization's configuration determines whether storage becomes **Read only** or **Disabled**. Object listing and downloads remain available in **Read only** mode and are blocked in **Disabled** mode. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
 
 These commands use the profile name `hivenet`. Replace `YOUR_BUCKET` with your bucket's name.
 

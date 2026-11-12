@@ -53,7 +53,7 @@ Clients must use the Hivenet endpoint, the signing region `Europe`, and explicit
 
 Self-service organizations pay from the same prepaid credit balance used by Compute and Hivenet Inference Service. Storage charges are deducted hourly. Direct customers with an invoicing agreement continue to receive monthly invoices after use; the €50 monthly minimum applies only to that arrangement.
 
-At zero credits, self-service storage becomes read only and continues to accrue charges. Read [Usage and billing](/documentation/object-storage/usage-and-billing) for access restrictions, top-ups, and the seven-day deletion eligibility policy.
+At a zero or negative balance, self-service storage changes to **Read only** or **Disabled**, depending on the organization's configuration. Stored data continues to accrue charges; downloads are blocked in **Disabled** mode. Read [Usage and billing](/documentation/object-storage/usage-and-billing) for access restrictions, top-ups, and the seven-day deletion eligibility policy.
 
 <Warning>
   Uploading to an existing object key replaces the stored object. Treat replacement and deletion as permanent, and keep a separate copy of data you need to recover.

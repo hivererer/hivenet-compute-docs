@@ -23,9 +23,9 @@ You need an active key of your own to use bucket and object actions in the conso
 
 If **My keys** is empty, select **New key**, save both credential values, and confirm that you have saved them. An active key is required, but your organization's access mode can still restrict actions.
 
-For self-service storage, also check for an **Add credits** warning. At zero or negative balance, writes are blocked and the console's bucket view is locked. Listing and downloads remain available through a configured S3 client. Add enough credits to clear outstanding debt and leave a positive balance, or ask the organization Owner to do so.
+For self-service storage, also check for an **Add credits** warning. At zero or negative balance, writes are blocked and the console's bucket view is locked. Your organization's configuration determines whether storage becomes **Read only** or **Disabled**. A configured S3 client can list and download objects in **Read only** mode; these actions are blocked in **Disabled** mode. Add enough credits to clear outstanding debt and leave a positive balance, or ask the organization Owner to do so.
 
-If support has set the organization to **Disabled**, contact support; this is separate from a credit-related restriction. See [Usage and billing](/documentation/object-storage/usage-and-billing#when-credits-run-out) and [Access keys](/documentation/object-storage/access-keys).
+If access remains restricted after the balance becomes positive, refresh the console and contact support if the problem continues. See [Usage and billing](/documentation/object-storage/usage-and-billing#when-credits-run-out) and [Access keys](/documentation/object-storage/access-keys).
 
 ## You cannot create or revoke a key
 
@@ -77,7 +77,7 @@ See [Connection settings](/documentation/object-storage/connection-settings).
 
 ## Bucket creation fails
 
-For self-service storage, check that the organization has a positive balance and full access. Bucket creation is blocked in read-only mode.
+For self-service storage, check that the organization has a positive balance and full access. Bucket creation is blocked in both **Read only** and **Disabled** modes.
 
 Use 3–63 lowercase letters, numbers, and hyphens. Start and end with a letter or number, and do not use dots.
 
@@ -89,9 +89,9 @@ Do not assume bucket names are available because your organization has not used 
 
 Check the file's name and size before retrying.
 
-- **Out of credits:** Uploads are blocked in read-only mode. [Add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access) to restore full access.
+- **Out of credits:** Uploads are blocked in both **Read only** and **Disabled** modes. [Add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access) to restore full access.
 - **Invalid name:** Follow the [object naming rules](/documentation/object-storage/objects#choose-object-names).
-- **File too large:** The console currently uses single-request uploads, which have a 5 GB limit. For larger files, use a client with multipart support, up to the 5 TB per-object limit. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers).
+- **File too large:** Follow the file-size validation shown in the console. The console handles multipart uploads automatically for larger files. For large batches or unattended transfers, use a client with multipart support. The API supports objects up to 5 TB through multipart uploads. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers).
 - **Only some files uploaded:** Use **Retry failed files** and check the resulting object list.
 - **You cannot add more files:** Resolve failed uploads by retrying them or closing the dialog before adding more.
 - **Page reloaded:** In-progress uploads stop, while completed files remain stored. Check the object list and retry the missing files.
@@ -106,7 +106,7 @@ Copy the exact object key, including its prefix and capitalization. Check that i
 
 A deleted object returns a not-found response. If the console list is stale, refresh it.
 
-Running out of credits does not block S3 client downloads, although the console's bucket view is locked. Download through a configured client while the data is still stored. A separate **Disabled** mode blocks authenticated object reads; contact support if that applies.
+At a zero or negative balance, the console's bucket view is locked. In **Read only** mode, you can download existing objects through a configured S3 client. In **Disabled** mode, authenticated object reads are blocked. Either mode can apply when credits run out, depending on your organization's configuration. Add enough credits to leave a positive balance, then retry. Contact support if access remains restricted.
 
 For console downloads, check the browser's download list. Use [AWS CLI](/documentation/object-storage/aws-cli) or [rclone](/documentation/object-storage/rclone) for multiple objects.
 
@@ -122,7 +122,7 @@ Do not include the complete share URL in a public issue or support screenshot.
 
 ## A bucket will not delete
 
-In read-only mode, you cannot delete stored data. Restore full access before trying to empty or delete a bucket.
+In **Read only** or **Disabled** mode, you cannot delete stored data. Restore full access before trying to empty or delete a bucket.
 
 `BucketNotEmpty` means objects remain.
 
@@ -136,7 +136,7 @@ See [Empty or delete a bucket](/documentation/object-storage/buckets#empty-or-de
 
 Check the billing period and your organization's rate. Self-service storage draws hourly from the same balance as Compute and inference. The €50 monthly minimum applies only to invoiced customers.
 
-Storage continues to accrue charges while read only, so a zero balance can become negative. A top-up first pays that outstanding amount. Distinguish actual cost so far from the end-of-month estimate.
+Stored data continues to accrue charges while access is restricted, so a zero balance can become negative. A top-up first pays that outstanding amount. Distinguish actual cost so far from the end-of-month estimate.
 
 **Storage used** measures the current amount stored. The usage API reports KiB-hours, which measure accumulated storage usage over time. Billing converts this meter to decimal TB-hours and uses the actual hours in the calendar month. See [How storage is metered](/documentation/object-storage/usage-and-billing#how-storage-is-metered) for units and rounding.
 

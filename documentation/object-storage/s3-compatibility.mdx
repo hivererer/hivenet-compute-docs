@@ -20,7 +20,7 @@ These settings target EU storage. See [Connection settings](/documentation/objec
 
 ## Organization access modes
 
-Operation support does not override an organization's access mode. Self-service organizations move to **Read only** when the shared credit balance reaches zero. **Disabled** is a separate support-controlled restriction; it is not the automatic billing state.
+Operation support does not override an organization's access mode. When a self-service organization's shared credit balance reaches zero or becomes negative, storage changes to **Read only** or **Disabled**, depending on the organization's configured access mode.
 
 | Operation | Full access | Read only | Disabled |
 | --- | --- | --- | --- |
@@ -29,7 +29,7 @@ Operation support does not override an organization's access mode. Self-service 
 | Upload or modify objects | Yes | No | No |
 | Delete objects or create buckets | Yes | No | No |
 
-Changing modes does not itself delete objects or keys. Storage continues to accrue charges while read only. Existing presigned share links remain valid until expiry regardless of mode, provided the object still exists.
+Changing modes does not itself delete objects or keys. Stored data continues to accrue charges while access is restricted. Existing presigned share links remain valid until expiry regardless of mode, provided the object still exists.
 
 See [Usage and billing](/documentation/object-storage/usage-and-billing#when-credits-run-out) for restoring access and deletion eligibility after seven days without funds.
 
@@ -58,7 +58,7 @@ For clients using V1, use its marker-based pagination. The two pagination format
 - A single `PutObject` request supports objects up to **5 GB**.
 - Use multipart uploads for larger objects, up to Hivenet's **5 TB** per-object limit.
 
-These are API limits. The console currently uses single-request uploads and cannot upload files larger than 5 GB. Use a client with multipart support for larger files.
+These are API limits. The console handles multipart uploads automatically for larger files. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers) for console guidance.
 
 Use a managed transfer function when you want the client to handle multipart uploads. A raw `PutObject` call does not automatically split a file.
 

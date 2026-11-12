@@ -7,7 +7,7 @@ icon: "file"
 
 Create an [access key](/documentation/object-storage/access-keys) of your own if you do not already have an active one. Then open a bucket in **Object Storage** and use its **Objects** tab to work with files.
 
-For self-service storage, uploads and deletions require a positive organization credit balance. At zero credits, these actions stop and the console's bucket view is locked. You can still list and download existing objects through a configured S3 client. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
+For self-service storage, uploads and deletions require a positive organization credit balance. At a zero or negative balance, these actions stop and the console's bucket view is locked. S3 clients can still list and download existing objects in **Read only** mode, but these actions are blocked in **Disabled** mode. The mode applied at zero credits depends on your organization's configuration. See [When credits run out](/documentation/object-storage/usage-and-billing#when-credits-run-out).
 
 An object key is the full name within the bucket, including any prefix. For example, `releases/1.4.2/app.zip` is one object key.
 
@@ -65,7 +65,9 @@ Objects created through an API may have names the console upload form would reje
 
 Hivenet Object Storage supports objects up to 5 TB through multipart uploads. A single `PutObject` request is limited to 5 GB.
 
-The console currently uses single-request uploads and does not support multipart uploads. Files larger than 5 GB cannot be uploaded through the console. For larger files or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
+The console handles multipart uploads automatically for larger files. Follow any file-size validation shown in the upload dialog and keep the tab open until the transfer finishes. The API limits above do not establish the console's maximum file size.
+
+For large batches or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
 
 An operation being implemented does not mean every client option is supported. Check [S3 compatibility](/documentation/object-storage/s3-compatibility) before changing transfer settings.
 

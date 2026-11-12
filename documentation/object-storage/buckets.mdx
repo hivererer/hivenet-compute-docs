@@ -9,7 +9,7 @@ A bucket holds objects for your organization. Buckets and objects are shared acr
 
 You need an active [access key](/documentation/object-storage/access-keys) of your own to use bucket actions. Without one, the bucket list remains visible, but its actions and options menus are disabled.
 
-For self-service storage, creating or deleting buckets requires full access and a positive organization credit balance. If the bucket view is locked, [add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access). Listing and downloading through a configured S3 client remain available in read-only mode.
+For self-service storage, creating or deleting buckets requires full access and a positive organization credit balance. If the bucket view is locked, [add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access). At a zero or negative balance, your organization's configuration determines whether storage becomes **Read only** or **Disabled**. A configured S3 client can list and download objects in **Read only** mode; these actions are blocked in **Disabled** mode.
 
 ## Create a bucket
 

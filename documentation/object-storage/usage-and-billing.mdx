@@ -30,20 +30,20 @@ Calculations retain full precision. Amounts displayed in the console and on invo
 
 The usage API reports **KiB-hours**, a measure of storage over time, where 1 KiB is 1,024 bytes. Billing converts this binary meter to decimal TB-hours: `KiB-hours × 1,024 ÷ 1,000,000,000,000`. Do not apply the price per TB directly to the raw KiB-hours value.
 
-Deleting objects ends their contribution to future storage usage. It does not remove charges already incurred. Storage continues to accrue charges when access is read only.
+Deleting objects ends their contribution to future storage usage. It does not remove charges already incurred. Stored data continues to accrue charges while access is restricted.
 
 ## When credits run out
 
-For self-service organizations, a zero balance changes storage to **Read only**. Reaching zero does not immediately delete data or revoke access keys.
+When a self-service organization's balance reaches zero or becomes negative, storage changes to **Read only** or **Disabled**, depending on the organization's configured access mode. Reaching zero does not immediately delete data or revoke access keys.
 
-| Action | Positive balance and full access | Zero or negative balance and read-only access |
-| --- | --- | --- |
-| List bucket names | Available | Available |
-| List and download existing objects through an S3 client | Available | Available |
-| Upload or modify objects | Available | Blocked |
-| Delete objects or create buckets | Available | Blocked |
+| Action | Full access | Read only | Disabled |
+| --- | --- | --- | --- |
+| List bucket names | Available | Available | Available |
+| List and download existing objects through an S3 client | Available | Available | Blocked |
+| Upload or modify objects | Available | Blocked | Blocked |
+| Delete objects or create buckets | Available | Blocked | Blocked |
 
-The console's bucket view is locked while the organization is out of credits. Use a configured [AWS CLI](/documentation/object-storage/aws-cli), [SDK](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone) client to list or download data while access is read only.
+The console's bucket view is locked while the organization is out of credits. In **Read only** mode, you can still list and download existing objects through a configured [AWS CLI](/documentation/object-storage/aws-cli), [SDK](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone) client. In **Disabled** mode, authenticated object listing and downloads are also blocked. Do not assume downloads remain available after credits run out.
 
 Stored data continues to incur charges, so the balance can become negative. Adding credits first pays that outstanding amount. For example, adding €10 to a balance of −€2 leaves €8 for further usage.
 
@@ -53,7 +53,7 @@ Stored data continues to incur charges, so the balance can become negative. Addi
 
 Existing [share links](/documentation/object-storage/share-objects) remain valid until expiry even when the access mode changes, as long as the object still exists.
 
-**Disabled** is a separate restriction applied by support, not the automatic result of running out of credits. In that mode, only bucket names remain listable through authenticated S3 requests; object listing and downloads are blocked. Contact support if your organization is disabled.
+If you are unsure which access mode applies to your organization, contact support.
 
 ## Add credits and restore access
 
@@ -65,7 +65,7 @@ The organization **Owner** manages payments. If you cannot add credits, ask the 
 4. Select **Continue to payment** and complete the Stripe checkout.
 5. Return to the console and check the balance and restored access.
 
-A payment that leaves the balance at zero or below does not restore full access. Once the payment leaves a positive balance, read-only restrictions are lifted. If the balance has updated but the page remains locked, refresh it and contact support if the problem continues.
+A payment that leaves the balance at zero or below does not restore full access. Once the payment leaves a positive balance, the credit-related access restrictions are lifted. If the balance has updated but the page remains locked, refresh it and contact support if the problem continues.
 
 The Owner can also use **Billing** to add credits or configure auto top-up. See [Billing information](/documentation/account-billing/billing-info#add-credits). Compute, inference, and self-service storage draw from the same balance, so account for their combined usage.
 
