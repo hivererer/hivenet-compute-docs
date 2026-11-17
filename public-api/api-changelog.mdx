@@ -21,6 +21,32 @@ The endpoint reference covers instance lifecycle, logs, usage metrics, regions, 
 
 ## Latest changes
 
+<Update label="Unreleased">
+  ## Instance response corrections
+
+  These changes are pending release. They affect list, get, start, stop, and terminate responses.
+
+  <Warning>
+    This update changes response formats used by existing integrations. Update clients that rely on numeric enum values, timestamp objects, action-response `id`, or undocumented fields.
+  </Warning>
+
+  **Response changes**
+
+  - `status`, `guest_ready`, and `termination_reason` use names instead of numeric enum values. For example, `status: 3` becomes `status: "RUNNING"`.
+  - `status` includes `PAUSED` for a running instance affected by a host outage. Billing is suspended until the host returns.
+  - `guest_ready` uses `READY`, `DEGRADED`, or `UNKNOWN`. It reports VM guest-agent readiness; containers return `UNKNOWN`. It does not change status or billing.
+  - `termination_reason` is `null` unless the instance is `TERMINATING` or `TERMINATED`. During or after termination, it uses `USER_INITIATED`, `CREDIT_EXHAUSTION`, or `UNKNOWN`.
+  - `started_at` and `terminated_at` use ISO 8601 strings instead of objects containing `seconds` and `nanos`. Unset timestamps return explicit `null`.
+  - Start, stop, and terminate normally return the same instance fields as GET, using `instance_id` instead of `id`. When the updated details cannot be read, they return `201` with only `instance_id`.
+  - Responses omit undocumented fields, including owner details, host identifiers, and internal deployment and billing fields.
+
+  **Update your integration**
+
+  Compare enum fields with their documented names, parse timestamps as strings or `null`, and use `instance_id` from action responses. Handle a successful response containing only that ID by polling `GET /instances/{id}`. Don't repeat an accepted action because other fields are missing.
+
+  See [Work with instances](/public-api/work-with-instances) for the field meanings and [retry guidance](/public-api/handle-errors-and-rate-limits#handle-a-successful-response-with-only-an-instance-id).
+</Update>
+
 <Update label="October 29, 2026" description="Compute v1.38">
   ## Instance usage metrics
 

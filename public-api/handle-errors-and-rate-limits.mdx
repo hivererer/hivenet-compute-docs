@@ -102,11 +102,18 @@ A start request can return `503 Service Unavailable` when no host currently has 
 
 Retry with backoff, or choose a compatible preset in another region. This is a temporary capacity condition rather than a problem with the request itself.
 
+## Handle a successful response with only an instance ID
+
+Start, stop, and terminate can return `201` with only `instance_id` when the action was accepted but the updated instance details could not be read immediately afterward.
+
+Use that ID to poll [`GET /instances/{id}`](/public-api/endpoints/get-instance). Missing `status` or other fields in this successful response is not a reason to repeat the POST. See [Handle accepted actions](/public-api/work-with-instances#handle-accepted-actions) for an example.
+
 ## Retry safely
 
 | Request type | Retry guidance |
 | :-- | :-- |
 | Read-only requests | Usually safe to retry after a short delay. |
+| `201` with only `instance_id` | The action was accepted. Poll `GET /instances/{id}`; don't repeat the action because details are missing. |
 | `400` | Fix the request before retrying. |
 | `401` or `403` | Fix authentication or access before retrying. |
 | `409` | Check the latest instance state and, for start requests, the account balance before retrying. |
