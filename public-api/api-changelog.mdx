@@ -17,9 +17,37 @@ Staging base URL:
 
 `https://staging-api.hivecompute.ai/v1`
 
-The endpoint reference covers instance lifecycle, logs, usage metrics, regions, and hardware presets.
+The endpoint reference covers instance creation and lifecycle, logs, usage metrics, regions, hardware presets, images, and SSH-key registration and retrieval.
 
 ## Latest changes
+
+<Update label="November 19, 2026" description="Compute v1.39">
+  ## Create instances and register SSH keys
+
+  Added:
+
+  - [`POST /instances`](/public-api/endpoints/create-instance) to create VMs and containers from a preset and image. A successful request returns `201` with `instance.instance_id`. Poll that ID for readiness.
+  - [`GET /images`](/public-api/endpoints/list-images), with required `type=vm` or `type=container`.
+  - [`POST /ssh-keys`](/public-api/endpoints/register-ssh-key), accepting public-key `content` and returning `201`.
+  - [`GET /ssh-keys/{id}`](/public-api/endpoints/get-ssh-key) to retrieve a registered public key.
+
+  Follow [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api) for the provisioning workflow.
+
+  ## Changes that affect existing integrations
+
+  - Instance list, detail, and lifecycle-action responses use the public instance record, with named status and readiness values and ISO 8601 timestamps. Action responses can contain only `instance_id` when the immediate readback is unavailable.
+  - Public instance responses no longer include `user_id`, `user_name`, `user_email`, `org_id`, `org_name`, or `host_id`.
+  - Preset `cpu`, `memory`, and `storage` are numeric strings without units. `hourly_price` and `price_discounted` are decimal strings without currency symbols. No preset discount is represented by `""`. Instance `hourly_rate` remains a JSON number and can contain floating-point precision artifacts.
+  - `date_range_begin` and `date_range_end` filter by creation time. Instances that never started can match. Reversed ranges return `400`. Fractional seconds are discarded, and the public response does not yet expose `created_at`.
+  - Malformed cursors return `400` for instance and image lists. Preset cursor validation remains inconsistent; use only the returned cursor.
+  - Rate limits are now 60 requests per minute per API key, per endpoint. The metrics endpoint shares its budget across all instance IDs. Respect `Retry-After` on `429`.
+
+  ## Integration notes
+
+  Registering the same SSH key again creates a new ID; trailing newlines are preserved. SSH certificates and multi-line keys are rejected.
+
+  Instance creation is not idempotent, and names can repeat. After a lost response or `500`, `503`, or `504`, check the instance list before retrying to avoid creating a second billed instance. SSH-key listing and deletion, key names and fingerprints, startup scripts, tags, and `PATCH` rename or retag operations are outside this release.
+</Update>
 
 <Update label="October 29, 2026" description="Compute v1.38">
   ## Instance usage metrics
@@ -47,7 +75,7 @@ The endpoint reference covers instance lifecycle, logs, usage metrics, regions, 
   - `POST /ssh-keys`
   - `GET /ssh-keys/{id}`
 
-  SSH-key operations are not backed by the released public API and will return in a later release.
+  SSH-key operations were excluded from that release. Registration and retrieval were added in Compute v1.39 on November 19, 2026.
 </Update>
 
 <Update label="07/29/2026">
@@ -58,6 +86,10 @@ The endpoint reference covers instance lifecycle, logs, usage metrics, regions, 
 
 ## Current endpoints
 
+- [`POST /instances`](/public-api/endpoints/create-instance)
+- [`GET /images`](/public-api/endpoints/list-images)
+- [`POST /ssh-keys`](/public-api/endpoints/register-ssh-key)
+- [`GET /ssh-keys/{id}`](/public-api/endpoints/get-ssh-key)
 - [`GET /instances`](/public-api/endpoints/list-instances)
 - [`GET /instances/{id}`](/public-api/endpoints/get-instance)
 - [`GET /instances/{id}/logs`](/public-api/endpoints/get-instance-logs)

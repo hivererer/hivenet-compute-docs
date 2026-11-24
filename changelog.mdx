@@ -4,6 +4,28 @@ description: "Product updates and announcements for Compute with Hivenet, includ
 sidebarTitle: "Product updates"
 ---
 
+<Update label="November 19, 2026" description="v1.39">
+  > ## Create instances through the Compute API and upload larger files in Object Storage
+
+  #### Compute API
+
+  You can now list VM and container images, register and retrieve an SSH public key, and create an instance from a hardware preset and image. A successful create request returns an instance ID. Use it to check when the instance is running. If you lose the response, check your instance list before retrying. A second successful request creates another billable instance.
+
+  If your integration reads prices, preset prices are decimal strings and the instance’s hourly rate is a JSON number. Each API key has a separate limit of 60 requests per minute for each endpoint. See [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api) and the [API changelog](/public-api/api-changelog).
+
+  #### SSH and instance settings
+
+  - At locations with an SSH proxy, the VM connection command now includes the site's proxy settings. Copy the full command from the instance's SSH panel. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+  - When you add ports to an existing instance, the resulting total can be at most 10 configured ports. [Local SSH tunnels](/documentation/connectivity/forwards-ports) use the existing SSH connection and do not count toward that total.
+  - For CPU and GPU VMs, [instance metrics](/public-api/endpoints/get-instance-metrics) report the purchased capacity of the main disk. The filesystem inside the VM can be smaller.
+
+  #### Object Storage and billing
+
+  - You can now [upload files up to 50 GB each in the Object Storage console](/documentation/object-storage/objects#upload-files). [S3 client upload limits](/documentation/object-storage/s3-compatibility) are separate.
+  - Storage billing uses a configurable number of hours per TB-month. The console estimates costs using the hours in the displayed calendar month. See [how storage charges and estimates are calculated](/documentation/object-storage/usage-and-billing).
+  - Fixed an issue that could charge your card twice for the same automatic credit top-up when your balance fell below its threshold.
+</Update>
+
 <Update label="October 29, 2026" description="v1.38">
   > ## Self-service Object Storage, AlmaLinux 10, and instance metrics
 

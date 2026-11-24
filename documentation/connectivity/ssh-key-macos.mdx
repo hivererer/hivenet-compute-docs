@@ -61,17 +61,7 @@ You’ll see the two files listed above.
 
 ## Step 4 – (Optional) add a quick SSH config
 
-In **~/.ssh**, create or edit a file named **config** (no extension) and paste:
-
-```text
-Host hivenet
-    HostName YOUR_SSH_HOST
-    User YOUR_SSH_USER
-    IdentityFile ~/.ssh/id_ed25519
-    Port 22
-```
-
-Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+Open **Connectivity options → SSH** for the running instance. Copy its complete configuration block into `~/.ssh/config`. Set `IdentityFile` to your matching private key and keep every supplied port and proxy setting. To use the command below, change the alias on the `Host` line to `hivenet`. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 Now you can connect with:
 

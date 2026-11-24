@@ -219,7 +219,7 @@ Make sure networking is **enabled** and the correct **protocol** (HTTPS/TCP/UDP)
 
 ### SSH fails to connect
 
-Confirm the instance is **Running**, copy its current SSH hostname and username from the console, use the matching private key, and check that your network allows outbound port 22. Verify host-identity warnings before accepting a changed identity.
+Confirm the instance is **Running** and copy the full SSH command from its connection panel. Use the matching private key. If the connection times out, check the outbound host and port in the command. For a site proxy, use the entry address inside `ProxyCommand`. Verify host-identity warnings before accepting a changed identity.
 
 ## See also
 

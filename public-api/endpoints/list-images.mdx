@@ -1,0 +1,51 @@
+---
+title: "List images"
+sidebarTitle: "List images"
+description: "Find Compute VM and container images, supply the required type parameter, follow container pagination, and check image fields before creation."
+openapi: "public-v1.yaml GET /images"
+authMethod: "bearer"
+playground: "none"
+keywords:
+  - "Compute API"
+  - "List images"
+---
+
+Use the Compute API to select an image before [creating an instance](/public-api/endpoints/create-instance). Supply `type=vm` or `type=container`.
+
+## Request
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/images?type=vm" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+| Parameter | Use |
+| --- | --- |
+| `type` | Required. Accepts `vm` or `container`, case-insensitive. A missing or unsupported value returns `400`. |
+| `cursor` | Continue a container-image list using the previous response's `pagination.next`. |
+| `size` | Container images only. Integer from 1 to 200, default 50. |
+| `mine` | Defaults to `false` for the shared catalog. Use `true` with `type=container` for your own saved templates. |
+
+There is no `region` filter. Do not assume an image response is narrowed by an unsupported query parameter.
+
+## Read the response
+
+A successful request returns `200 OK`. Read images from `data` and paging information from `pagination`. Pass the selected item’s `id` and `type` as `image_id` and `image_type` when creating an instance.
+
+VM images come in one page. `pagination.next` is `null`, and `pagination.size` is the number of images. Omit `cursor`, `size`, and `mine=true` for VMs. The API rejects them with `400`. Check `os_family`, `gpu_supported`, `min_disk_gb`, and `min_memory_gb` against your preset. `login_user` gives the Linux login name when known.
+
+<Note>
+  Some VM images report zero for their minimum disk or memory size in this release. Treat those values as incomplete sizing information, not confirmation that any preset is suitable.
+</Note>
+
+Container images are paginated. Follow `pagination.next` until it is `null`. Container fields include `id`, `name`, `image`, `registry`, `command`, `env`, `workload_type`, `created_at`, `software_list`, and `requires_init`.
+
+Secret environment values are masked. Do not copy a masked value as an application secret.
+
+## Errors
+
+A missing or invalid `type`, or a malformed cursor, returns `400 VALIDATION_ERROR`. A missing or invalid API key returns `401`. An account restriction can return `403`. On `429`, wait for `Retry-After`. A server error returns `500`.
+
+See [Pagination and filters](/public-api/use-pagination-and-filters) and [Handle errors and rate limits](/public-api/handle-errors-and-rate-limits).

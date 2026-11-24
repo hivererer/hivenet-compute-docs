@@ -51,7 +51,9 @@ curl --request GET \
   --header "Accept: application/json"
 ```
 
-Keep using the latest `pagination.next` value until it becomes `null`.
+Keep using the latest `pagination.next` value until it becomes `null`. Keep the endpoint, filters, and sort settings unchanged while paging.
+
+`GET /instances` and `GET /images` reject malformed cursors with `400 VALIDATION_ERROR`. For instances, an omitted or empty cursor requests the first page. Cursor validation is not consistent across all endpoints: `GET /presets` can return an empty page for a malformed cursor. Use only the cursor returned by that endpoint.
 
 ## Filter instances
 
@@ -62,8 +64,8 @@ Keep using the latest `pagination.next` value until it becomes `null`.
 | `status` | Filters by a lifecycle-status bucket. `running` also includes `CREATED`, `DEPLOYED`, and `STARTING`; `stopped` includes `STOPPING`; `terminated` includes `TERMINATING`; `errored` matches `ERRORED`. |
 | `gpu_type` | Filters by GPU model. |
 | `region` | Filters by region. |
-| `date_range_begin` | Returns instances that started at or after a timestamp. |
-| `date_range_end` | Returns instances that started at or before a timestamp. |
+| `date_range_begin` | Returns instances created at or after a timestamp. |
+| `date_range_end` | Returns instances created at or before a timestamp. |
 | `free_text_search` | Searches instance names and related searchable fields. |
 
 The accepted region values are:
@@ -83,7 +85,9 @@ curl --request GET \
 
 ## Filter by date range
 
-Date filters apply to `started_at`, not the time the instance record was created. An instance that has never started is excluded as soon as either date bound is used.
+Date filters apply to the instance's creation time (`created_at`). Each bound is optional and inclusive. Instances that have never started can match the range. A begin value later than the end returns `400 VALIDATION_ERROR`.
+
+The public instance response does not expose `created_at` in this release. Date filters also discard fractional seconds, so do not use millisecond boundaries for precise matching.
 
 Use ISO 8601 timestamps in UTC:
 
@@ -113,6 +117,10 @@ curl --request GET \
   --header "Authorization: Bearer $HIVENET_API_KEY" \
   --header "Accept: application/json"
 ```
+
+## List images
+
+[`GET /images`](/public-api/endpoints/list-images) requires `type=vm` or `type=container`. For containers, `size` defaults to 50 and accepts 1 to 200. Continue with `pagination.next`. VM images come in one page and reject `cursor`, `size`, and `mine=true`. The images endpoint does not support a `region` filter.
 
 ## Common issues
 

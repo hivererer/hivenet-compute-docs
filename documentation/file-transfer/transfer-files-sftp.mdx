@@ -9,21 +9,19 @@ Use SFTP to transfer files over the instance's SSH connection.
 ## What you’ll need
 
 - An instance in **Running**.
-- The SSH hostname and username from its connection details in Compute.
+- The complete SSH configuration block from its connection details in Compute.
 - The private key matching the public key supplied for the instance.
 - An SFTP client, such as the command-line `sftp` tool, WinSCP, or FileZilla.
 
-The SSH endpoint uses port 22. Use the console's username, which may differ from the image's default user. Follow any additional SSH configuration supplied there.
-
 ## Transfer files from a terminal
 
-Replace the placeholders below with the console values and your private-key path:
+Save the instance’s full SSH configuration and test it with `ssh hivenet` as described in [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained). The example assumes you named the entry `hivenet`. Exit the remote shell and run this on your computer:
 
 ```text
-sftp -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
+sftp hivenet
 ```
 
-If you already created an SSH config entry named `hivenet`, you can use `sftp hivenet` instead.
+SFTP uses the saved username, key, port, and proxy settings. A successful connection opens an `sftp>` prompt.
 
 At the `sftp>` prompt:
 
@@ -45,13 +43,13 @@ Create a new SFTP connection using:
 | :-- | :-- |
 | Protocol | SFTP |
 | Host | The SSH hostname shown by Compute |
-| Port | 22 |
+| Port | The SSH destination port in the console command or configuration. For a site proxy, configure the proxy host and port separately. |
 | Username | The SSH username shown by Compute |
 | Authentication | Your matching private key |
 
 Use a private-key format supported by your client. If it requests conversion, use its supported key-import process or PuTTYgen. Never upload the private key to Compute.
 
-Only configure a proxy or jump host if the console's connection instructions require one. Verify any host-identity prompt before accepting it; see [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+For a proxied connection, the client must support the route shown by the console. If it cannot use the supplied proxy or bastion settings, use the OpenSSH `sftp` command above. Verify any host-identity prompt before accepting it; see [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 After connecting, use the local and remote file panels to upload or download files.
 
@@ -60,7 +58,7 @@ After connecting, use the local and remote file panels to upload or download fil
 If `rsync` is installed on both computers, use it to copy a folder and retain partial transfers for a later retry:
 
 ```bash
-rsync -avz --partial -e "ssh -i /path/to/private_key" ./localfolder/ YOUR_SSH_USER@YOUR_SSH_HOST:/path/to/remote-folder/
+rsync -avz --partial -e ssh ./localfolder/ hivenet:/path/to/remote-folder/
 ```
 
 Use a destination folder your SSH user can write to. Rerun the command after an interruption.
@@ -68,7 +66,7 @@ Use a destination folder your SSH user can write to. Rerun the command after an 
 ## Troubleshooting
 
 - **Permission denied:** Check the username, private-key path, and matching public key on the instance.
-- **Connection timed out or closed:** Confirm the instance is Running, use the current console connection details, and check outbound port 22 on your network.
+- **Connection timed out or closed:** Confirm the instance is Running, use the current console connection details, and check network access to the direct host or proxy entry on its supplied port.
 - **Host verification failed:** Verify the host identity before changing saved trust settings.
 - **The client rejects the key file:** Check which key formats it supports and convert locally if needed.
 

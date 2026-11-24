@@ -17,33 +17,26 @@ sidebarTitle: "Why we support SFT"
 ## Why we chose SFTP
 
 1. **Same key, same port** – Your SSH key doubles for file transfers; no extra credentials.
-2. **No additional firewall rules** – Everything slips through port 22, even behind strict networks.
+2. **Network access** – SFTP reuses the instance’s SSH route. Your network must allow the direct host and port or the proxy entry shown in the console.
 3. **End‑to‑end encryption** – Data and commands are encrypted by default.
 
 <Info>
   **Good to know: **FTPS requires opening a range of data ports, which conflicts with Compute’s default security posture.
 </Info>
 
-## Need an HTTPS upload instead?
+## Serve files over HTTPS
 
-Spin up a quick web server on port 8888 inside your instance:
-
-```
-python3 -m http.server 8888 --bind 0.0.0.0
-```
-
-Then open your instance URL:
-
-```
-https://<instance-id>-8888.tenants.hivecompute.ai
-```
+To make files available for download in a browser, see [Serve an HTTPS site](/documentation/connectivity/https-site-ssh-port-forwarding). For uploads to your instance, use SFTP.
 
 ##  Migrating scripts from FTPS to SFTP
 
-| Old FTPS command                              | SFTP replacement                              |
-| :-------------------------------------------- | :-------------------------------------------- |
-| `curl --ftp-ssl -T file.zip ftp://user@host/` | `sftp user@host:~/upload <<< $'put file.zip'` |
-| `lftp -u user,pass ftps://host`               | `sftp user@host` then `put/get`               |
+Save the instance’s complete SSH configuration under an alias, such as `hivenet`. From the local folder containing your file, run:
+
+```text
+sftp hivenet
+```
+
+At the `sftp>` prompt, enter `put file.zip`. Use `get file.zip` to download it again. See [Transfer files with SFTP](/documentation/file-transfer/transfer-files-sftp) for graphical clients and folder transfers.
 
 For automated workflows, tools like `rsync` or `scp` provide shell‑friendly, encrypted transfers.
 

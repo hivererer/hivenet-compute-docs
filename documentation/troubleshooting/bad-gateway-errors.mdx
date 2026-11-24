@@ -59,12 +59,12 @@ Here’s how to troubleshoot:
 
 ## When in doubt, forward the port yourself
 
-If you can’t get the public link working, use SSH port forwarding:
+On your computer, [save the console’s SSH configuration](/tutorials/more-guides/SSH-config-file-explained) under the alias `hivenet` and check that `ssh hivenet` connects. Exit that session, then run:
 
 ```text
-ssh -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
+ssh -L 8888:localhost:8888 hivenet
 ```
 
-Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
+Keep the SSH session open while you use the tunnel.
 
 Then open [http://localhost:8888](http://localhost:8888) in your browser. This is usually more reliable.

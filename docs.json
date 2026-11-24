@@ -204,6 +204,7 @@
               "public-api/get-started-with-the-compute-api",
               "public-api/make-your-first-api-request",
               "public-api/authenticate-api-requests",
+              "public-api/create-an-instance-using-the-compute-api",
               "public-api/work-with-instances",
               "public-api/use-pagination-and-filters",
               "public-api/handle-errors-and-rate-limits"
@@ -222,7 +223,11 @@
               "public-api/endpoints/stop-instance",
               "public-api/endpoints/terminate-instance",
               "public-api/endpoints/list-regions",
-              "public-api/endpoints/list-presets"
+              "public-api/endpoints/list-presets",
+              "public-api/endpoints/create-instance",
+              "public-api/endpoints/list-images",
+              "public-api/endpoints/register-ssh-key",
+              "public-api/endpoints/get-ssh-key"
             ]
           },
           "public-api/api-changelog"

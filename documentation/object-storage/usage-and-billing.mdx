@@ -22,11 +22,9 @@ Charges depend on both the amount stored and how long it is stored. Changes in s
 
 Storage sizes and prices use decimal units: **1 TB = 1,000 GB = 1,000,000,000,000 bytes**, and **1 GB = 1,000,000,000 bytes**.
 
-The hourly rate per TB is your organization's monthly price divided by the actual hours in that calendar month: 744 for a 31-day month, 720 for a 30-day month, and 672 or 696 for February. The console's cost and estimate cards and monthly invoicing use this same calculation.
+To calculate storage charges, the billing service divides your organization's price per TB-month by the configured number of hours in a TB-month. It multiplies that hourly rate by your metered TB-hours. The default billing period is 720 hours. At that setting, storing 1 TB for 720 hours costs one TB-month at your organization's rate. A longer or shorter calendar month changes the amount of usage billed.
 
-A full month at an average of 1 TB incurs €9.99 in storage usage charges at the list rate. The €50 monthly minimum still applies to invoiced customers.
-
-Calculations retain full precision. Amounts displayed in the console and on invoices are rounded half-up to two decimal places. For example, storing 500 GB for all of November at the list rate costs €4.995 before rounding and displays as **€5.00**. For self-service billing, each hourly deduction applies the change in the rounded month-to-date total, so rounding does not accumulate across hourly charges.
+Calculations retain full precision. The console and invoices display amounts to two decimal places. For self-service billing, each hourly deduction applies the change in the rounded month-to-date total, so rounding does not accumulate across hourly charges.
 
 The usage API reports **KiB-hours**, a measure of storage over time, where 1 KiB is 1,024 bytes. Billing converts this binary meter to decimal TB-hours: `KiB-hours × 1,024 ÷ 1,000,000,000,000`. Do not apply the price per TB directly to the raw KiB-hours value.
 
@@ -77,13 +75,13 @@ After each month ends, Hivenet reviews the organization's metered storage usage 
 
 ## Read the cost cards
 
-Open **Object Storage** to review usage and the displayed billing period.
+Open **Object Storage** to review usage for the displayed calendar month. The two cost cards calculate an hourly rate by dividing your organization's TB-month price by the hours in that month. If the billing service uses a different number of hours, the cards can differ from your credit deductions or invoice.
 
 | Card | How to read it |
 | --- | --- |
 | **Storage used** | The current amount of data stored across your organization, not accumulated usage over time. |
 | **Cost this month** | Storage cost accumulated so far in the displayed period, using your organization's configured rate. |
-| **Estimated cost this month** | Cost so far plus the projected cost of keeping the current amount of data stored for the remaining hours of the calendar month, using your organization's hourly rate per TB. It can change when you upload or delete data. |
+| **Estimated cost this month** | Cost so far plus the projected cost of keeping the current amount of data stored through the end of the calendar month, using the console's hourly rate. It can change when you upload or delete data. |
 | **Estimated egress savings** | Outbound traffic in decimal GB multiplied by the AWS comparison rate of €0.09 per GB, rounded to cents, such as “up to €1.82 saved.” This is an estimate, not a credit or payment. |
 
 These cards describe storage usage. The shared prepaid balance also reflects charges from other products and any credit purchases. For invoiced customers, charges are handled externally. A zero charge in the console does not mean contracted storage is free; use the formal invoice and contract to confirm what is due.

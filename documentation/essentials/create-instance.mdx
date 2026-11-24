@@ -142,16 +142,10 @@ After the instance reaches **Running**:
 4. Copy the SSH command shown by the console.
 5. Run the command in your terminal.
 
-A typical command looks like this:
-
-```bash
-ssh -i /path/to/private_key username@host
-```
-
-Use the username and address shown in the instance’s connection details. The login can use a configured username, so do not assume it is the image’s default user. Use the private key that matches the public key supplied during creation.
+Use the private key that matches the public key supplied during creation. Keep the username, hostname, port, and any `ProxyCommand` in the copied command.
 
 <Tip>
-  After a successful connection, you can add the host and identity file to `~/.ssh/config` to make later connections shorter.
+  To reuse the connection, copy the complete SSH configuration block from the console into your local `~/.ssh/config`. Set `IdentityFile` to the path to your matching private key.
 </Tip>
 
 For platform-specific instructions, see:

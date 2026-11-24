@@ -4,3 +4,7 @@ sidebarTitle: "List instances"
 slug: "/public-api/api-reference/list-instances"
 openapi: "public-v1.yaml GET /instances"
 ---
+
+List the Compute instances owned by your account. Date bounds apply to creation time and include instances that never started. A reversed date range or malformed cursor returns `400 VALIDATION_ERROR`.
+
+The public response does not expose `created_at` in this release, and date filters discard fractional seconds. Keep filters and sorting unchanged while paging. See [Pagination and filters](/public-api/use-pagination-and-filters).

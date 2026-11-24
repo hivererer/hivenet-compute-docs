@@ -1,0 +1,73 @@
+---
+title: "Create instance"
+sidebarTitle: "Create instance"
+description: "Create a Compute VM or container from a preset and image, register an SSH key first, check credit and capacity, and poll for readiness."
+openapi: "public-v1.yaml POST /instances"
+authMethod: "bearer"
+playground: "none"
+keywords:
+  - "Compute API"
+  - "Create instance"
+---
+
+Create a Compute VM or container using a hardware preset and an image. The instance uses the last public key you registered through the API or the Compute console.
+
+For the full workflow, see [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api).
+
+## Before you send the request
+
+Choose a preset from [List presets](/public-api/endpoints/list-presets) and an image from [List images](/public-api/endpoints/list-images). The preset determines the hardware and location. Match `image_type` to the type used when listing images.
+
+A prepaid account needs enough credit for one hour of the selected preset. Availability can change between listing presets and creating the instance.
+
+## Request
+
+All four fields are required in the JSON body.
+
+| Field | Value |
+| --- | --- |
+| `name` | 1–255 letters, digits, hyphens, or underscores. Names can repeat. |
+| `preset_id` | A current preset UUID from `GET /presets`. Look it up before each create because presets can change. |
+| `image_type` | `vm` or `container`, case-insensitive. |
+| `image_id` | An image ID from `GET /images` for that type, up to 255 characters. |
+
+```bash
+curl --request POST \
+  --url "https://api.hivecompute.ai/v1/instances" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "name": "my-api-vm",
+    "preset_id": "YOUR_PRESET_ID",
+    "image_type": "vm",
+    "image_id": "YOUR_IMAGE_ID"
+  }'
+```
+
+Replace `YOUR_PRESET_ID` and `YOUR_IMAGE_ID` with values from the catalogue. For a container, use `image_type: "container"` and a container image ID.
+
+## Response and readiness
+
+A successful create returns `201 Created`. Read `instance.instance_id` from the response. If `instance` contains only `instance_id`, creation still succeeded. Poll [Get instance](/public-api/endpoints/get-instance) until `status` reaches `RUNNING`. Creation can succeed before the instance is ready.
+
+Use the connection command shown in the Compute console to connect.
+
+## Errors and retries
+
+| Status | What to check |
+| --- | --- |
+| `400` | Check the four fields and whether the image is compatible with the preset. |
+| `401` | Supply a valid Compute API key. |
+| `403` | Check account status and access to the preset’s location. |
+| `404` | Check the registered SSH key, preset, image, and availability of the image in that location. |
+| `409 CONFLICT` | Check credit and capacity, then refresh the preset in case it changed. These failures do not create an instance. |
+| `429` | Wait the number of seconds in `Retry-After`. |
+| `500`, `503`, `504` | The outcome is unknown. List instances before retrying. |
+
+A no-capacity `409` does not include `Retry-After`. Choose another compatible preset or try again later.
+
+<Warning>
+  Creation is not idempotent. Each successful call creates a separately billed instance, even with the same name and body. After a lost response, connection failure, or `500`, `503`, or `504`, check [List instances](/public-api/endpoints/list-instances) before you submit again.
+</Warning>
+
+This release does not support startup scripts, tags, or renaming and retagging instances through `PATCH`.

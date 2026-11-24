@@ -1,0 +1,41 @@
+---
+title: "Get SSH key"
+sidebarTitle: "Get SSH key"
+description: "Retrieve a registered SSH public key by ID through the Compute API, check its returned content, and handle invalid IDs or keys you cannot access."
+openapi: "public-v1.yaml GET /ssh-keys/{id}"
+authMethod: "bearer"
+playground: "none"
+keywords:
+  - "Compute API"
+  - "Get SSH key"
+---
+
+Retrieve a public key registered to your Compute account using its ID. Use the ID returned by [Register SSH key](/public-api/endpoints/register-ssh-key).
+
+## Request
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/ssh-keys/YOUR_SSH_KEY_ID" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+Replace `YOUR_SSH_KEY_ID` with the key's UUID.
+
+## Response
+
+A successful request returns `200 OK` with `id`, `content`, and `created_at`. `created_at` is a date-time string or `null`. The public key content is returned as registered, including any trailing newline.
+
+| Status | Meaning |
+| --- | --- |
+| `400` | The ID is not a valid UUID. |
+| `401` | Authentication is missing or invalid. |
+| `403` | The account is restricted. |
+| `404` | The key does not exist or belongs to another account. |
+| `429` | Wait for `Retry-After` before retrying. |
+| `500` | A server error occurred. Retry the read after a delay. |
+
+There is no SSH-key listing endpoint in this release. Keep the ID from registration.
+
+See [Handle errors and rate limits](/public-api/handle-errors-and-rate-limits) for the error envelope and retry guidance.

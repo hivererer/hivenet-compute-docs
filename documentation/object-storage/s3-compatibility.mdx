@@ -55,10 +55,11 @@ For clients using V1, use its marker-based pagination. The two pagination format
 
 ## Upload limits
 
-- A single `PutObject` request supports objects up to **5 GB**.
-- Use multipart uploads for larger objects, up to Hivenet's **5 TB** per-object limit.
-
-These are API limits. The console handles multipart uploads automatically for larger files. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers) for console guidance.
+| Upload method | Maximum size |
+| --- | --- |
+| [Browser console](/documentation/object-storage/objects#file-size-and-large-transfers) | 50 GB per file. The console handles multipart uploads automatically. |
+| S3 API, one `PutObject` request | 5 GB per object. |
+| S3 API, multipart upload | 5 TB per object. Very large uploads can fail during `CompleteMultipartUpload` even after all parts arrive. See [upload troubleshooting](/documentation/object-storage/troubleshooting#an-upload-fails). |
 
 Use a managed transfer function when you want the client to handle multipart uploads. A raw `PutObject` call does not automatically split a file.
 

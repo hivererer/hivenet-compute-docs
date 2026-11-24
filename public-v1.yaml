@@ -6,9 +6,11 @@ info:
     programmatically, and browse the hardware presets and regions available to
     you.
 
-    Instances are created and their SSH keys registered through the Hive
-    Compute console. This release of the API covers reading and controlling
-    instances that already exist.
+    This release of the API covers creating, reading and controlling
+    instances, the images you can launch, and registering the SSH key your
+    instances use. To create an instance, pick a preset from `GET /presets`
+    and an image from `GET /images`, register an SSH key once with
+    `POST /ssh-keys`, then call `POST /instances`.
 
     **Base URL:** `https://api.hivecompute.ai/v1`
 
@@ -32,8 +34,9 @@ info:
     ## Scope
 
     Requests are scoped to the account the key belongs to. You can only see and
-    act on your own instances. Regions and presets are the shared public
-    catalogue and look the same to everyone.
+    act on your own instances and SSH keys. Regions and presets are the shared
+    public catalogue and look the same to everyone. The images you can launch
+    depend on the locations your account can use.
 
     ## Errors
 
@@ -54,24 +57,36 @@ info:
 
     Branch on `code`, never on `message`. Most messages are fixed strings
     chosen per status rather than a description of your particular request:
-    `403`, `404` and `409` read the same every time, and `401` has two fixed
+    `403` and `404` read the same every time, a `409` may say what to change
+    (for example that a preset is sold out), and `401` has two fixed
     forms depending on whether the key was absent or rejected. Only
     `VALIDATION_ERROR` carries detail, and even there a malformed path id
     reports only that a UUID was expected, without naming the parameter. The
     underlying detail is internal; `request_id` is how we trace a specific
     failure.
 
+    A request with no key gets `401`, unless its body is not valid JSON, its
+    body is too large or its path cannot be decoded, which are rejected first.
+    With a key, the format of the request is checked before the key itself: a
+    malformed path id, or a parameter or body of the wrong type or out of
+    range, gets `400` whether or not the key is valid. That `400` holds nothing
+    about any account. Everything else is checked after the key, so an invalid
+    key gets `401`.
+
     ## Rate limiting
 
-    Requests are rate limited per source IP address, not per key, so callers
-    sharing an egress IP share a budget. Exceeding the limit returns `429` with
-    a `Retry-After` header giving the number of seconds to wait. Treat the limit
-    as subject to change and back off on `429` rather than pacing to a fixed
-    number.
+    Requests are rate limited per API key, currently 60 requests per minute,
+    with a separate budget for each endpoint. Calls to one endpoint do not use
+    up another endpoint's budget, and a key counts the same wherever it calls
+    from. Exceeding the limit returns `429` with a `Retry-After` header giving
+    the number of seconds to wait. Treat the limit as subject to change and back
+    off on `429` rather than pacing to a fixed number. The metrics endpoint
+    shares one budget across instance IDs. Shared service protection can
+    also return `429`. Use the delay in the response.
 
     ## Pagination
 
-    List endpoints are cursor-paginated and return the same envelope:
+    Paginated endpoints return this envelope. `GET /regions` returns an array:
 
     ```json
     {
@@ -102,7 +117,7 @@ tags:
   - name: Instances
     description: |
       Compute instances are the core resource of the platform. Each instance
-      runs a GPU-backed workload on a hardware preset in a region, and moves
+      runs a CPU or GPU workload on a hardware preset in a region, and moves
       through this lifecycle:
 
       `CREATED → DEPLOYED → STARTING → RUNNING → STOPPING → STOPPED → TERMINATING → TERMINATED`
@@ -113,6 +128,17 @@ tags:
     description: |
       The regions and hardware presets available to launch instances on. This
       is shared public reference data, identical for every caller.
+  - name: Images
+    description: |
+      The images an instance boots. A `vm` image is an operating system for a
+      virtual machine. A `container` image is a template for a container
+      instance: the Hive catalogue, or templates you saved yourself.
+  - name: SSH keys
+    description: |
+      The public key you use to log in to your instances. Your account can
+      hold more than one key. New instances get the key you registered last,
+      whether through this API or in the console's Settings, and the console
+      launches with that same key.
 
 paths:
   /instances:
@@ -125,6 +151,16 @@ paths:
 
         Only instances belonging to your account are returned. There is no way
         to widen the result set to another account or organisation.
+
+        A `cursor` that cannot be decoded is refused with `400` and
+        `VALIDATION_ERROR`, whose message is always "The request was invalid."
+        The server cannot tell which endpoint issued a well-formed cursor, so
+        pass back only an unmodified `pagination.next` from this endpoint.
+
+        A cursor is valid only with the `sort_field`, `sort_direction` and
+        filters it was issued under. It does not record them, so a cursor
+        reused with other values is not refused, and the page can skip or
+        repeat instances. To change the sort, start again without `cursor`.
       parameters:
         - $ref: '#/components/parameters/Cursor'
         - $ref: '#/components/parameters/Size'
@@ -143,6 +179,9 @@ paths:
 
             There is no filter for a transitional state on its own. Read
             `status` on each instance to tell them apart.
+
+            The value is not case-sensitive: `RUNNING` and `running` are the
+            same.
           schema:
             type: string
             enum: [running, stopped, terminated, errored]
@@ -158,7 +197,7 @@ paths:
             location — see the `Instance` schema.
           schema:
             type: string
-            enum: [UAE, FR, US]
+            example: FR
         - name: gpu_type
           in: query
           description: Return only instances on this GPU model, e.g. `RTX 4090`.
@@ -167,22 +206,22 @@ paths:
         - name: date_range_begin
           in: query
           description: |
-            Return only instances that **started** at or after this ISO 8601
-            timestamp. Despite the name, the bound is on `started_at`, not on
-            creation time.
+            Return only instances **created** at or after this ISO 8601
+            timestamp. The bound is on creation time, not on `started_at`, so
+            an instance that never started running is still returned when it
+            was created inside the range.
 
-            An instance that never started running has no `started_at`, so it is
-            excluded as soon as either bound is set — including a range wide
-            enough to cover everything. Omit both bounds to see those instances.
+            Must not be later than `date_range_end`; a reversed range returns
+            `400`.
           schema:
             type: string
             format: date-time
         - name: date_range_end
           in: query
           description: |
-            Return only instances that **started** at or before this ISO 8601
-            timestamp. The same `started_at` semantics as `date_range_begin`,
-            including the exclusion of instances that never started.
+            Return only instances **created** at or before this ISO 8601
+            timestamp. The same creation-time semantics as `date_range_begin`.
+            Both bounds are inclusive.
           schema:
             type: string
             format: date-time
@@ -232,6 +271,125 @@ paths:
           $ref: '#/components/responses/RateLimited'
         '500':
           $ref: '#/components/responses/InternalError'
+
+    post:
+      operationId: createInstance
+      tags: [Instances]
+      summary: Create an instance
+      description: |
+        Creates an instance of a preset with an image, and starts it. The
+        preset sets the region, location and hardware, and the instance is
+        billed at that preset's price, or at your organization's discounted
+        rate when that is lower. `hourly_rate` in the response is the rate
+        billed. Your account needs enough credit for one hour of the preset,
+        unless it is invoiced.
+
+        **Creates are not idempotent and names are not unique.** Each
+        successful call creates and bills a new instance, even with the same
+        body. If a create answers `500`, `503` or `504`, or the connection
+        drops, the instance may or may not exist: list your instances with
+        `GET /instances` before retrying.
+
+        Look the preset up with `GET /presets` before each create rather than
+        storing its `id`: a preset can be retired, which answers `404`, or
+        edited in place to a different size or price. Find it again by `sku`,
+        `region` and `location`, and check the size and `hourly_rate` in the
+        response.
+
+        The instance gets the SSH key you registered last, whether through
+        `POST /ssh-keys` or in the console. Without a key, the call answers
+        `404`.
+
+        Give `image_type` and `image_id` as `GET /images` lists them. The
+        image must suit the preset: for a virtual machine, a GPU preset needs
+        an image with `gpu_supported`; the preset must meet the image's
+        `min_disk_gb` and `min_memory_gb`; and the location must allow the
+        image's `os_family`. Otherwise the call answers `400`, with a fixed
+        message that does not say which rule failed. Windows images cannot be
+        created through the API in this release and are refused too.
+
+        Connection details are not part of the API in this release: neither
+        this response nor `GET /instances/{id}` carries a host or port. Find
+        them on the instance in the Hive Compute console.
+
+        Ports, environment variables, tags and a startup script are not
+        part of this release.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, preset_id, image_type, image_id]
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  pattern: '^[a-zA-Z0-9_-]+$'
+                  description: Letters, digits, hyphens and underscores.
+                  example: training-run-1
+                preset_id:
+                  type: string
+                  format: uuid
+                  description: The `id` of a preset from `GET /presets`.
+                image_type:
+                  type: string
+                  enum: [vm, container]
+                  description: The `type` of the image. Case-insensitive.
+                image_id:
+                  type: string
+                  maxLength: 255
+                  description: The `id` of an image from `GET /images` of that type.
+                  example: ubuntu24.04
+      responses:
+        '201':
+          description: The instance was created and is starting.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedInstance'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: |
+            Your account cannot use the preset's location, or cannot create
+            instances now, for example because it is suspended.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: |
+            The preset or the image does not exist, the preset's location does
+            not offer it, or you have registered no SSH key. The message is
+            fixed and does not say which. A preset being edited at that moment
+            can also answer `404` once; look it up again and retry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: |
+            The instance cannot be created right now: not enough credit, the
+            preset is sold out in its location, or the preset was edited
+            during the call. Nothing was created. Top up, or retry later.
+            Availability is counted separately for virtual machines and
+            containers, so if a sold-out answer persists, try the other
+            `image_type` or another preset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/CreateOutcomeUnknown'
+        '503':
+          $ref: '#/components/responses/CreateOutcomeUnknown'
+        '504':
+          $ref: '#/components/responses/CreateOutcomeUnknown'
 
   /instances/{id}:
     get:
@@ -321,6 +479,161 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /instances/{id}/metrics:
+    get:
+      operationId: getInstanceMetrics
+      tags: [Instances]
+      summary: Read an instance's metrics
+      description: |
+        Returns what one of your instances used over a recent time range: CPU,
+        memory, disks, network and GPUs.
+
+        Each metric is a series of points, **oldest first**, with one point per
+        step. The step depends on `range`:
+
+        | `range` | Window            | `step_seconds` | Points |
+        |---------|-------------------|----------------|--------|
+        | `1h`    | The last hour     | 60             | 61     |
+        | `6h`    | The last 6 hours  | 180            | 121    |
+        | `24h`   | The last 24 hours | 300            | 289    |
+        | `7d`    | The last 7 days   | 3600           | 169    |
+
+        A series with data has one point per step of the window, plus the
+        step that is still in progress, as `Points` shows. A series with no
+        data has no points.
+
+        A point covers the step that ends at its `unix_seconds`, and never
+        less than 3 minutes. Thus on the `1h` range, each point covers the 3
+        minutes that end at it. Each series says if its values are averages
+        or the highest value in the step. When the instance ran for only part
+        of a step, an average covers only the part when it ran. On a
+        Performance VM, when the instance stops and starts again in one step,
+        the averages of that step also include the time when it did not run.
+        Thus they are lower. On a container, the step it started in also
+        includes what it used while it started. The newest point is the step
+        that is still in progress, so its value can change on the next call.
+
+        On a GPU VM, a CPU VM or a container, `cpu_percent`, `in_mbps` and
+        `out_mbps` come from counters sampled about every 30 seconds, and
+        samples can be up to 2 minutes apart. Each value is the change between
+        samples divided by the time between those samples, not by the length
+        of the step. Thus steady use reads true, but a burst shorter than a
+        few minutes can read higher or lower than its average over the step,
+        and can appear one point late. For the same reason, `in_mbps` or
+        `out_mbps` multiplied by the step does not give the bytes transferred.
+
+        A step with no sample has `value: null`. A gap is never sent as `0`,
+        so a `0` is a measured zero.
+
+        Every field of the response is always present. A value that is not
+        known is `null`, never absent. The `status` of each group tells you
+        if the group has data at all; see `UsageStatus`.
+
+        An instance that does not exist and an instance that is not yours both
+        return `404`.
+      parameters:
+        - $ref: '#/components/parameters/InstanceId'
+        - name: range
+          in: query
+          required: true
+          description: |
+            The time range to return, which also sets the step. The value is
+            not case-sensitive: `24H` and `24h` are the same.
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+      responses:
+        '200':
+          description: |
+            The metrics of the instance over the range. The example shows only
+            the two newest points of each series. A response has all the
+            points.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceMetrics'
+              example:
+                step_seconds: 60
+                last_sample_at: '2026-10-20T09:59:45.000Z'
+                cpu_status: OK
+                cpu_percent:
+                  points:
+                    - { unix_seconds: 1792490400, value: 37.5 }
+                    - { unix_seconds: 1792490460, value: 41.2 }
+                memory:
+                  status: OK
+                  used_bytes:
+                    points:
+                      - { unix_seconds: 1792490400, value: 6442450944 }
+                      - { unix_seconds: 1792490460, value: 6576668672 }
+                  limit_bytes: 34359738368
+                  hard_limit_bytes: 36507222016
+                disks:
+                  - kind: VOLUME
+                    label: /home/ubuntu
+                    status: OK
+                    used_bytes:
+                      points:
+                        - { unix_seconds: 1792490400, value: 21474836480 }
+                        - { unix_seconds: 1792490460, value: 21475885056 }
+                    total_bytes: 107374182400
+                  - kind: CONTAINER_DISK
+                    label: /
+                    status: OK
+                    used_bytes:
+                      points:
+                        - { unix_seconds: 1792490400, value: 1073741824 }
+                        - { unix_seconds: 1792490460, value: 1074790400 }
+                    total_bytes: 32212254720
+                network:
+                  status: OK
+                  in_mbps:
+                    points:
+                      - { unix_seconds: 1792490400, value: 12.4 }
+                      - { unix_seconds: 1792490460, value: 10.8 }
+                  out_mbps:
+                    points:
+                      - { unix_seconds: 1792490400, value: 3.1 }
+                      - { unix_seconds: 1792490460, value: 2.9 }
+                  in_peak_mbps: { points: [] }
+                  out_peak_mbps: { points: [] }
+                  cap_mbps: 1000
+                gpu_status: OK
+                gpus:
+                  - index: 0
+                    model: RTX 4090
+                    utilization_percent:
+                      points:
+                        - { unix_seconds: 1792490400, value: 98 }
+                        - { unix_seconds: 1792490460, value: 97 }
+                    memory_used_bytes:
+                      points:
+                        - { unix_seconds: 1792490400, value: 20401094656 }
+                        - { unix_seconds: 1792490460, value: 20401094656 }
+                    memory_total_bytes: 25757220864
+                    temperature_celsius:
+                      points:
+                        - { unix_seconds: 1792490400, value: 71 }
+                        - { unix_seconds: 1792490460, value: 72 }
+                    power_watts:
+                      points:
+                        - { unix_seconds: 1792490400, value: 402.5 }
+                        - { unix_seconds: 1792490460, value: 398 }
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/MetricsForbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/MetricsUnavailable'
+
   /instances/{id}/start:
     post:
       operationId: startInstance
@@ -345,7 +658,11 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted; the instance's current state is returned,
+            as `GET /instances/{id}` returns it. When it could not be read right
+            after the call, only `instance_id` is returned: the action was
+            accepted, so poll `GET /instances/{id}` rather than repeating it.
           content:
             application/json:
               schema:
@@ -376,8 +693,8 @@ paths:
         Stops a running instance. The call returns as soon as the request is
         accepted; the instance moves `STOPPING → STOPPED` in the background.
 
-        Storage is retained and the instance can be started again. Billing for
-        compute stops; storage may still be charged.
+        Storage is retained and the instance can be started again. Compute
+        charges stop when the instance leaves RUNNING.
 
         Stopping an already-stopped instance is accepted and changes nothing.
         Returns `409` when the instance is `TERMINATING` or `TERMINATED`.
@@ -391,7 +708,11 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted; the instance's current state is returned,
+            as `GET /instances/{id}` returns it. When it could not be read right
+            after the call, only `instance_id` is returned: the action was
+            accepted, so poll `GET /instances/{id}` rather than repeating it.
           content:
             application/json:
               schema:
@@ -421,7 +742,7 @@ paths:
 
         **This cannot be undone.** The instance moves `TERMINATING → TERMINATED`
         and can never be started again. Use `POST /instances/{id}/stop` if you
-        only want to pause billing.
+        want to stop the instance and keep its storage.
 
         Terminating one that is `STOPPING` is accepted; the stop does not have
         to settle first.
@@ -444,7 +765,11 @@ paths:
               $ref: '#/components/schemas/InstanceAction'
       responses:
         '201':
-          description: The request was accepted; the instance's current state is returned.
+          description: |
+            The request was accepted; the instance's current state is returned,
+            as `GET /instances/{id}` returns it. When it could not be read right
+            after the call, only `instance_id` is returned: the action was
+            accepted, so poll `GET /instances/{id}` rather than repeating it.
           content:
             application/json:
               schema:
@@ -473,10 +798,12 @@ paths:
         Returns the region codes used across the API. Use a region's `name`
         as the `region` filter on `GET /presets` and `GET /instances`.
 
-        The set is fixed — currently `UAE`, `FR` and `US` — and is returned in
-        full rather than paginated. It tells you which values the filters
-        accept, not which locations currently have capacity; use
-        `GET /presets` for what can actually be launched.
+        The list holds every region that has at least one datacenter
+        location, sorted by code, and is returned in full rather than
+        paginated. It changes when a region gains its first location or loses
+        its last one, so read it rather than hardcoding the values. It tells
+        you which values the filters accept, not which locations currently
+        have capacity; use `GET /presets` for what can actually be launched.
       responses:
         '200':
           description: The available regions.
@@ -525,7 +852,7 @@ paths:
             empty page rather than an error.
           schema:
             type: string
-            enum: [UAE, FR, US]
+            example: FR
         - name: sku
           in: query
           description: Return only presets with this SKU name, e.g. `8x-RTX-4090`.
@@ -579,6 +906,161 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /images:
+    get:
+      operationId: listImages
+      tags: [Images]
+      summary: List images
+      description: |
+        Returns the images of one type. Each item carries `type`, so you can
+        give its `id` and `type` together when you launch an instance.
+
+        `type=vm` returns every virtual machine image available to your
+        account, in one page (Windows images are listed, but cannot be
+        created through the API in this release): `pagination.next` is always `null`, `pagination.size` is
+        the number of images, and `cursor`, `size` and `mine=true` are refused.
+        An image is left out when no location your account can use allows its
+        operating system family.
+
+        `type=container` returns a cursor-paginated list. By default it is the
+        Hive catalogue. With `mine=true` it is the templates you saved
+        yourself. Templates belong to one user, so a teammate's templates are
+        never listed.
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: The kind of image to list. Case-insensitive.
+          schema:
+            type: string
+            enum: [vm, container]
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Size'
+        - name: mine
+          in: query
+          required: false
+          description: |
+            For `type=container` only. `true` lists the templates you saved
+            instead of the Hive catalogue.
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: A page of images.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/VmImage'
+                        - $ref: '#/components/schemas/ContainerImage'
+                      discriminator:
+                        propertyName: type
+                        mapping:
+                          vm: '#/components/schemas/VmImage'
+                          container: '#/components/schemas/ContainerImage'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/AccountForbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /ssh-keys:
+    post:
+      operationId: createSshKey
+      tags: [SSH keys]
+      summary: Register an SSH key
+      description: |
+        Adds a public key to your account. Instances you create after this
+        call get this key. Instances that already exist keep the key they were
+        created with. Registering the same public key again creates a new ID.
+        A trailing newline is accepted and preserved.
+
+        The key must be one OpenSSH public key line, for example the content
+        of `~/.ssh/id_ed25519.pub`, with no `authorized_keys` options in front
+        of it. Ed25519, ECDSA (P-256, P-384, P-521), the security-key types
+        `sk-ssh-ed25519@openssh.com` and `sk-ecdsa-sha2-nistp256@openssh.com`,
+        and RSA keys of 2048 bits or more are accepted. Other key types,
+        certificates, and RSA keys shorter than 2048 bits get `400`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  maxLength: 8192
+                  description: The public key, in OpenSSH format.
+                  example: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIETCectK27yhdmuct8RFCynCjeWek5/ShKk6ISJZFSx+ you@laptop
+      responses:
+        '201':
+          description: The key was registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKey'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/AccountForbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /ssh-keys/{id}:
+    get:
+      operationId: getSshKey
+      tags: [SSH keys]
+      summary: Get an SSH key
+      description: |
+        Returns one of your SSH keys. A key that belongs to another account
+        answers `404`, the same as a key that does not exist.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The key's unique identifier.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The SSH key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKey'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/AccountForbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -627,7 +1109,7 @@ components:
           nullable: true
           description: |
             Cursor for the following page, or `null` on the last page.
-          example: eyJjcmVhdGVkX2F0IjoiMjAyNi0wNy0yOSJ9
+          example: eyJ0IjoiMjAyNi0wNy0yOVQxMDowMDowMFoiLCJpIjoiNDkyMzBkZWQtYWI5OS00ZDAyLWI1NmMtZDUwNzBjY2U2MzgzIn0=
         size:
           type: integer
           description: Page size used for this response.
@@ -656,7 +1138,11 @@ components:
             - TERMINATED
             - STOPPING
             - STOPPED
-          description: Current lifecycle state.
+            - PAUSED
+          description: |
+            Current lifecycle state. `PAUSED` is a running instance whose host
+            is in an outage: it is not stopped, and billing is suspended until
+            the host is back.
         region:
           type: string
           description: |
@@ -724,14 +1210,45 @@ components:
         termination_reason:
           type: string
           nullable: true
-          description: Why the instance was terminated, if it has been.
+          enum:
+            - USER_INITIATED
+            - CREDIT_EXHAUSTION
+            - UNKNOWN
+            - null
+          description: |
+            Why the instance is being or was terminated: `USER_INITIATED` for a
+            terminate call, `CREDIT_EXHAUSTION` when the organisation ran out of
+            credits, `UNKNOWN` when the platform cannot tell (an instance that
+            failed is reported this way). `null` until the instance is
+            `TERMINATING` or `TERMINATED`.
         guest_ready:
           type: string
-          description: Whether the guest OS has finished booting and is reachable.
+          enum:
+            - READY
+            - DEGRADED
+            - UNKNOWN
+          description: |
+            Whether the guest OS inside a VM has booted and answers its agent:
+            `READY` when it does, `DEGRADED` when the VM is up but the agent is
+            silent, `UNKNOWN` when nothing has reported (always the case for
+            containers). Informational only: it never changes `status` or
+            billing.
         guest_ready_reason:
           type: string
           nullable: true
           description: Explanation when the guest is not ready.
+
+    CreatedInstance:
+      type: object
+      properties:
+        instance:
+          description: |
+            The instance, as `GET /instances/{id}` returns it. When it could
+            not be read right after the create, it holds only `instance_id`:
+            the instance exists, so read it with `GET /instances/{id}` rather
+            than creating again.
+          allOf:
+            - $ref: '#/components/schemas/Instance'
 
     InstanceAction:
       type: object
@@ -743,6 +1260,367 @@ components:
           description: Free-text note explaining why the action was taken.
           example: scaling down overnight
 
+    InstanceMetrics:
+      type: object
+      description: |
+        What one instance used over the requested range. A group that the
+        instance does not have is present with status `NOT_APPLICABLE`.
+      required:
+        - step_seconds
+        - last_sample_at
+        - cpu_status
+        - cpu_percent
+        - memory
+        - disks
+        - network
+        - gpu_status
+        - gpus
+      properties:
+        step_seconds:
+          type: integer
+          format: int64
+          description: |
+            Seconds between two points of a series: 60, 180, 300 or 3600 for
+            the `1h`, `6h`, `24h` and `7d` ranges.
+          example: 60
+        last_sample_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: |
+            The time of the newest CPU sample of the instance in the range. Use
+            it to see if the instance reports at all. `null` when the range has
+            no CPU sample.
+        cpu_status:
+          description: Whether `cpu_percent` has data.
+          allOf:
+            - $ref: '#/components/schemas/UsageStatus'
+        cpu_percent:
+          description: |
+            CPU time used, as a percentage of the instance's vCPUs, from 0 to
+            100. The average over each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        memory:
+          $ref: '#/components/schemas/MemoryUsage'
+        disks:
+          type: array
+          description: |
+            The disks the instance has, each with its own status. On a VM, the
+            `ROOT_DISK` comes first. An instance with no known disk has an
+            empty list.
+          items:
+            $ref: '#/components/schemas/DiskUsage'
+        network:
+          $ref: '#/components/schemas/NetworkUsage'
+        gpu_status:
+          description: |
+            Whether `gpus` has data, for all the GPUs of the instance together.
+            `NOT_APPLICABLE` on an instance with no GPU.
+          allOf:
+            - $ref: '#/components/schemas/UsageStatus'
+        gpus:
+          type: array
+          description: |
+            The GPUs that reported in the range. Empty when the instance has no
+            GPU, or when no GPU of the instance reported. `gpu_status` tells
+            which of the two applies. On a GPU VM, when one GPU reported, the
+            list has all the GPUs of the instance. A container lists only the
+            GPUs that reported. A Performance VM does not report GPU metrics,
+            thus its list is always empty.
+          items:
+            $ref: '#/components/schemas/GpuUsage'
+
+    UsageStatus:
+      type: string
+      enum:
+        - OK
+        - NOT_MONITORED
+        - STALE
+        - AGENT_NOT_INSTALLED
+        - AGENT_NOT_RESPONDING
+        - NOT_APPLICABLE
+        - UNSPECIFIED
+      description: |
+        Whether a group of metrics has data.
+
+        - `OK` — the group has at least one sample in the range.
+        - `NOT_MONITORED` — nothing reports this group for the instance in the
+          range.
+        - `STALE` — the group has samples in the range, but none recently,
+          and the instance is not stopped. Its source stopped reporting; the
+          series shows since when.
+        - `AGENT_NOT_INSTALLED` — GPUs of a VM only. The guest has no GPU
+          agent to read from.
+        - `AGENT_NOT_RESPONDING` — GPUs of a VM only. The GPU agent in the
+          guest exists but does not answer.
+        - `NOT_APPLICABLE` — the instance does not have this group, such as
+          GPUs on a CPU-only instance, or any group on an inference instance.
+        - `UNSPECIFIED` — no answer. It is not sent today.
+
+        More values can come in a later release. Read `UNSPECIFIED`, and any
+        value not in this list, as "unknown".
+
+    UsageSeries:
+      type: object
+      description: |
+        One point per step of the range, oldest first. All the series of a
+        response that have points use the same timestamps. A series with no
+        data has no points.
+      required:
+        - points
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/UsagePoint'
+
+    UsagePoint:
+      type: object
+      required:
+        - unix_seconds
+        - value
+      properties:
+        unix_seconds:
+          type: integer
+          format: int64
+          description: The end of the step, as Unix time in seconds.
+          example: 1792490400
+        value:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            The value for the step, in the unit of its series. `null` when the
+            step has no sample. Never NaN or infinite.
+          example: 37.5
+
+    MemoryUsage:
+      type: object
+      description: The RAM the instance used, against its limits.
+      required:
+        - status
+        - used_bytes
+        - limit_bytes
+        - hard_limit_bytes
+      properties:
+        status:
+          $ref: '#/components/schemas/UsageStatus'
+        used_bytes:
+          description: RAM used, in bytes. The highest value in each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        limit_bytes:
+          type: number
+          nullable: true
+          description: |
+            The RAM the instance was sold with, in bytes. For a Performance
+            VM, the RAM the VM actually has. `null` when not known.
+          example: 34359738368
+        hard_limit_bytes:
+          type: number
+          nullable: true
+          description: |
+            Containers only. The memory limit that the kernel applies to the
+            container, in bytes. It is above `limit_bytes`, to leave headroom.
+            `null` for VMs and for a container that has no such limit.
+          example: 36507222016
+
+    DiskUsage:
+      type: object
+      description: The space used on one disk.
+      required:
+        - kind
+        - label
+        - status
+        - used_bytes
+        - total_bytes
+      properties:
+        kind:
+          $ref: '#/components/schemas/DiskKind'
+        label:
+          type: string
+          description: |
+            The name of the disk for display: `/`, `/home/ubuntu`, `vda`,
+            `vdb`, or a mount point in the guest such as `/data` or `C:\`.
+          example: /home/ubuntu
+        status:
+          $ref: '#/components/schemas/UsageStatus'
+        used_bytes:
+          description: |
+            Space used, in bytes. The highest value in each step. It can have
+            no points, with status `NOT_MONITORED`, while `total_bytes` is
+            known.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        total_bytes:
+          type: number
+          nullable: true
+          description: |
+            The size of the disk, in bytes. `kind` tells what it measures.
+            `null` when not known.
+          example: 107374182400
+
+    DiskKind:
+      type: string
+      enum:
+        - ROOT_DISK
+        - VOLUME
+        - CONTAINER_DISK
+        - DATA_DISK
+        - GUEST_FILESYSTEM
+        - UNSPECIFIED
+      description: |
+        Which disk a `DiskUsage` describes.
+
+        - `ROOT_DISK` — the main disk of a VM: labelled `/` on a GPU or CPU
+          VM, and `vda` on a Performance VM.
+
+          On a GPU or CPU VM, `total_bytes` is the disk size the VM was sold
+          with. The filesystem on the disk is smaller, usually by a few
+          percent, so a full disk reads below `total_bytes`.
+
+          When the QEMU guest agent of the VM reported the filesystem that
+          holds `/` in the range, `used_bytes` is that filesystem as the guest
+          sees it, like `df`. These values lag and freeze as for
+          `GUEST_FILESYSTEM`.
+
+          If not, `used_bytes` is the host's view: the space that the disk
+          image of the VM takes on its volume. It stays high after the guest
+          deletes files, until the guest trims the free blocks.
+
+          One source serves the whole response, so two ranges of one VM can
+          use different sources. When the agent stops while the VM runs, the
+          disk reads `STALE` on the ranges that still hold samples from the
+          agent.
+
+          A Windows guest has no `/`, so its `ROOT_DISK` is usually the
+          host's view. On a GPU VM, its system drive also shows as a
+          `GUEST_FILESYSTEM` such as `C:\`. On a Performance VM, this is the
+          `vda` disk, with `total_bytes` only.
+        - `VOLUME` — the persistent workspace volume of a container, labelled
+          `/home/ubuntu`.
+        - `CONTAINER_DISK` — the root filesystem of a container outside the
+          workspace volume, labelled `/`. `used_bytes` is mostly the writable
+          layer of the container and its logs. **When `used_bytes` goes above
+          `total_bytes`, the container is evicted and all data on this disk is
+          lost.**
+        - `DATA_DISK` — an extra disk of a Performance VM, such as `vdb`.
+          Like the `ROOT_DISK` of a Performance VM, it has `total_bytes` only:
+          `used_bytes` has no points and `status` is `NOT_MONITORED`.
+        - `GUEST_FILESYSTEM` — a filesystem mounted in the guest of a GPU VM,
+          as its QEMU guest agent reports it, other than the one that holds
+          `/`. These come after the `ROOT_DISK`. CPU VMs and Performance VMs
+          never have them.
+
+          `label` is the mount point, such as `/data`, or a Windows drive such
+          as `C:\`. `total_bytes` is the newest capacity from the agent: the
+          bytes used plus the bytes available to non-root users. Values can
+          lag the guest by up to about 5.5 minutes. If the agent stops
+          answering while the VM runs, they keep their last value.
+
+          A filesystem mounted at several points shows one time. `/boot` and
+          all below it, `/efi`, snaps, loop devices, CD-ROMs and the Windows
+          System Reserved volume do not show. At most 8 show: the ones
+          reported most recently. A filesystem unmounted while the VM runs
+          reads `STALE` from then on.
+        - `UNSPECIFIED` — an unknown kind. It is not sent today.
+
+        More values can come in a later release. Read `UNSPECIFIED`, and any
+        value not in this list, as "unknown".
+
+    NetworkUsage:
+      type: object
+      description: |
+        Traffic into and out of the instance, in megabits per second (Mbps).
+        1 Mbps is 1,000,000 bits per second.
+      required:
+        - status
+        - in_mbps
+        - out_mbps
+        - in_peak_mbps
+        - out_peak_mbps
+        - cap_mbps
+      properties:
+        status:
+          $ref: '#/components/schemas/UsageStatus'
+        in_mbps:
+          description: Traffic into the instance. The average over each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        out_mbps:
+          description: Traffic out of the instance. The average over each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        in_peak_mbps:
+          description: |
+            `7d` range only: the highest 3-minute average of traffic into the
+            instance in each step. It shows the bursts that the hourly average
+            hides. It has no points on the other ranges.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        out_peak_mbps:
+          description: |
+            `7d` range only: the highest 3-minute average of traffic out of
+            the instance in each step. It has no points on the other ranges.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        cap_mbps:
+          type: number
+          nullable: true
+          description: |
+            The bandwidth the instance was sold with, in Mbps. It is always
+            `null` on a Performance VM. It is also `null` when we have no
+            bandwidth on record for the instance.
+          example: 1000
+
+    GpuUsage:
+      type: object
+      description: |
+        One GPU of the instance. In the step where a container restarts onto
+        other GPUs, the values of the GPUs from before and after the restart
+        can both count for that step.
+      required:
+        - index
+        - model
+        - utilization_percent
+        - memory_used_bytes
+        - memory_total_bytes
+        - temperature_celsius
+        - power_watts
+      properties:
+        index:
+          type: integer
+          description: |
+            The position of the GPU in the instance, from 0. It is not the GPU
+            number on the host, which can change when a container restarts.
+          example: 0
+        model:
+          type: string
+          description: The GPU model.
+          example: RTX 4090
+        utilization_percent:
+          description: GPU use, from 0 to 100 percent. The average over each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        memory_used_bytes:
+          description: GPU memory used, in bytes. The highest value in each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        memory_total_bytes:
+          type: number
+          nullable: true
+          description: The memory of the GPU, in bytes. `null` when not known.
+          example: 25757220864
+        temperature_celsius:
+          description: GPU temperature, in degrees Celsius. The highest value in each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+        power_watts:
+          description: GPU power draw, in watts. The average over each step.
+          allOf:
+            - $ref: '#/components/schemas/UsageSeries'
+
     Preset:
       type: object
       properties:
@@ -752,7 +1630,7 @@ components:
         region:
           type: string
           description: |
-            Region this preset is offered in.
+            Region this preset is offered in. Some shared presets return an empty string.
 
             Usually a region code, but a preset on a datacenter location with no
             region mapping reports that raw location name instead, so this is
@@ -761,12 +1639,14 @@ components:
           example: FR
         location:
           type: string
-          description: Datacentre within the region.
+          description: |
+            Datacenter within the region. This field can be an empty string.
         gpu:
           type: string
           description: |
-            GPU count. The model is **not** part of this field — use the SKU
-            `name`, or `gpu_type` on an instance, to identify the hardware.
+            GPU count. The model is **not** part of this field. To choose by
+            model, filter with `sku` (for example `8x-RTX-4090`) or
+            `free_text_search`; on an instance, `gpu_type` names it.
           example: 8×
         cpu:
           type: string
@@ -794,6 +1674,119 @@ components:
             and fall back to `hourly_price`.
           example: '2.8000'
 
+    VmImage:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [vm]
+        id:
+          type: string
+          description: Unique identifier, used when launching an instance.
+          example: ubuntu24.04
+        name:
+          type: string
+          example: Ubuntu 24.04 LTS
+        os_family:
+          type: string
+          enum: [LINUX, WINDOWS, UNSPECIFIED]
+          description: |
+            The guest operating system family.
+
+            More values can come in a later release. Read `UNSPECIFIED`, and
+            any value not in this list, as "unknown".
+        gpu_supported:
+          type: boolean
+          description: Whether the image can boot on a GPU preset.
+        login_user:
+          type: string
+          description: |
+            The account a Linux image creates for you to log in with. Empty
+            when it is not known, and always empty for Windows, whose account
+            is named at launch in the console.
+          example: ubuntu
+        min_disk_gb:
+          type: integer
+          description: Minimum preset storage in GB. A reported zero does not establish how much storage the workload needs.
+        min_memory_gb:
+          type: integer
+          description: Minimum preset memory in GB. A reported zero does not establish how much memory the workload needs.
+        secure_boot:
+          type: boolean
+          description: Whether instances boot with UEFI Secure Boot. Always `false` for Linux.
+        tpm:
+          type: boolean
+          description: Whether instances get a virtual TPM. Always `false` for Linux.
+
+    ContainerImage:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [container]
+        id:
+          type: string
+          description: Unique identifier, used when launching an instance.
+        name:
+          type: string
+          example: Jupyter
+        software_list:
+          type: array
+          items:
+            type: string
+          example: [python, jupyter]
+        registry:
+          type: string
+          example: docker.io
+        image:
+          type: string
+          example: jupyter/base-notebook:latest
+        workload_type:
+          type: string
+          enum: [CPU, GPU, UNSPECIFIED]
+          description: |
+            The hardware the template is for.
+
+            More values can come in a later release. Read `UNSPECIFIED`, and
+            any value not in this list, as "unknown".
+        env:
+          type: array
+          description: |
+            The variables the template sets. The value of a secret variable is
+            replaced by a placeholder, never returned.
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+              is_secret:
+                type: boolean
+        requires_init:
+          type: boolean
+        command:
+          type: string
+          description: The command the container runs. Empty means the image's own.
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    SshKey:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+          description: The public key, as registered.
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+
     Error:
       type: object
       properties:
@@ -809,6 +1802,7 @@ components:
                 - VALIDATION_ERROR
                 - CONFLICT
                 - TOO_MANY_REQUESTS
+                - SERVICE_UNAVAILABLE
                 - INTERNAL_ERROR
               description: Stable, machine-readable error code.
             message:
@@ -843,6 +1837,32 @@ components:
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     Forbidden:
       description: The resource exists but does not belong to your account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: You do not have access to this resource.
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    AccountForbidden:
+      description: Your account cannot use the API now, for example because it is suspended.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: You do not have access to this resource.
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    MetricsForbidden:
+      description: |
+        Your account cannot use the API now, for example because it is
+        suspended. For an instance that is not yours, this endpoint does not
+        answer `403`. It answers `404`, as for an instance that does not
+        exist.
       content:
         application/json:
           schema:
@@ -890,15 +1910,33 @@ components:
       description: |
         No host currently has enough free capacity for this instance's preset.
         This is a temporary condition, not a fault in the request: retry with
-        backoff, or pick a preset in another region. The body carries
-        `code: INTERNAL_ERROR` rather than a dedicated code.
+        backoff, or pick a preset in another region.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             error:
-              code: INTERNAL_ERROR
+              code: SERVICE_UNAVAILABLE
+              message: The service is temporarily unavailable. Try again later.
+              request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    MetricsUnavailable:
+      description: |
+        We cannot read the metrics now. The causes are: the metrics store or
+        our database did not answer in time, or answered with an error, or
+        this environment does not supply metrics. The message is the same for
+        all the causes.
+
+        Retry with backoff. If you get `503` for every instance and every
+        range, and it does not stop, this environment does not supply
+        metrics. Then stop retrying.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: SERVICE_UNAVAILABLE
               message: The service is temporarily unavailable. Try again later.
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     RateLimited:
@@ -919,6 +1957,16 @@ components:
               code: TOO_MANY_REQUESTS
               message: Too Many Requests
               request_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    CreateOutcomeUnknown:
+      description: |
+        The create may or may not have happened: the instance can exist and
+        be billing even though no id was returned. Do not retry blindly. List
+        your instances with `GET /instances`, and create again only if the
+        instance is not there.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     InternalError:
       description: |
         Something went wrong on our side. Retry, then contact support with the

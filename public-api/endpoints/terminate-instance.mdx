@@ -2,3 +2,13 @@
 title: "Terminate instance"
 openapi: "public-v1.yaml POST /instances/{id}/terminate"
 ---
+
+Terminate a Compute instance permanently.
+
+<Danger>
+  Termination deletes the instance and its data. It cannot be undone.
+</Danger>
+
+A successful request returns `201` with the public instance record. If the API cannot read the record immediately, the body contains only `instance_id`. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until `status` reaches `TERMINATED`.
+
+`termination_reason` is null before termination begins. `terminated_at` is set when the instance reaches `TERMINATED`.

@@ -5,7 +5,7 @@ description: "Understand how the Compute API authenticates requests, what base U
 slug: "/public-api/get-started"
 ---
 
-The Compute API lets you inspect and manage existing Compute resources programmatically instead of working only through the web console.
+The Compute API lets you create, inspect, and manage Compute instances programmatically. You can also browse regions, hardware presets, and images, and register SSH public keys.
 
 Use these guides to understand the main workflows, then use the API reference for exact endpoint details.
 
@@ -47,6 +47,7 @@ The public API provides these endpoints:
 
 | Method | Endpoint | Use it to |
 | :-- | :-- | :-- |
+| `POST` | [`/instances`](/public-api/endpoints/create-instance) | Create a VM or container from a preset and image. |
 | `GET` | [`/instances`](/public-api/endpoints/list-instances) | List your instances. |
 | `GET` | [`/instances/{id}`](/public-api/endpoints/get-instance) | Get one instance. |
 | `GET` | [`/instances/{id}/logs`](/public-api/endpoints/get-instance-logs) | Read recent logs. |
@@ -56,12 +57,13 @@ The public API provides these endpoints:
 | `POST` | [`/instances/{id}/terminate`](/public-api/endpoints/terminate-instance) | Permanently terminate an instance. |
 | `GET` | [`/regions`](/public-api/endpoints/list-regions) | List supported region codes. |
 | `GET` | [`/presets`](/public-api/endpoints/list-presets) | List hardware presets and pricing. |
-
-SSH-key endpoints are not part of this release.
+| `GET` | [`/images`](/public-api/endpoints/list-images) | List VM or container images. |
+| `POST` | [`/ssh-keys`](/public-api/endpoints/register-ssh-key) | Register an SSH public key. |
+| `GET` | [`/ssh-keys/{id}`](/public-api/endpoints/get-ssh-key) | Retrieve a registered SSH public key. |
 
 ## Regions
 
-The API uses these region values:
+Examples of region codes include:
 
 - `UAE`
 - `FR`
@@ -71,7 +73,7 @@ Use the value returned by [`GET /regions`](/public-api/endpoints/list-regions) w
 
 ## How actions work
 
-Start, stop, and terminate actions are asynchronous. The API can return before the instance reaches its final state.
+Creation, start, stop, and terminate actions are asynchronous. The API can return before the instance reaches its final state.
 
 Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `status` field shows the state you expect.
 
@@ -84,10 +86,10 @@ Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the `stat
 - A Compute with Hivenet account
 - An API key
 - A terminal, API client, or tool that can send HTTP requests
-- Access to the instance you want to inspect or manage
+- Access to the instance you want to inspect or manage, or a registered SSH public key and sufficient credit to create one
 
 You don't need an SDK to get started. A `curl` request is enough.
 
 ## Where to go next
 
-Start with [Make your first API request](/public-api/make-your-first-api-request), then use the endpoint reference for exact request and response details.
+Start with [Make your first API request](/public-api/make-your-first-api-request). To provision a VM or container, follow [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api).

@@ -21,7 +21,7 @@ Use **TCP** when you want inbound connections for a TCP service (most APIs, many
 
 Use **UDP** when you need inbound connections for a UDP service (some game servers, streaming, realtime protocols).
 
-One important constraint: connectivity settings are chosen during creation, and some options can’t be changed later. Plan your ports early if you know you’ll need them.
+Choose the public ports you need during creation. When ports are added to an existing instance, Compute rejects a change that would bring its total above **10 configured ports**. Forwarding a port locally through SSH uses the existing SSH connection and does not count toward that total.
 
 ## Before you open anything: make your app reachable on the VM
 
@@ -56,15 +56,15 @@ Then connect from your computer using the SSH command shown on the instance page
 
 If your web UI is only meant for you, don’t make it public. Forward the port over SSH instead.
 
-Example (local forwarding):
+On your computer, [save the console’s SSH configuration](/tutorials/more-guides/SSH-config-file-explained) under the alias `hivenet` and check that `ssh hivenet` connects. Exit that session, then run:
 
 ```text
-ssh -L 7865:localhost:7865 YOUR_SSH_USER@YOUR_SSH_HOST
+ssh -L 7865:localhost:7865 hivenet
 ```
 
-Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
+Keep the SSH session open while you use the tunnel.
 
-Then open `http://localhost:7865` in your browser.\\
+Then open `http://localhost:7865` in your browser.
 
 <Info>
   Full walkthrough: [How to forward ports to reach your web app](/documentation/connectivity/forwards-ports)
@@ -130,10 +130,10 @@ If you’re on a strict network (corporate firewall, locked-down router) and thi
 
 If you can’t connect:
 
-- Confirm the instance is \*\*Running \*\*(not stopped).
+- Confirm the instance is **Running**.
 - Confirm the right protocol is enabled (HTTPS/TCP/UDP).
 - Confirm the app is actually running.
 - Confirm the app is listening on the right port.
 - Confirm it’s not bound only to localhost (use `0.0.0.0` when needed).
-- If HTTPS shows Bad Gateway, use: \[[Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
+- If HTTPS shows Bad Gateway, use [Compute instance URLs and Bad Gateway errors](/documentation/troubleshooting/bad-gateway-errors).
 - If you’re trying to reach a local-only UI, skip public access and use: [How to forward ports to reach your web app](/documentation/connectivity/forwards-ports).

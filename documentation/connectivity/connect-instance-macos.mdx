@@ -38,21 +38,13 @@ Replace `/path/to/your-key.pem` with the actual path to the key you downloaded.
 
 ## Step 4: Connect to your instance
 
-Open the instance's connectivity details in Compute and copy the SSH command shown there. Compute exposes a stable SSH endpoint for each instance on port 22, so use the current command from the console rather than reconstructing the address yourself.
+In **Connectivity options → SSH**, copy the complete command and run it in Terminal. If needed, change only the private-key path after `-i`. Keep the supplied username, hostname, port, and proxy options.
 
-A typical command looks like:
-
-```text
-ssh -i /path/to/your-key.pem YOUR_SSH_USER@YOUR_SSH_HOST
-```
-
-1. Replace `/path/to/your-key.pem` with your key file location if needed.
-2. Use the hostname and username shown for your instance in Compute.
-3. The login can use a configured username. Do not assume the image’s default user.
+If the command contains `nc -X connect -x`, your Mac connects through the site proxy. Keep the entry host and port after `-x`. For a direct VM connection, keep the port after `-p`. A container uses the bastion in the supplied command.
 
 ## Step 5: Verify the server identity
 
-Compute instances present signed SSH host certificates. Follow the console's instructions to trust Hivenet's signing authority once in your SSH client. New VMs with valid certificates from that authority do not require a separate host-key acceptance prompt. If your client still asks you to accept a host identity, verify it with trusted information from Hivenet first.
+If the VM panel shows an `@cert-authority` line, follow its instructions to add the line to `~/.ssh/known_hosts`. If your client still prompts for a host identity, verify it with Hivenet before accepting it.
 
 For certificate trust and changed-host warnings, see [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
@@ -69,4 +61,4 @@ You’ll land in your instance’s terminal, ready to install packages, run apps
 - **Permission denied (publickey)?**
   - Make sure the path to your `.pem` file is correct and that it’s set to `chmod 600`.
 - **Connection times out?**
-  - Confirm the instance is Running, use its current connection details, and check whether your network allows outbound port 22. If it still fails, contact Support with the instance ID and error.
+  - Confirm the instance is Running, use its current connection details, and check whether your network allows the host and port your Mac connects to. For a site proxy, check the entry in `ProxyCommand`. If it still fails, contact Support with the instance ID and error.

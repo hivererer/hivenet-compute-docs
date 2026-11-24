@@ -1,14 +1,14 @@
 ---
 title: "Work with instances"
 sidebarTitle: "Instances"
-description: "Manage existing Compute instances through the API: list, inspect, read logs, and start, stop, or terminate them across their lifecycle statuses."
+description: "Create and manage Compute instances through the API: inspect their state, read logs and metrics, and start, stop, or terminate them."
 slug: "/public-api/instances"
 ---
 
-Instances are the main Compute resource exposed by the Compute API. You can list and inspect existing instances, read recent logs, and start, stop, or terminate them.
+Instances are the main Compute resource exposed by the Compute API. You can create VMs and containers, list and inspect instances, read recent logs, and start, stop, or terminate them.
 
 <Note>
-  The Compute API does not create instances. Create new instances in the Compute console, then use the API to inspect or manage them.
+  To provision an instance from a preset and image, follow [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api).
 </Note>
 
 ## Instance lifecycle
@@ -27,7 +27,7 @@ Common lifecycle states include:
 | `TERMINATING` | Permanent termination is in progress. |
 | `TERMINATED` | The instance has been permanently terminated. |
 
-Start, stop, and terminate actions are asynchronous. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the instance reaches the expected state.
+Creation, start, stop, and terminate actions are asynchronous. Create returns the ID in `instance.instance_id`. Start, stop, and terminate return an instance object directly, sometimes with only `instance_id`. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until the instance reaches the expected state.
 
 ## List instances
 
@@ -72,9 +72,11 @@ Supported filters include:
 - `free_text_search`
 - supported sort fields and direction
 
-Use one of the accepted region values: `UAE`, `FR`, or `US`.
+Use a region code from [List regions](/public-api/endpoints/list-regions).
 
 For exact allowed values and limits, use the [`GET /instances`](/public-api/endpoints/list-instances) reference.
+
+Date filters use creation time, including instances that have never started. See [Pagination and filters](/public-api/use-pagination-and-filters) for date precision and cursor behavior.
 
 ## Get one instance
 

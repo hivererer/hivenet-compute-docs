@@ -3,3 +3,7 @@ title: "Stop instance"
 sidebarTitle: "Stop instance"
 openapi: "public-v1.yaml POST /instances/{id}/stop"
 ---
+
+Stop a Compute instance and keep it for later. A successful request returns `201` with the public instance record. If the API cannot read the record immediately, the body contains only `instance_id`. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until `status` reaches `STOPPED`.
+
+The response uses `instance_id`, named status and readiness values, and ISO 8601 timestamps. Compute charges stop when the instance is stopped.

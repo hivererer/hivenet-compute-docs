@@ -74,7 +74,7 @@ Compute retries failed starts a limited number of times instead of retrying inde
 
 Start and stop operations also retry after internal conflicts. Let the current action settle before trying again.
 
-If repeated retries fail, note the instance ID, error, and approximate failure time before contacting Support. For virtual machines, Support can also review serial-console logs to investigate boot and crash problems.
+If the error mentions a disk that could not attach, record the exact message, the instance ID, and the time of the failed start. Contact Support if the error persists. The same details help Support investigate repeated start failures. For virtual machines, Support can also review serial-console logs to investigate boot and crash problems.
 
 ## Data protection during cleanup
 
@@ -82,4 +82,4 @@ Persistent volumes are protected if an instance cleanup fault occurs. This safeg
 
 ## Manage instances through the API
 
-To check an existing instance's status or start and stop it programmatically, see [Work with instances through the Compute API](/public-api/work-with-instances). The Compute API cannot create new instances.
+To check an existing instance's status or start and stop it programmatically, see [Work with instances through the Compute API](/public-api/work-with-instances). To create a new instance, follow [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api).

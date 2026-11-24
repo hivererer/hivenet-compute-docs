@@ -76,13 +76,7 @@ This guide takes you from sign-in to a running Compute instance. You’ll confir
   <Step title="Connect to the instance">
     Open the running instance and find its connection details.
 
-    For SSH, copy the command shown by the console and run it in your terminal. A typical command looks like this:
-
-    ```bash
-    ssh -i /path/to/private_key username@host
-    ```
-
-    Use the username and host shown by the console, along with the private key that matches the public key supplied during creation. The username may differ from the image’s default user. If you enabled Jupyter Notebook or a public endpoint, use the link shown in the instance’s connectivity details.
+    For SSH, run the complete command from the console in your terminal. Change the private-key path to match your key and keep the supplied username, hostname, port, and any `ProxyCommand`. If you enabled Jupyter Notebook or a public endpoint, use the link shown in the instance’s connectivity details.
   </Step>
   <Step title="Stop or terminate when you’re done">
     - **Stop** the instance when you want to pause compute usage and continue later.
@@ -121,4 +115,4 @@ Confirm that the relevant HTTPS, TCP, UDP, or Jupyter option was enabled during 
 - Learn how to [track organization spending](/documentation/account-billing/track-costs-real-time).
 - Review how to [start and stop an instance](/documentation/essentials/start-stop-instances).
 - Create [custom templates](/documentation/essentials/custom-templates) for repeatable environments.
-- Learn to [manage existing instances through the Compute API](/public-api/get-started-with-the-compute-api). The API does not create new instances.
+- [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api) or [manage an existing instance](/public-api/work-with-instances).

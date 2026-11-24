@@ -1,11 +1,17 @@
 ---
 title: "Get instance metrics"
 sidebarTitle: "Get instance metrics"
-api: "GET https://api.hivecompute.ai/v1/instances/{id}/metrics"
+openapi: "public-v1.yaml GET /instances/{id}/metrics"
 authMethod: "bearer"
 playground: "none"
 description: "Read Compute instance usage metrics through the public API, choose a time range, check ownership permissions, and handle missing data and errors."
-keywords: ["Compute API", "instance metrics", "CPU", "GPU", "memory", "usage"]
+keywords:
+  - "Compute API"
+  - "instance metrics"
+  - "CPU"
+  - "GPU"
+  - "memory"
+  - "usage"
 ---
 
 Use `GET /instances/{id}/metrics` to read usage time series for an instance you own. Metrics can include CPU, memory, disk, network, and GPU data, depending on the runtime, hardware, and available measurements.
@@ -40,14 +46,18 @@ Requests for another user's instance return `404`, the same response as a missin
 
 ## Read the response
 
-The response is JSON containing time series and a status for each metric group. Status values are strings, timestamps use ISO format, and unavailable values can be explicit `null` values.
+The response is JSON containing time series and a status for each metric group. Group statuses are strings. Each point uses `unix_seconds`, an integer Unix timestamp, and `last_sample_at` is a date-time string or `null`. A missing measurement can have `value: null`.
 
 - Check each metric group's status before using its values.
 - Treat missing samples as missing data. Do not replace them with zero usage.
 - GPU data depends on the instance's GPU hardware and available measurements.
 - Historical data may include gaps while an instance is stopped or terminated. A successful metrics response does not mean the instance is currently running; check its [current state](/public-api/endpoints/get-instance).
 
-This page documents the metrics request and response handling. The downloadable OpenAPI file has not yet been updated with the full metrics response schema.
+Points are ordered oldest first. The step is 60 seconds for `1h`, 180 seconds for `6h`, 300 seconds for `24h`, and 3,600 seconds for `7d`. The newest point can change while its step is in progress.
+
+## Rate limits
+
+This endpoint allows 60 requests per minute per API key, shared across all instance IDs. Polling a different instance does not start a new budget. Cache results and stagger requests; respect `Retry-After` on `429` responses.
 
 ## Errors
 

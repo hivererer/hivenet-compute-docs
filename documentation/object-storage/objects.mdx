@@ -25,7 +25,7 @@ An object key is the full name within the bucket, including any prefix. For exam
     Use **Upload more** to add files before starting.
   </Step>
   <Step title="Review the files">
-    Check the destination, names, and sizes. Resolve invalid names and oversized files.
+    Check the destination, names, and sizes. The console accepts files up to **50 GB each** and rejects larger files before the upload starts.
 
     Review any **Replaces existing** or **Duplicate name** warnings.
   </Step>
@@ -63,11 +63,9 @@ Objects created through an API may have names the console upload form would reje
 
 ## File size and large transfers
 
-Hivenet Object Storage supports objects up to 5 TB through multipart uploads. A single `PutObject` request is limited to 5 GB.
+For files up to **50 GB**, you can use the console. It splits larger files into parts automatically. Keep the tab open until the file appears in the bucket.
 
-The console handles multipart uploads automatically for larger files. Follow any file-size validation shown in the upload dialog and keep the tab open until the transfer finishes. The API limits above do not establish the console's maximum file size.
-
-For large batches or unattended transfers, use [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone), which provide managed transfer functions.
+For a file over 50 GB, use a client that supports multipart uploads, such as the [AWS CLI](/documentation/object-storage/aws-cli), [boto3](/documentation/object-storage/sdks), or [rclone](/documentation/object-storage/rclone). The S3 API limit is **5 GB** for one `PutObject` request and **5 TB** per multipart object. Check that the completed object appears in the bucket before deleting your local copy.
 
 An operation being implemented does not mean every client option is supported. Check [S3 compatibility](/documentation/object-storage/s3-compatibility) before changing transfer settings.
 

@@ -12,7 +12,7 @@ The Hivenet Agent is a lightweight network tool that:
 - Manages secure tunnels for HTTPS endpoints
 - Enables peer-to-peer communication without needing a central gateway
 
-If your instance’s public URL isn’t working—or if SSH fails unexpectedly—the Agent might be blocked or misconfigured.
+For SSH from your computer, open the instance’s connection panel and check the host and port in the supplied command. A VM may use a site proxy or a direct port. Containers use a bastion. The Agent ports below apply to the Agent’s own traffic.
 
 ## **Which ports the Agent needs**
 
@@ -48,5 +48,5 @@ Most users don’t need to manually open ports unless:
 ## **Firewall troubleshooting tips**
 
 - Allow outgoing connections on ports 4001 and 4443
-- Temporarily disable firewall apps or try switching to a less restricted network
+- If a managed network blocks the connection, ask the network administrator to check the destination host and port.
 - Restart the instance and check if the error persists

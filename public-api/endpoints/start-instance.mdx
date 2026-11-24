@@ -2,3 +2,7 @@
 title: "Start instance"
 openapi: "public-v1.yaml POST /instances/{id}/start"
 ---
+
+Start a stopped Compute instance. A successful request returns `201` with the public instance record. If the API cannot read the record immediately, the body contains only `instance_id`. Poll [`GET /instances/{id}`](/public-api/endpoints/get-instance) until `status` reaches `RUNNING`.
+
+The response uses `instance_id`, named status and readiness values, and ISO 8601 timestamps. Do not expect the older internal `id` response shape.

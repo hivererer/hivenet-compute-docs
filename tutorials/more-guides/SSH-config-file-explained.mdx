@@ -17,35 +17,27 @@ Your SSH folder is usually `~/.ssh` on macOS and Linux, or `C:\Users\<yourname>\
 
 Wait for **Running**, then open the instance's SSH connection details in the Compute console. Running means the instance has responded over SSH; it does not guarantee that an application inside it has finished starting.
 
-Copy the current hostname, username, and connection command. The instance has a stable SSH endpoint on port 22. Its login can use a configured username, so do not assume it is `ubuntu`.
+Copy the complete SSH configuration block from the instance’s **Connectivity options → SSH** panel into your local `~/.ssh/config`. Set `IdentityFile` to the private key that matches the public key used for that instance. Keep the supplied `HostName`, `User`, and any `Port` or `ProxyCommand` lines.
 
-A basic config entry looks like this:
+| What the console shows | How your client connects |
+| --- | --- |
+| A VM with a `ProxyCommand` that uses `nc` or `connect` | SSH reaches the VM through the site’s HTTP CONNECT proxy. Your network must allow the entry host and port in `ProxyCommand`. Port 22 in the SSH command is the port on the VM. |
+| A VM with a `Port` line and no proxy | SSH connects directly to the hostname and port in the block. |
+| A container with `ProxyCommand ssh bastion@…` | SSH connects through the bastion. Keep the full proxy line. |
 
-```text
-Host hivenet
-    HostName YOUR_SSH_HOST
-    User YOUR_SSH_USER
-    IdentityFile ~/.ssh/id_ed25519
-    Port 22
-```
+For a site proxy, macOS and Linux need an `nc` implementation that supports `-X connect -x`. Windows needs the `connect` helper with HTTP proxy support (`-H`) on your PATH. Use the command for the operating system where you run SSH. Replacing the HTTP proxy with an SSH jump host changes the protocol and the connection will fail.
 
-Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the console values, and set `IdentityFile` to your matching private key. Include any additional settings supplied in the console's SSH configuration. Only add a proxy or jump-host setting if those instructions require one.
-
-Connect with:
+The name after `Host` is a local alias. For the examples in these guides, change just that name to `hivenet`, save the file, and test it:
 
 ```bash
 ssh hivenet
 ```
 
-Use a different Host alias for each instance.
+A remote shell confirms the alias works. Use a different alias for each instance. SFTP, rsync over SSH, and local port forwarding can reuse the same entry.
 
 ## Verify the server identity
 
-Compute instances present signed SSH host certificates. A host certificate identifies the server; your own SSH key identifies you. These are separate checks.
-
-Configure your SSH client to trust Hivenet's signing certificate authority using the instructions supplied by Compute. You do this once for that client; new VMs with valid certificates signed by the trusted authority do not need a separate host-key acceptance prompt. This does not replace your own SSH key.
-
-Use the trusted configuration supplied by the console. If the certificate-authority details are missing, ask Support for them.
+When the VM’s SSH panel shows an `@cert-authority` line, copy the complete line into your local `~/.ssh/known_hosts`. Its hostname pattern and public key identify which signed VM host certificates your client can trust. Use the line for that environment. Your private key still authenticates you to the instance.
 
 If your client asks you to accept a host identity, verify it using trusted information from Hivenet before accepting. Do not disable host checking to get past a warning.
 
@@ -53,13 +45,13 @@ If your client asks you to accept a host identity, verify it using trusted infor
 
 If you see `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`, stop and check that you are connecting to the hostname shown for the intended instance. A replaced instance can have a different identity, but the warning can also mean you reached an unexpected server.
 
-After verifying the replacement identity with Hivenet, remove only the stale entry if needed:
+After verifying the replacement identity with Hivenet, remove only the entry named in the warning. For a plain hostname, use:
 
 ```bash
 ssh-keygen -R YOUR_SSH_HOST
 ```
 
-Reconnect and verify the new identity. Do not clear the entire `known_hosts` file.
+For a direct connection on a nondefault port, use `ssh-keygen -R "[YOUR_SSH_HOST]:YOUR_SSH_PORT"` with the host and port from the warning. Reconnect and verify the new identity. Do not clear the entire `known_hosts` file.
 
 ## Keep your private key private
 

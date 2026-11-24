@@ -23,18 +23,13 @@ This is common with:
 
 ## Step 1 – Set up local port forwarding
 
-In your Windows Terminal, run:
+On your computer, [save the console’s SSH configuration](/tutorials/more-guides/SSH-config-file-explained) under the alias `hivenet` and check that `ssh hivenet` connects. Exit that session, then run:
 
 ```text
-ssh -L 7865:localhost:7865 YOUR_SSH_USER@YOUR_SSH_HOST
+ssh -L 7865:localhost:7865 hivenet
 ```
 
-Use the SSH username and hostname shown in the instance’s connection details. Keep any key or connection options from the console’s SSH command.
-
-Replace:
-
-- `7865` with the actual port your app uses
-- `YOUR_SSH_USER` and `YOUR_SSH_HOST` with the console’s SSH username and hostname
+Replace `7865` with the port your application listens on. The final `hivenet` selects the saved SSH route, including its key and any proxy options.
 
 Now open [http://localhost:7865](http://localhost:7865) in your browser.
 
@@ -86,7 +81,7 @@ If it doesn’t work or shows “Bad Gateway,” fall back to SSH port forwardin
 You can add more `-L` flags to forward several ports at once:
 
 ```text
-ssh -L 7865:localhost:7865 -L 8888:localhost:8888 YOUR_SSH_USER@YOUR_SSH_HOST
+ssh -L 7865:localhost:7865 -L 8888:localhost:8888 hivenet
 ```
 
-Great for debugging or running multiple services.
+Each `-L` opens a local listener through the same SSH connection. It does not add a public port to the instance.

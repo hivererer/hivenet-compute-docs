@@ -50,7 +50,7 @@ Staging base URL:
     ```
   </Step>
   <Step title="Check the response">
-    A successful request returns `200 OK` and a JSON response with a `data` array and pagination information.
+    A successful request returns `200 OK` and a JSON response with a `data` array and pagination information. This shortened example shows selected instance fields:
 
     ```json
     {
@@ -100,9 +100,9 @@ An empty `data` array can still mean authentication succeeded. It may simply mea
 | `429` | `TOO_MANY_REQUESTS` | Wait for the `Retry-After` value before retrying. |
 
 <Warning>
-  Test authentication with read-only requests before using start, stop, or terminate actions.
+  Test authentication with read-only requests before creating an instance or using start, stop, or terminate actions.
 </Warning>
 
 ## Next step
 
-Continue with [Authenticate API requests](/public-api/authenticate-api-requests) for key-handling guidance.
+Continue with [Authenticate API requests](/public-api/authenticate-api-requests) for key-handling guidance, or [Create an instance using the Compute API](/public-api/create-an-instance-using-the-compute-api) to provision a VM or container.

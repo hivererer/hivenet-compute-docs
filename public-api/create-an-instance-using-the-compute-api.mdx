@@ -1,0 +1,131 @@
+---
+title: "Create an instance using the Compute API"
+sidebarTitle: "Create an instance"
+description: "Provision a Compute VM or container: choose a region, preset, and image, register an SSH public key, create the instance, and check its state."
+keywords: ["Compute API", "provisioning", "VM", "container", "SSH"]
+---
+
+Use the Compute API to create a VM or container from a hardware preset and image. This guide takes you from catalogue selection to a running instance.
+
+## Before you start
+
+You need a Compute account, a [Compute API key](/public-api/authenticate-api-requests), a terminal with `curl`, and an SSH key pair. Set `HIVENET_API_KEY` securely in your environment.
+
+For a prepaid account, make sure the balance covers one hour of the selected preset.
+
+<Warning>
+  Creating an instance can incur charges. Review the preset's price before submitting the create request. Only upload your SSH public key; keep the private key on your machine.
+</Warning>
+
+The examples use the production base URL, `https://api.hivecompute.ai/v1`. Replace every `YOUR_...` placeholder before sending a request.
+
+## 1. Choose a region and preset
+
+List region codes:
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/regions" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+Use a returned region code to list presets. This example uses `FR`:
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/presets?region=FR&size=200" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+Check the preset's location, CPU, memory, storage, GPU count, and price. Follow [pagination](/public-api/use-pagination-and-filters) if `pagination.next` is not `null`. Look up the preset again before each create. A preset can be retired or its size and price can change.
+
+Preset `cpu`, `memory`, and `storage` are numeric strings without units. `hourly_price` and `price_discounted` are decimal strings; an empty `price_discounted` means no preset discount. Convert strings explicitly when comparing values. Do not treat an empty discount as a zero price.
+
+## 2. Choose an image
+
+For a VM:
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/images?type=vm" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+For a container, use `type=container` and follow `pagination.next` if another page is available. Select an image compatible with the preset. A GPU VM needs `gpu_supported: true`. Check the minimum memory and disk size and save the image’s `id`.
+
+The image endpoint does not filter by region. Some VM minimum-size fields are zero in this release; do not interpret zero as a sizing recommendation.
+
+## 3. Register your SSH public key
+
+New instances use the public key you registered most recently in the API or console. If that is the key you want, skip to step 4. To use another key for future instances, create a local `ssh-key.json` file.
+
+```json
+{
+  "content": "YOUR_SSH_PUBLIC_KEY"
+}
+```
+
+Replace the placeholder with the complete single-line public key from your `.pub` file, then send it:
+
+```bash
+curl --request POST \
+  --url "https://api.hivecompute.ai/v1/ssh-keys" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data-binary @ssh-key.json
+```
+
+Expect `201 Created`. Save the returned key `id`; [Get SSH key](/public-api/endpoints/get-ssh-key) lets you retrieve it later. Repeating registration creates a new record, even for identical key content.
+
+## 4. Create the instance
+
+<Warning>
+  Each successful request creates a separately billed instance. Names can repeat. If the connection drops or you receive `500`, `503`, or `504`, list your instances and check whether creation succeeded before retrying.
+</Warning>
+
+```bash
+curl --request POST \
+  --url "https://api.hivecompute.ai/v1/instances" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "name": "my-api-vm",
+    "preset_id": "YOUR_PRESET_ID",
+    "image_type": "vm",
+    "image_id": "YOUR_IMAGE_ID"
+  }'
+```
+
+Use the IDs selected in steps 1 and 2. For a container, set `image_type` to `container` and use a container image ID. The minimal request above uses the account's registered SSH key without a key-selection field.
+
+Expect `201 Created` and save `instance.instance_id`. If the response contains only that ID inside `instance`, creation succeeded. Use it in the next step. When available, `hourly_rate` on the instance is the billed rate in credits per hour, returned as a JSON number.
+
+If creation returns `409 CONFLICT`, check credit, capacity, and whether the preset changed during the request. A no-capacity response does not include `Retry-After`. Choose another compatible preset or try later.
+
+## 5. Check readiness and connect
+
+Poll the instance:
+
+```bash
+curl --request GET \
+  --url "https://api.hivecompute.ai/v1/instances/YOUR_INSTANCE_ID" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Accept: application/json"
+```
+
+Allow time between requests and stay below [60 requests per minute per API key and endpoint](/public-api/handle-errors-and-rate-limits). Continue until `status` is `RUNNING`. Applications inside the instance may still be starting.
+
+If the instance reaches `ERRORED`, inspect its [logs](/public-api/endpoints/get-instance-logs) and console details before trying another creation.
+
+Open the instance in the Compute console and use the connection command shown there. Keep any supplied host, port, and connection options.
+
+## Manage the instance
+
+Use [Work with instances](/public-api/work-with-instances) to stop, restart, read logs and metrics, or terminate it.
+
+<Danger>
+  Termination permanently deletes the instance and its data. Use stop if you need to keep the instance for later.
+</Danger>

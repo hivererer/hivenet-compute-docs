@@ -1,0 +1,53 @@
+---
+title: "Register SSH key"
+sidebarTitle: "Register SSH key"
+description: "Register an SSH public key with the Compute API, understand validation and duplicate registration behavior, and save its ID for later retrieval."
+openapi: "public-v1.yaml POST /ssh-keys"
+authMethod: "bearer"
+playground: "none"
+keywords:
+  - "Compute API"
+  - "Register SSH key"
+---
+
+Register an SSH public key with the Compute API before creating an instance. New instances use the most recently registered key, including registrations made in the console. Existing instances keep their original key.
+
+<Warning>
+  Send only the public key, normally the file ending in `.pub`. Never send the private key.
+</Warning>
+
+## Request
+
+Create a local `ssh-key.json` file containing:
+
+```json
+{
+  "content": "YOUR_SSH_PUBLIC_KEY"
+}
+```
+
+Replace the placeholder with one complete OpenSSH public key (up to 8,192 characters). Accepted types are Ed25519, ECDSA P-256/P-384/P-521, `sk-ssh-ed25519@openssh.com`, `sk-ecdsa-sha2-nistp256@openssh.com`, and RSA with at least 2,048 bits. Then send the file:
+
+```bash
+curl --request POST \
+  --url "https://api.hivecompute.ai/v1/ssh-keys" \
+  --header "Authorization: Bearer $HIVENET_API_KEY" \
+  --header "Content-Type: application/json" \
+  --data-binary @ssh-key.json
+```
+
+## Response
+
+A successful registration returns `201 Created` with `id`, `content`, and `created_at`. `id` is a UUID. `created_at` is a date-time string or `null`. Save the ID so you can [retrieve the key](/public-api/endpoints/get-ssh-key).
+
+Registering the same key again creates another record with a new ID. It does not return the existing ID or a duplicate-key conflict. A trailing newline is preserved.
+
+## Validation and scope
+
+Invalid key content returns `400`. Rejected inputs include malformed keys, RSA keys shorter than 2048 bits, options prefixes such as `no-pty`, SSH certificates, and multiple key lines.
+
+A missing or invalid API key returns `401`. Account restrictions can return `403`, throttling returns `429`, and a server error returns `500`.
+
+This API supports registration and retrieval by ID. Key listing, deletion, names, and fingerprints are not available in this release.
+
+Use the key with the [instance creation workflow](/public-api/create-an-instance-using-the-compute-api). For authentication and throttling errors, see [Handle errors and rate limits](/public-api/handle-errors-and-rate-limits).

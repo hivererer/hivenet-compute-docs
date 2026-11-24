@@ -31,7 +31,7 @@ Regardless of the instance type, you’ll configure the following:
 
 - **GPU(s)**<br />Choose from the GPU presets currently available in your selected location. Compute currently uses NVIDIA RTX 5090 GPUs, with 32 GB of VRAM per GPU and multi-GPU configurations available when capacity allows.
 - **vCPUs and RAM**<br />Review the CPU and system-memory resources attached to each preset. These support the runtime, data loading, preprocessing, and CPU-side parts of your workload.
-- **Storage**<br />Instances include fast local SSD storage. Storage behavior depends on the instance type and lifecycle. See the instance lifecycle documentation for details.
+- **Storage**<br />Instances include fast local SSD storage. For CPU and GPU VMs, [instance metrics](/public-api/endpoints/get-instance-metrics) report the purchased main disk size in the `total_bytes` field of the `ROOT_DISK` entry. The filesystem inside the VM can be smaller. Storage behavior also depends on the instance lifecycle. See the instance lifecycle documentation for details.
 - **Region**<br />Select where your instance runs. Region choice affects latency, capacity, and data residency.
 - **Billing type**<br />Instances use on-demand billing. Eligible usage is charged per second while the instance is running.
 

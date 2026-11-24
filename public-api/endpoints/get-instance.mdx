@@ -4,3 +4,7 @@ sidebarTitle: "Get instance"
 slug: "/public-api/api-reference/get-instance"
 openapi: "public-v1.yaml GET /instances/{id}"
 ---
+
+Read the current state of a Compute instance. The public instance record uses named status and readiness values, ISO 8601 timestamps, and nullable termination fields. It no longer includes `user_id`, `user_name`, `user_email`, `org_id`, `org_name`, or `host_id`.
+
+`hourly_rate` is a JSON number and can contain floating-point precision artifacts. Preset prices are decimal strings. Do not assume those fields have the same type.

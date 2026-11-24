@@ -91,7 +91,8 @@ Check the file's name and size before retrying.
 
 - **Out of credits:** Uploads are blocked in both **Read only** and **Disabled** modes. [Add credits](/documentation/object-storage/usage-and-billing#add-credits-and-restore-access) to restore full access.
 - **Invalid name:** Follow the [object naming rules](/documentation/object-storage/objects#choose-object-names).
-- **File too large:** Follow the file-size validation shown in the console. The console handles multipart uploads automatically for larger files. For large batches or unattended transfers, use a client with multipart support. The API supports objects up to 5 TB through multipart uploads. See [File size and large transfers](/documentation/object-storage/objects#file-size-and-large-transfers).
+- **File too large:** The console rejects files over 50 GB before upload. For a larger file, use an [S3 client with multipart support](/documentation/object-storage/objects#file-size-and-large-transfers).
+- **All parts uploaded, but completion failed:** Check whether the object appears in the bucket. If `CompleteMultipartUpload` keeps returning `500 InternalError`, contact support with the request ID, time, object size, and part size. Abort the unfinished upload if you abandon the transfer.
 - **Only some files uploaded:** Use **Retry failed files** and check the resulting object list.
 - **You cannot add more files:** Resolve failed uploads by retrying them or closing the dialog before adding more.
 - **Page reloaded:** In-progress uploads stop, while completed files remain stored. Check the object list and retry the missing files.
@@ -138,7 +139,7 @@ Check the billing period and your organization's rate. Self-service storage draw
 
 Stored data continues to accrue charges while access is restricted, so a zero balance can become negative. A top-up first pays that outstanding amount. Distinguish actual cost so far from the end-of-month estimate.
 
-**Storage used** measures the current amount stored. The usage API reports KiB-hours, which measure accumulated storage usage over time. Billing converts this meter to decimal TB-hours and uses the actual hours in the calendar month. See [How storage is metered](/documentation/object-storage/usage-and-billing#how-storage-is-metered) for units and rounding.
+**Storage used** measures the current amount stored. The usage API reports KiB-hours, which measure accumulated storage usage over time. Billing converts the meter to decimal TB-hours. The console cost cards use the number of hours in the displayed calendar month. Credit deductions and invoices use the configured TB-month period, so their amounts can differ from the cards. See [How storage is metered](/documentation/object-storage/usage-and-billing#how-storage-is-metered) for the calculation.
 
 Transfer data is aggregated hourly. It is not a real-time activity log.
 

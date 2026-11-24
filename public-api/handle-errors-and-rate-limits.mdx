@@ -1,7 +1,7 @@
 ---
 title: "Handle errors and rate limits"
 sidebarTitle: "Errors and rate limits"
-description: "Reference for Compute API error responses, HTTP status codes, retry guidance, and per-IP rate limits so your integration handles failures reliably."
+description: "Handle Compute API errors, status codes, and retries, with the 60-request-per-minute limit applied separately to each API key and endpoint."
 slug: "/public-api/errors-and-rate-limits"
 ---
 
@@ -39,10 +39,16 @@ Errors use this structure:
 | `401 Unauthorized` | `UNAUTHORIZED` | The API key is missing or invalid. |
 | `403 Forbidden` | `FORBIDDEN` | The resource exists but the account cannot access it. |
 | `404 Not Found` | `NOT_FOUND` | The requested resource does not exist. |
-| `409 Conflict` | `CONFLICT` | The action can't proceed in the current state, or a start request has insufficient credit. |
+| `409 Conflict` | `CONFLICT` | A lifecycle action conflicts with the current state, credit is insufficient, or instance creation has no capacity for the selected preset. |
 | `429 Too Many Requests` | `TOO_MANY_REQUESTS` | The rate limit was exceeded. |
 | `500 Internal Server Error` | `INTERNAL_ERROR` | The server could not complete the request. |
 | `503 Service Unavailable` | `INTERNAL_ERROR` | No host currently has enough capacity for the requested start operation. |
+
+## Handle creation errors
+
+`POST /instances` returns `409 CONFLICT` if capacity is unavailable, a prepaid account lacks credit for one hour, or the preset changed during creation. These failures do not create an instance. A no-capacity response has no `Retry-After` header; choose another compatible preset or try later.
+
+Register an SSH public key before creating an instance. A `404` can also mean that the preset or image is missing or that the preset’s location does not offer that image.
 
 ## Handle 409 conflicts
 
@@ -68,7 +74,9 @@ The error message does not distinguish these cases. Fetch the current instance s
 
 ## Handle rate limits
 
-Rate limits apply per source IP address rather than per API key. Clients that share an egress IP also share the same request budget.
+Each API key has a limit of **60 requests per minute per endpoint**. Calls to one endpoint do not consume another endpoint's budget. Different keys have separate budgets, including when callers share a network address.
+
+Calls to `GET /instances/{id}/metrics` share one budget across all instance IDs. For example, refreshing 20 instances every 15 seconds requires 80 requests per minute and exceeds the limit. Cache results and stagger polling across instances.
 
 A `429 Too Many Requests` response includes a `Retry-After` header. Wait that many seconds before retrying.
 
@@ -76,7 +84,7 @@ A `429 Too Many Requests` response includes a `Retry-After` header. Wait that ma
 Retry-After: 60
 ```
 
-Don't pace requests against an assumed fixed limit. Treat the rate limit as subject to change and respond to `429` dynamically.
+Leave room below the limit for other requests using the same key. Continue handling `429` dynamically; shared service protection can also throttle requests. Release testing observed `Retry-After: 60`. Use the delay returned by the request. Do not depend on undocumented rate-limit headers.
 
 ## Handle server errors
 
@@ -94,7 +102,7 @@ A `500` response uses the generic message:
 
 The message is intentionally generic. Use `error.code` for program logic and keep `request_id` for troubleshooting.
 
-For temporary server errors, retry after a short delay. If the problem continues, contact Support with the `request_id`.
+For temporary read errors, retry after a short delay. Before retrying a state-changing request, check whether it completed. If the problem continues, contact Support with the `request_id`.
 
 ## Handle temporary capacity errors
 
@@ -104,6 +112,10 @@ Retry with backoff, or choose a compatible preset in another region. This is a t
 
 ## Retry safely
 
+`POST /instances` is not idempotent. Every successful call creates a separately billed instance, including repeated calls with the same name and body. After a lost connection or a `500`, `503`, or `504`, check [List instances](/public-api/endpoints/list-instances) before submitting another create request.
+
+Registering the same SSH public key again creates another key record with a new ID. Save and reuse the ID returned by the first successful registration.
+
 | Request type | Retry guidance |
 | :-- | :-- |
 | Read-only requests | Usually safe to retry after a short delay. |
@@ -111,8 +123,9 @@ Retry with backoff, or choose a compatible preset in another region. This is a t
 | `401` or `403` | Fix authentication or access before retrying. |
 | `409` | Check the latest instance state and, for start requests, the account balance before retrying. |
 | `429` | Wait for `Retry-After`. |
-| `500` | Retry after a delay; contact Support if it persists. |
-| `503` | Retry with backoff or choose a preset in another region. |
+| `500` | For reads, retry after a delay. For writes, check the outcome first; contact Support if it remains unclear. |
+| `503` | For start capacity errors, retry with backoff. For create, check whether the instance exists first. |
+| `504` on create | Check the instance list before retrying. |
 
 <Danger>
   Before retrying a destructive action such as terminate, fetch the instance state and confirm the action is still needed.

@@ -13,9 +13,7 @@ sidebarTitle: "Connect to an instance from Windows"
 
 ## Step 1 – Open the SSH connection details
 
-Open your instance in Compute and go to **Connectivity options → SSH**. Compute exposes a stable SSH endpoint for the instance on port 22.
-
-The console shows the current hostname, username, and connection command. The login can use a configured username instead of the image’s default user. Use those values rather than building the hostname yourself.
+Open the running instance in **Connectivity options → SSH** on your Windows computer. Copy its current command or SSH configuration block. The console selects the proxy command for the computer you use to view the panel.
 
 ![Connect Instance Windows 1 Pn](/images/connect-instance-windows-1.png)
 
@@ -26,30 +24,22 @@ The console shows the current hostname, username, and connection command. The lo
 1. In the dashboard go to **Instance → Connectivity options → SSH**.
 2. Click **Copy to terminal to connect**.
 3. Paste the command into your terminal and hit Enter.
-   - The command already includes your instance ID and user.
+   - Keep the supplied connection options. Adjust the private-key path after `-i` to match your local key.
    - If the command uses an SSH alias, add the console’s matching SSH config snippet first.
 
 ![Connect Instance Windows Gif Gi](/images/connect-instance-windows-gif.gif)
 
-**Build the command yourself**
+If the command contains `connect -H`, Windows OpenSSH needs the `connect` HTTP proxy helper on your PATH. Run `Get-Command connect` in PowerShell to check. Keep the proxy host and port after `-H`. If the console gives you a direct connection, keep the port after `-p`. For a container, keep the supplied bastion command.
 
-If you prefer to type the command manually, use the hostname and username shown in the instance's SSH connection details:
+For a saved connection, copy the console’s entire block to your OpenSSH config file and set `IdentityFile` to your private-key path. If you name the entry `hivenet`, connect with:
 
-```text
-ssh -i /path/to/private_key YOUR_SSH_USER@YOUR_SSH_HOST
-```
-
-SSH uses port 22 by default, so you do not need to specify the port unless the console tells you otherwise.
-
-If you’ve created a Host entry named `hivenet` in `~/.ssh/config`:
-
-```text
+```powershell
 ssh hivenet
 ```
 
 ## Step 3 – Verify the server identity
 
-Compute instances present signed SSH host certificates. Follow the console's instructions to trust Hivenet's signing authority once in your SSH client. New VMs with valid certificates from that authority do not require a separate host-key acceptance prompt. Include the connection settings supplied by the console, and add a proxy or jump host only when those instructions specify one.
+If the VM panel shows an `@cert-authority` line, add the complete line to `known_hosts` in your user’s `.ssh` folder. It lets OpenSSH verify VM certificates signed by that authority for the specified hostnames.
 
 If the client asks you to accept a host identity or reports that it has changed, verify it before continuing. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 

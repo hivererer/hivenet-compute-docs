@@ -3,3 +3,19 @@ title: "List presets"
 sidebarTitle: "List presets"
 openapi: "public-v1.yaml GET /presets"
 ---
+
+Use Compute presets to choose hardware and a location before [creating an instance](/public-api/create-an-instance-using-the-compute-api).
+
+## Parse sizes and prices
+
+`cpu`, `memory`, and `storage` are numeric strings without units, such as `"8"`, `"73"`, and `"250"`. `gpu` remains a count string such as `"1×"`; it does not include a model name.
+
+`hourly_price` and `price_discounted` are four-decimal strings without currency symbols, such as `"0.3000"` and `"0.2000"`. If there is no preset discount, `price_discounted` is `""`. Check for a non-empty value before using it, and otherwise fall back to `hourly_price`.
+
+Convert numeric strings explicitly for comparisons. The instance response's `hourly_rate` is a JSON number and can contain floating-point precision artifacts.
+
+## Choose a usable preset
+
+Use a region code from [List regions](/public-api/endpoints/list-regions) for filtering. Some presets can have empty region and location fields in this release; do not select those for this provisioning workflow.
+
+Follow the exact `pagination.next` cursor. Malformed preset cursors are not reliably rejected and can return an empty page. Listing a preset does not reserve capacity.

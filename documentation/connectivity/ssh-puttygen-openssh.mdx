@@ -16,7 +16,7 @@ sidebarTitle: "Connect using OpenSSH"
 
 Open PowerShell and run:
 
-```
+```text
 ssh -V
 ```
 
@@ -39,33 +39,17 @@ For a new key pair, follow [Add an SSH key on Windows](/documentation/connectivi
 
 ### Step 3 – Create a config entry (optional)
 
-In `C:\Users\<you>\.ssh\config`, add:
-
-```text
-Host hivenet
-    HostName YOUR_SSH_HOST
-    User YOUR_SSH_USER
-    IdentityFile ~/.ssh/id_ed25519
-    Port 22
-```
-
-Replace `YOUR_SSH_HOST` and `YOUR_SSH_USER` with the values in the instance’s SSH connection details, and use your matching private key. Include any additional settings supplied by the console. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
+Open **Connectivity options → SSH** for the running instance. Copy its complete configuration block into the file `config` in your user’s `.ssh` folder. Set `IdentityFile` to your matching private key and keep every supplied port and proxy setting. To use the command below, change the alias on the `Host` line to `hivenet`. See [SSH configuration and host verification](/tutorials/more-guides/SSH-config-file-explained).
 
 Save, then simply:
 
-```
+```text
 ssh hivenet
 ```
 
 ###  Step 4 – Connect manually
 
-Without a config file, run:
-
-```text
-ssh -i ~/.ssh/id_ed25519 YOUR_SSH_USER@YOUR_SSH_HOST
-```
-
-Use the username and hostname from the console and the private key matching your uploaded public key.
+Copy the full SSH command from the instance’s connection panel and change the private-key path after `-i` if needed. If the command uses `connect -H`, the `connect` helper must be on your PATH. See [Connect from Windows](/documentation/connectivity/connect-instance-windows).
 
 ##  Troubleshooting OpenSSH
 
